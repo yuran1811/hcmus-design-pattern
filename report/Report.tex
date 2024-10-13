@@ -1,0 +1,114 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage[vietnamese]{babel}
+\usepackage[utf8]{inputenc, vietnam}
+\usepackage[a4paper,margin=24mm]{geometry}
+\usepackage[skip=10pt plus1pt, indent=20pt]{parskip}
+\usepackage[colorlinks=true,allcolors=blue,urlcolor=magenta]{hyperref}
+
+\usepackage{caption}
+\usepackage{indentfirst,setspace,subcaption}
+\usepackage{amsmath,amssymb,graphicx,xcolor,url}
+\usepackage{fancyhdr,tocbasic,titlesec,minted,listings}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+% Header and footer styling
+\pagestyle{fancy}
+\setlength{\headheight}{18pt}
+\fancyhf{}
+\fancyhead[R]{\nouppercase\rightmark\hfill~Báo cáo đồ án OOP}
+\fancyfoot[C]{\hfill\thepage\hfill}
+
+% TOC styling
+\DeclareTOCStyleEntry[
+  indent=12pt,
+  level=1
+]{largetocline}{section}
+
+% Title page data
+\title{Báo cáo đồ án OOP}
+\author{\begin{tabular}{r c}
+  Ngô Nguyễn Thế Khoa & 23127065\\
+  Phi Anh Khôi        & 23127073\\
+  Khưu Ngọc Ý Vy      & 23127145\\
+  Trần Phụng Đình     & 23127527\\
+\end{tabular}}
+
+\date{Ngày 9 tháng 10 năm 2024}
+% \date{\today}
+
+\begin{document}
+
+% Title page and TOC
+\input{title_page}
+\tableofcontents\thispagestyle{empty}
+
+% Report contents
+\pagebreak
+\section{Thông tin nhóm}
+\begin{itemize}
+  \item \textbf{Môn:} Phương pháp lập trình hướng đối tượng
+  \item \textbf{Lớp học phần:} 23CLC09
+  \item \textbf{Giảng viên hướng dẫn:} Bùi Tiến Lên
+  \item \textbf{Thành viên:}
+        \begin{center}
+          \renewcommand{\arraystretch}{1.5}
+          \begin{tabular}{|c|l|l|c|l|}
+            \hline
+            \textbf{STT} & \textbf{Họ và tên}  & \textbf{MSSV} & \textbf{Email}                                                       \\\hline
+            1            & Ngô Nguyễn Thế Khoa & 23127065      & \href{mailto:nntkhoa23@clc.fitus.edu.vn}{nntkhoa23@clc.fitus.edu.vn} \\\hline
+            2            & Phi Anh Khôi        & 23127073      & \href{mailto:pakhoi23@clc.fitus.edu.vn}{pakhoi23@clc.fitus.edu.vn}   \\\hline
+            3            & Khưu Ngọc Ý Vy      & 23127145      & \href{mailto:knyvy23@clc.fitus.edu.vn}{knyvy23@clc.fitus.edu.vn}     \\\hline
+            4            & Trần Phụng Đình     & 23127527      & \href{mailto:tpdinh23@clc.fitus.edu.vn}{tpdinh23@clc.fitus.edu.vn}   \\\hline
+          \end{tabular}
+        \end{center}
+  \item \textbf{Công cụ hỗ trợ:}
+        \begin{itemize}
+          \item \href{https://git-scm.com/}{\textbf{Git}}, \href{https://github.com/}{\textbf{GitHub}}
+          \item \href{https://docs.google.com/docs/}{\textbf{Google Docs}}
+          \item \href{https://staruml.io/}{\textbf{StarUML}}
+          \item \href{https://www.capcut.com/}{\textbf{CapCut}}
+        \end{itemize}
+\end{itemize}
+
+\pagebreak
+\section{Nội dung}
+\subsection{Thông tin chung về đồ án:}
+\begin{enumerate}
+  \item \textbf{Tên đồ án:} Command Design Pattern
+  \item \textbf{Môi trường lập trình:} Visual Studio Code
+  \item \textbf{Ngôn ngữ lập trình:} C++
+\end{enumerate}
+
+% \pagebreak
+\section{Bảng phân công việc}
+\begin{center}
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabular}{|c|p{\dimexpr0.6\linewidth-2\tabcolsep}|c|}
+    \hline
+    \textbf{STT} & \textbf{Công việc} & \textbf{Người thực hiện} \\\hline
+    1            & K                  & None                     \\\hline
+    2            & K                  & None                     \\\hline
+    3            & V                  & None                     \\\hline
+    4            & D                  & None                     \\\hline
+  \end{tabular}
+\end{center}
+
+\pagebreak
+\section{Ảnh chụp màn hình}
+% \subsection{Demo}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=0.7\textwidth]{Screenshots/server-console.png}
+%   \caption{Giao diện Server (Console)}\label{fig:server-console}
+% \end{figure}
+
+% References
+\pagebreak
+\section{Nguồn tham khảo}
+\begin{enumerate}
+  \item \href{https://www.youtube.com/watch?v=oBykLn64AUc}{Class Diagram in UML}
+\end{enumerate}
+
+\end{document}
