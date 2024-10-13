@@ -8,6 +8,14 @@
 class Command {
  public:
   virtual ~Command() {}
+
+  /*
+   * `= 0`: This syntax makes the function a pure virtual function. A pure
+   * virtual function does not have an implementation in the base class and must
+   * be overridden in any derived class. Declaring a pure virtual function makes
+   * the containing class abstract, meaning you cannot instantiate objects of
+   * that class directly.
+   */
   virtual void execute() const = 0;
 };
 
