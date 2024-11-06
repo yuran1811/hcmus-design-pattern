@@ -13,6 +13,20 @@
 
 \renewcommand{\thesection}{\arabic{section}}
 
+\input{cmd/cmd}
+
+% Code highlighting
+\usemintedstyle{one-dark}
+\setminted{frame=lines,
+  framesep=2mm,
+  baselinestretch=1.2,
+  fontsize=\footnotesize,
+  linenos,
+  breakanywhere,
+  breaklines,
+  mathescape
+}
+
 % Header and footer styling
 \pagestyle{fancy}
 \setlength{\headheight}{18pt}
@@ -34,14 +48,13 @@
   Khưu Ngọc Ý Vy      & 23127145\\
   Trần Phụng Đình     & 23127527\\
 \end{tabular}}
-
-\date{Ngày 9 tháng 10 năm 2024}
-% \date{\today}
+\date{Ngày 1 tháng 11 năm 2024}
 
 \begin{document}
+\input{envs/code}
 
 % Title page and TOC
-\input{title_page}
+\input{pages/title_page}
 \tableofcontents\thispagestyle{empty}
 
 % Report contents
@@ -76,7 +89,7 @@
 \section{Nội dung}
 \subsection{Thông tin chung về đồ án:}
 \begin{enumerate}
-  \item \textbf{Tên đồ án:} Command Design Pattern
+  \item \textbf{Tên đồ án:} Design Pattern
   \item \textbf{Môi trường lập trình:} Visual Studio Code
   \item \textbf{Ngôn ngữ lập trình:} C++
 \end{enumerate}
@@ -94,6 +107,13 @@
     4            & D                  & None                     \\\hline
   \end{tabular}
 \end{center}
+
+\pagebreak
+\section{Source}
+\codeimport{cpp}{../src/ecommerce/main.cpp}
+\codeimport{cpp}{../src/ecommerce/Payment.hpp}
+\codeimport{cpp}{../src/ecommerce/Order.hpp}
+\codeimport{cpp}{../src/ecommerce/Stage.hpp}
 
 \pagebreak
 \section{Ảnh chụp màn hình}
