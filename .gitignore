@@ -1,7 +1,10 @@
 **/bin/*.exe
+*.o
+
 **/_minted-*
 *.gz
 *.pdf
 *.log
 
 **/raylib*
+**/raygui*

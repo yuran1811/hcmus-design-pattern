@@ -39,11 +39,11 @@
 - [x] Project Idea
 - [ ] Problem Analysis and Design Patterns Selection
 - [ ] System Design and UML Diagrams
-- [ ] Design Pattern Implementation in the System
-- [ ] Code structure
-- [ ] System Correctness
-- [ ] Effectiveness of Design Patterns
-- [ ] Demo Application
+- [x] Design Pattern Implementation in the System
+- [x] Code structure
+- [x] System Correctness
+- [x] Effectiveness of Design Patterns
+- [x] Demo Application
 - [ ] [Report](./report/) + Documentation
 - [ ] [Slide](./slide/) + Presentation Video
 
