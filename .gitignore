@@ -1,4 +1,6 @@
 **/bin/*.exe
+**/logs/*.txt
+**/qrcode/*.png
 *.o
 
 **/_minted-*
