@@ -35,7 +35,7 @@ class GUI {
                                   ADDR_INP_SIZE.x, ADDR_INP_SIZE.y};
 
   const Vector2 PHONE_INP_POS = {ADDR_INP_POS.x, ADDR_INP_POS.y + 100};
-  const Vector2 PHONE_INP_SIZE = {240, 40};
+  const Vector2 PHONE_INP_SIZE = {160, 40};
   const Rectangle PHONE_INP_REC = {PHONE_INP_POS.x, PHONE_INP_POS.y,
                                    PHONE_INP_SIZE.x, PHONE_INP_SIZE.y};
 
@@ -46,7 +46,11 @@ class GUI {
   BitState loadingStates;
 
   enum class InputType { ADDRESS, PHONE };
-  BitState inputActiveStates;
+  enum class InputState { DISABLE, INACTIVE, ACTIVE, HOVER };
+  vector<BitState> inputActiveStates = vector<BitState>(2);
+
+  BitState cursorBitState;
+  Vector2 lastCurPos;
 
   const Rectangle paymentMethodRec = {leftAlign, 100, 150, 40};
   Rectangle ctaRec = {0, 470, 0, 40};
@@ -54,21 +58,24 @@ class GUI {
   bool isShowCTA = false;
   bool isPaymentMethodChanged = false;
 
-  BreathColor breathColor;
-
   int frameCounter = 0;
+  float frameTimer = 0.f;
 
  public:
   GUI();
   ~GUI();
 
   int getFrameCounter() const;
+  float getFrameTimer() const;
   static vector<Texture2D> &getTextureCollection();
 
   void incFrameCounter();
+  void incFrameTimer();
   void setCTARec(const Rectangle &);
 
   void init();
+
+  void cursorUpdate();
 
   void render(function<void()>);
   void renderHeader(const string &);

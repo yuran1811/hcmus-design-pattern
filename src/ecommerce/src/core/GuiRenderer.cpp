@@ -2,8 +2,9 @@
 
 void GUI::render(function<void()> callback) {
   BeginDrawing();
-
   ClearBackground(RAYWHITE);
+
+  cursorUpdate();
   renderHeader("Interactive E-Commerce Order Processing");
   callback();
 
@@ -11,9 +12,7 @@ void GUI::render(function<void()> callback) {
 }
 
 void GUI::renderHeader(const string& s) {
-  breathColor.setBase(BLUE);
-  DrawText(s.c_str(), leftMidAlign, 15, 20,
-           breathColor.get(frameCounter / 100));
+  DrawText(s.c_str(), leftMidAlign, 15, 20, BLUE);
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
 }
 
@@ -22,12 +21,23 @@ void GUI::renderCTAButton(const string& message) {
   const float rightAlign = SCREEN_SIZE.width - ctaRecWidth - 10;
   setCTARec({rightAlign, ctaRec.y, ctaRecWidth, ctaRec.height});
 
-  DrawRectangleRounded(ctaRec, .25f, 40, DARKGRAY);
+  Color ctaColor = GRAY;
+
+  if (CheckCollisionPointRec(GetMousePosition(), ctaRec)) {
+    ctaColor = DARKGRAY;
+
+    cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
+  } else {
+    cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
+  }
+
+  DrawRectangleRounded(ctaRec, .25f, 40, ctaColor);
   DrawText(message.c_str(), ctaRec.x + 12, ctaRec.y + 12, 20, RAYWHITE);
 }
 
 void GUI::renderStageMessage(const string& s) {
-  DrawText((">>> " + s).c_str(), leftAlign, 60, 20, DARKGREEN);
+  DrawText((">>> " + s).c_str(), leftAlign, 60, 20,
+           utils::color::calcBreathColor(LIME, frameTimer * 3.75f));
 }
 
 void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
@@ -119,13 +129,21 @@ void GUI::renderInput(const InputType& type, const string& info,
                       const string& value, const Vector2& pos,
                       const Vector2& size) {
   DrawText(info.c_str(), pos.x, pos.y - 30, 20, DARKGRAY);
-  DrawRectangleV(
-      pos, size,
-      inputActiveStates.isSet((unsigned int)type) ? LIGHTGRAY : GRAY);
-  DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, BLACK);
 
-  if (value.empty())
-    DrawText("Click to enter", pos.x + 10, pos.y + 10, 20, LIGHTGRAY);
+  if (inputActiveStates[int(type)].isSet((unsigned int)InputState::ACTIVE)) {
+    DrawRectangleV(pos, size, SKYBLUE);
+    DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, DARKBLUE);
+
+    if ((getFrameCounter() / 30) % 2)
+      DrawText("_", pos.x + 10 + MeasureText(value.c_str(), 20), pos.y + 6, 30,
+               DARKBLUE);
+  } else {
+    DrawRectangleV(pos, size, LIGHTGRAY);
+    DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, GRAY);
+
+    if (value.empty())
+      DrawText("Click to type", pos.x + 10, pos.y + 10, 20, GRAY);
+  }
 }
 
 void GUI::renderAddressInput(const string& address) {
@@ -153,7 +171,7 @@ void GUI::renderPaymentQR(const string& content,
   const string paymentQRFileName = "payment";
   const string qrPath =
       isPaymentMethodChanged
-          ? utils::saveQRCode(paymentQRFileName, content, 270)
+          ? utils::qrcode::saveQRCode(paymentQRFileName, content, 270)
           : utils::getResourcePath(AssetFolder::QRCODE, paymentQRFileName,
                                    AssetType::PNG);
   isPaymentMethodChanged = false;
@@ -161,6 +179,8 @@ void GUI::renderPaymentQR(const string& content,
   vector<Texture2D>& itemTextures = getTextureCollection();
 
   if (frameCounter == 0) {
+    loadingStates.unset((unsigned int)LoadingState::PAYMENT_QR);
+
     Image qrImage = LoadImage(qrPath.c_str());
 
     if (itemTextures[(int)ItemTexture::PAYMENT_QR].id)
@@ -168,8 +188,6 @@ void GUI::renderPaymentQR(const string& content,
     itemTextures[(int)ItemTexture::PAYMENT_QR] = LoadTextureFromImage(qrImage);
 
     UnloadImage(qrImage);
-
-    loadingStates.unset((unsigned int)LoadingState::PAYMENT_QR);
   }
 
   if (loadingStates.isSet((unsigned int)LoadingState::PAYMENT_QR))
@@ -184,15 +202,15 @@ void GUI::renderPaymentMethod(const PaymentMethod& paymentMethod,
                               const Price& price) {
   Rectangle rec = paymentMethodRec;
 
-  DrawRectangleRec(rec, paymentMethod == CREDIT_CARD ? LIGHTGRAY : GRAY);
+  DrawRectangleRec(rec, paymentMethod == CREDIT_CARD ? GRAY : LIGHTGRAY);
   DrawText("Credit Card", rec.x + 15, rec.y + 10, 20, BLACK);
 
   rec.y += 50;
-  DrawRectangleRec(rec, paymentMethod == PAYPAL ? LIGHTGRAY : GRAY);
+  DrawRectangleRec(rec, paymentMethod == PAYPAL ? GRAY : LIGHTGRAY);
   DrawText("PayPal", rec.x + 15, rec.y + 10, 20, BLACK);
 
   rec.y += 50;
-  DrawRectangleRec(rec, paymentMethod == COD ? LIGHTGRAY : GRAY);
+  DrawRectangleRec(rec, paymentMethod == COD ? GRAY : LIGHTGRAY);
   DrawText("COD", rec.x + 15, rec.y + 10, 20, BLACK);
 
   renderPaymentQR(PAYMENT_METHODS[paymentMethod] + "::" + price.format(),

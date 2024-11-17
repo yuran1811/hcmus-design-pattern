@@ -1,11 +1,9 @@
 #pragma once
 
-#include <cmath>
 #include <iostream>
 
 using std::max;
 using std::ostream;
-using std::sin;
 using std::string;
 using std::to_string;
 
@@ -171,22 +169,6 @@ struct BitState {
 struct Voucher {
   string name;
   int discount;
-};
-
-struct BreathColor {
-  float amplitude;
-  float frequency;
-
-  Color base;
-
-  BreathColor() : amplitude(0.5f), frequency(1.f), base(BLACK) {}
-
-  void setBase(const Color& _) { base = _; }
-
-  Color get(int time) const {
-    const float brightness = 0.5f + amplitude * sin(frequency * time);
-    return {base.r * brightness, base.g * brightness, base.b * brightness, 255};
-  }
 };
 
 template <class T>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ctime>
+#include <cmath>
 #include <cstdio>
 
 #include <sstream>
@@ -8,7 +9,7 @@
 
 #include "raylib.h"
 #include "qrcodegen.hpp"
-#include "stb_image_write.h"
+#include "stb_image_write.hpp"
 
 #include "../shared/index.hpp"
 
@@ -18,19 +19,7 @@ using qrcodegen::QrSegment;
 using std::ostringstream;
 
 namespace utils {
-Font GetFont(const int &);
-
 string getResourcePath(AssetFolder, string, AssetType);
-
-void logging(const char *, ...);
-
-void CustomLog(int, const char *, va_list);
-
-string generateSVGQRCode(const string &);
-
-pair<unsigned char *, int> generateQRCodeImage(const string &, const int &);
-
-string saveQRCode(const string &, const string &, const int &);
 
 namespace range {
 template <class T>
@@ -54,7 +43,24 @@ T rand_in_range(T l, T r) {
 }
 }  // namespace range
 
+namespace log {
+void logging(bool, const char *, ...);
+void CustomLog(int, const char *, va_list);
+}  // namespace log
+
+namespace color {
+Color calcBreathColor(const Color &_, const float &time);
+Color calcPulseColor(const Color &_, const float &time);
+}  // namespace color
+
+namespace qrcode {
+string generateSVGQRCode(const string &);
+pair<unsigned char *, int> generateQRCodeImage(const string &, const int &);
+string saveQRCode(const string &, const string &, const int &);
+}  // namespace qrcode
+
 namespace ui {
 bool mousePressedInBox(Rectangle, MouseButton);
 }
+
 }  // namespace utils

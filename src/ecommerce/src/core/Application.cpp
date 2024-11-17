@@ -62,21 +62,19 @@ void Application::run() {
   isRunning = true;
 
   while (!WindowShouldClose() && isRunning) {
+    gui->incFrameTimer();
+    gui->incFrameCounter();
+
     stageHandler();
 
     gui->render([this]() {
       gui->renderStageMessage(getStageMessage(currentStage));
       renderHandler();
     });
-
-    gui->incFrameCounter();
   }
 }
 
 void Application::stageHandler() {
-  bool phoneHandler = false;
-  bool addressHandler = false;
-
   switch (currentStage) {
     case SELECT_ITEM:
       gui->selectItemHandler(items, cart, totalCost);
@@ -86,7 +84,8 @@ void Application::stageHandler() {
       break;
 
     case ADDRESS_INPUT:
-      gui->phoneHandler(phone) && gui->addressHandler(address);
+      gui->addressHandler(address);
+      gui->phoneHandler(phone);
       if (gui->isCTAClicked()) {
         currentStage = PAYMENT_METHOD;
       }

@@ -22,11 +22,14 @@ bool GUI::selectItemHandler(const vector<Item>& items, CartType& cart,
 bool GUI::inputHandler(const InputType& inputType, string& value, int maxLen,
                        const Range<int>& range, const Rectangle& rec) {
   if (utils::ui::mousePressedInBox(rec, MOUSE_BUTTON_LEFT)) {
-    inputActiveStates.reset();
-    inputActiveStates.set((unsigned int)inputType);
+    for (BitState& state : inputActiveStates)
+      state.unset((unsigned int)InputState::ACTIVE);
+
+    inputActiveStates[(int)inputType].set((unsigned int)InputState::ACTIVE);
   }
 
-  if (inputActiveStates.isSet((unsigned int)inputType)) {
+  if (inputActiveStates[(int)inputType].isSet(
+          (unsigned int)InputState::ACTIVE)) {
     int key = GetCharPressed();
 
     if (utils::range::is_in_range(range, key) && value.length() < maxLen) {
@@ -38,7 +41,7 @@ bool GUI::inputHandler(const InputType& inputType, string& value, int maxLen,
     }
 
     if (IsKeyPressed(KEY_ENTER))
-      inputActiveStates.unset((unsigned int)inputType);
+      inputActiveStates[(int)inputType].unset((unsigned int)InputState::ACTIVE);
   }
 
   return true;
