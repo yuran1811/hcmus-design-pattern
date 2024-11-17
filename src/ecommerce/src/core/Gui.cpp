@@ -41,17 +41,19 @@ void GUI::init() {
   loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
 }
 
-void GUI::cursorUpdate() {
-  bool isHovered = false;
-  vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
-  for (int i = 0; i < recs.size(); i++)
-    if (CheckCollisionPointRec(GetMousePosition(), recs[i])) {
-      cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
-      isHovered = true;
-      break;
-    }
-  if (!isHovered)
-    cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
+void GUI::cursorUpdate(const OrderStageState& curStage) {
+  if (curStage == OrderStageState::ADDRESS_INPUT) {
+    bool isHovered = false;
+    vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
+    for (int i = 0; i < recs.size(); i++)
+      if (CheckCollisionPointRec(GetMousePosition(), recs[i])) {
+        cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
+        isHovered = true;
+        break;
+      }
+    if (!isHovered)
+      cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
+  }
 
   // Handling cursor state
   if (!cursorBitState.value)

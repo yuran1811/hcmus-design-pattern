@@ -67,7 +67,7 @@ void Application::run() {
 
     stageHandler();
 
-    gui->render([this]() {
+    gui->render(currentStage, [this]() {
       gui->renderStageMessage(getStageMessage(currentStage));
       renderHandler();
     });
