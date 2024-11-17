@@ -75,9 +75,9 @@ class GUI {
 
   void init();
 
-  void cursorUpdate();
+  void cursorUpdate(const OrderStageState &);
 
-  void render(function<void()>);
+  void render(const OrderStageState &, function<void()>);
   void renderHeader(const string &);
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);

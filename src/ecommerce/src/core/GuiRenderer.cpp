@@ -1,10 +1,10 @@
 #include "Gui.hpp"
 
-void GUI::render(function<void()> callback) {
+void GUI::render(const OrderStageState& curStage, function<void()> callback) {
   BeginDrawing();
   ClearBackground(RAYWHITE);
 
-  cursorUpdate();
+  cursorUpdate(curStage);
   renderHeader("Interactive E-Commerce Order Processing");
   callback();
 
