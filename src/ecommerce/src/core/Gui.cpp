@@ -43,14 +43,16 @@ void GUI::init() {
 
 void GUI::cursorUpdate(const OrderStageState& curStage) {
   if (curStage == OrderStageState::ADDRESS_INPUT) {
-    bool isHovered = false;
     vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
-    for (int i = 0; i < recs.size(); i++)
-      if (CheckCollisionPointRec(GetMousePosition(), recs[i])) {
+
+    bool isHovered = false;
+    for (const Rectangle& _ : recs)
+      if (CheckCollisionPointRec(GetMousePosition(), _)) {
         cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
         isHovered = true;
         break;
       }
+
     if (!isHovered)
       cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
   }
@@ -60,9 +62,10 @@ void GUI::cursorUpdate(const OrderStageState& curStage) {
     SetMouseCursor(MouseCursor::MOUSE_CURSOR_DEFAULT);
   else {
     const int loopCount = sizeof(cursorBitState.value) * 8;
-    for (int i = loopCount - 1; i >= 0; i--)
+    for (int i = 0; i < loopCount; i++)
       if (cursorBitState.isSet(i)) {
         SetMouseCursor((MouseCursor)i);
+        break;
       }
 
     cursorBitState.reset();
