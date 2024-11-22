@@ -12,6 +12,7 @@
 
 #include "raylib.h"
 
+#include "../components/index.hpp"
 #include "../shared/index.hpp"
 #include "../utils/index.hpp"
 

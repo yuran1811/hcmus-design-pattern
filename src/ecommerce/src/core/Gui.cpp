@@ -42,6 +42,12 @@ void GUI::init() {
 }
 
 void GUI::cursorUpdate(const OrderStageState& curStage) {
+  for (GuiButton* btn : GuiButton::getButtons())
+    if (btn->isHovered()) {
+      cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
+      break;
+    }
+
   if (curStage == OrderStageState::ADDRESS_INPUT) {
     vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
 
@@ -52,9 +58,6 @@ void GUI::cursorUpdate(const OrderStageState& curStage) {
         isHovered = true;
         break;
       }
-
-    if (!isHovered)
-      cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
   }
 
   // Handling cursor state

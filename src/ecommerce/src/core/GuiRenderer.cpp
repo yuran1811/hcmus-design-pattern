@@ -4,9 +4,10 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
   BeginDrawing();
   ClearBackground(RAYWHITE);
 
-  cursorUpdate(curStage);
   renderHeader("Interactive E-Commerce Order Processing");
   callback();
+  cursorUpdate(curStage);
+  GuiButton::releaseButtons();
 
   EndDrawing();
 }
@@ -21,18 +22,8 @@ void GUI::renderCTAButton(const string& message) {
   const float rightAlign = SCREEN_SIZE.width - ctaRecWidth - 10;
   setCTARec({rightAlign, ctaRec.y, ctaRecWidth, ctaRec.height});
 
-  Color ctaColor = GRAY;
-
-  if (CheckCollisionPointRec(GetMousePosition(), ctaRec)) {
-    ctaColor = DARKGRAY;
-
-    cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
-  } else {
-    cursorBitState.unset((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
-  }
-
-  DrawRectangleRounded(ctaRec, .25f, 40, ctaColor);
-  DrawText(message.c_str(), ctaRec.x + 12, ctaRec.y + 12, 20, RAYWHITE);
+  (new GuiButton(message, ctaRec, RAYWHITE, DARKGRAY, 12))
+      ->render(GetFontDefault(), 0);
 }
 
 void GUI::renderStageMessage(const string& s) {
@@ -42,10 +33,11 @@ void GUI::renderStageMessage(const string& s) {
 
 void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
                            Price& totalCost) {
-  for (int i = 0; i < items.size(); i++) {
-    DrawRectangle(leftAlign, 100 + (i * 50), 150, 30, LIGHTGRAY);
-    DrawText(items[i].name.c_str(), leftAlign + 10, 105 + (i * 50), 20, BLACK);
-  }
+  for (int i = 0; i < items.size(); i++)
+    (new GuiButton(items[i].name,
+                   Rectangle{leftAlign, 100.f + (i * 50), 150, 30}, DARKGRAY,
+                   LIGHTGRAY, 10, 5))
+        ->render(GetFontDefault(), 0);
 
   isShowCTA = !cart.empty();
   if (isShowCTA) renderCTAButton("Proceed to Address");
@@ -85,20 +77,20 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
 
     // Draw the Increase/Decrease buttons
     Rectangle rec = {incButtonX, float(cartYPos), 30, 30};
-    DrawRectangleRounded(rec, 1.f, 0, LIGHTGRAY);
-    DrawText("-", incButtonX + 10, cartYPos + 7, 20, BLACK);
+    (new GuiButton("-", rec, GRAY, LIGHTGRAY, 10, 7))
+        ->render(GetFontDefault(), 0);
 
     rec.x = incButtonX + quantityGap;
-    DrawRectangleRounded(rec, 1.f, 0, LIGHTGRAY);
-    DrawText("+", incButtonX + quantityGap + 10, cartYPos + 7, 20, BLACK);
+    (new GuiButton("+", rec, GRAY, LIGHTGRAY, 10, 7))
+        ->render(GetFontDefault(), 0);
 
     cartYPos += 40;
   }
 
   if (cart.size()) {
     const Rectangle clearBtnRec = {incButtonX, float(cartYPos), 75, 30};
-    DrawRectangleRounded(clearBtnRec, .25f, 40, RED);
-    DrawText("Clear", incButtonX + 10, cartYPos + 6, 20, WHITE);
+    (new GuiButton("Clear", clearBtnRec, WHITE, MAROON, 10, 6))
+        ->render(GetFontDefault(), 0);
 
     if (utils::ui::mousePressedInBox({incButtonX, float(cartYPos), 75, 30},
                                      MOUSE_BUTTON_LEFT)) {
@@ -202,16 +194,19 @@ void GUI::renderPaymentMethod(const PaymentMethod& paymentMethod,
                               const Price& price) {
   Rectangle rec = paymentMethodRec;
 
-  DrawRectangleRec(rec, paymentMethod == CREDIT_CARD ? GRAY : LIGHTGRAY);
-  DrawText("Credit Card", rec.x + 15, rec.y + 10, 20, BLACK);
+  (new GuiButton("Credit Card", rec, BLACK,
+                 paymentMethod == CREDIT_CARD ? GRAY : LIGHTGRAY, 15, 10))
+      ->render(GetFontDefault(), 0);
 
   rec.y += 50;
-  DrawRectangleRec(rec, paymentMethod == PAYPAL ? GRAY : LIGHTGRAY);
-  DrawText("PayPal", rec.x + 15, rec.y + 10, 20, BLACK);
+  (new GuiButton("PayPal", rec, BLACK,
+                 paymentMethod == PAYPAL ? GRAY : LIGHTGRAY, 15, 10))
+      ->render(GetFontDefault(), 0);
 
   rec.y += 50;
-  DrawRectangleRec(rec, paymentMethod == COD ? GRAY : LIGHTGRAY);
-  DrawText("COD", rec.x + 15, rec.y + 10, 20, BLACK);
+  (new GuiButton("COD", rec, BLACK, paymentMethod == COD ? GRAY : LIGHTGRAY, 15,
+                 10))
+      ->render(GetFontDefault(), 0);
 
   renderPaymentQR(PAYMENT_METHODS[paymentMethod] + "::" + price.format(),
                   paymentMethod, price);

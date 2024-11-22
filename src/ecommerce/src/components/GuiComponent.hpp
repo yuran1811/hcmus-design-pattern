@@ -115,17 +115,29 @@ class GuiTextWrap : public GuiText {
 };
 
 class GuiButton {
- public:
+ private:
+  static vector<GuiButton*> buttons;
+
   string text;
   Rectangle bounds;
   Color textColor;
   Color color;
+  int px, py;
 
-  BitState state;
-
+ public:
   GuiButton() = delete;
-  GuiButton(const string&, Rectangle, Color, Color);
+  GuiButton(const string&, Rectangle, Color, Color, int);
+  GuiButton(const string&, Rectangle, Color, Color, int, int);
+  GuiButton(const GuiButton&) = delete;
   ~GuiButton() = default;
 
-  void render(const Font&, bool, ...);
+  const string& getText() const { return text; }
+  const Rectangle& getBounds() const { return bounds; }
+
+  static vector<GuiButton*>& getButtons() { return buttons; }
+  static void releaseButtons();
+
+  const bool isHovered() const;
+
+  GuiButton* render(const Font&, bool, ...);
 };
