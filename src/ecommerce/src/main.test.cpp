@@ -1,4 +1,4 @@
-#include "raylib.h"
+/* #include "raylib.h"
 
 #include "components/index.hpp"
 
@@ -36,7 +36,7 @@ int main(void) {
 
   CloseWindow();
   return 0;
-}
+} */
 
 /* #include <cmath>
 #include <iostream>
@@ -164,5 +164,4 @@ GuiText::TextEffect::PULSE, time); DrawText("Rainbow Sliding Bar", screenWidth
 
   CloseWindow();
   return 0;
-}
- */
+} */

@@ -1,5 +1,10 @@
 #include "CatpuccinPaletteBar.hpp"
 
+CatpuccinPaletteBar& CatpuccinPaletteBar::getInstance() {
+  static CatpuccinPaletteBar instance;
+  return instance;
+}
+
 const Color* CatpuccinPaletteBar::getPalette() const {
   static const Color catpuccinMachiatoPalette[] = {
       {244, 219, 214, 255}, {240, 198, 198, 255}, {245, 189, 230, 255},

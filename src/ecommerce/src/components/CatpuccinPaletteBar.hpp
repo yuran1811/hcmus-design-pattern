@@ -4,6 +4,8 @@
 
 #include "raylib.h"
 
+#include "../utils/index.hpp"
+
 class CatpuccinPaletteBar {
  public:
   enum class Direction { Horizontal, Vertical };
@@ -12,7 +14,12 @@ class CatpuccinPaletteBar {
 
  public:
   CatpuccinPaletteBar() = default;
+  CatpuccinPaletteBar(const CatpuccinPaletteBar&) = delete;
   ~CatpuccinPaletteBar() = default;
+
+  CatpuccinPaletteBar& operator=(const CatpuccinPaletteBar&) = delete;
+
+  static CatpuccinPaletteBar& getInstance();
 
   const Color* getPalette() const;
   const Color getPaletteColor(int index) const;
