@@ -1,4 +1,52 @@
-/* #include "raylib.h"
+/* // Confetti
+
+#include "raylib.h"
+
+#include "components/index.hpp"
+
+int main(void) {
+  const int screenWidth = 800;
+  const int screenHeight = 450;
+  InitWindow(screenWidth, screenHeight, "Example");
+  SetTargetFPS(60);
+
+  ConfettiParticles* confettiParticles = nullptr;
+
+  while (!WindowShouldClose()) {
+    // Rendering
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    if (IsKeyPressed(KEY_SPACE)) {
+      if (confettiParticles) {
+        confettiParticles->generateSetOfConfetties();
+      }
+    }
+
+    if (!confettiParticles) {
+      confettiParticles = new ConfettiParticles(400, screenWidth, screenHeight);
+      confettiParticles->setCanonPosition({screenWidth / 2, screenHeight});
+    }
+
+    confettiParticles->update();
+    confettiParticles->render();
+
+    DrawText(to_string(confettiParticles->isAlive()).c_str(), 10, 10, 20,
+             DARKGRAY);
+
+    EndDrawing();
+  }
+
+  CloseWindow();
+
+  delete confettiParticles;
+
+  return 0;
+} */
+
+/* // Text wrap
+
+#include "raylib.h"
 
 #include "components/index.hpp"
 
@@ -38,7 +86,9 @@ int main(void) {
   return 0;
 } */
 
-/* #include <cmath>
+/* // Text effects
+
+#include <cmath>
 #include <iostream>
 
 #include "raylib.h"
@@ -89,7 +139,9 @@ int main(void) {
   return 0;
 } */
 
-/* #include <cmath>
+/* // Demo
+
+#include <cmath>
 #include <iostream>
 
 #include "raylib.h"
