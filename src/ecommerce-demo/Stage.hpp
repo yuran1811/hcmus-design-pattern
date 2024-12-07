@@ -12,7 +12,7 @@ class OrderStage {
 
  public:
   OrderStage() : nextStage(nullptr) {}
-  virtual ~OrderStage() = default;
+  virtual ~OrderStage() { delete nextStage; };
 
   void setNextStage(OrderStage* next) { nextStage = move(next); }
   virtual void handleOrder() const = 0;

@@ -34,8 +34,6 @@ int main() {
   delete creditGateway;
   delete order;
   delete payment;
-  delete packaging;
-  delete shipping;
 
   return 0;
 }
