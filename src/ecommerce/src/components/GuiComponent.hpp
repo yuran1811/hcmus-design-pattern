@@ -39,7 +39,7 @@ class GuiFont {
   static const string getFontStyle(const FontStyle&);
   static string getFontPath(const GuiFont&, const FontStyle&);
   static vector<Font>& getFontVariants(const GuiFont&);
-  static Font& getFont(const GuiFont&, const int& size,
+  static Font& getFont(const GuiFont&, const int&,
                        FontStyle style = FontStyle::REGULAR);
 };
 

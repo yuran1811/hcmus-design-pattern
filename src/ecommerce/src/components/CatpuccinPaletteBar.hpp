@@ -1,10 +1,6 @@
 #pragma once
 
-#include <cmath>
-
 #include "raylib.h"
-
-#include "../utils/index.hpp"
 
 class CatpuccinPaletteBar {
  public:
@@ -22,7 +18,7 @@ class CatpuccinPaletteBar {
   static CatpuccinPaletteBar& getInstance();
 
   const Color* getPalette() const;
-  const Color getPaletteColor(int index) const;
+  const Color getPaletteColor(int) const;
   const int getPaletteSize() const;
 
   void render(Vector2 pos, Vector2 size,

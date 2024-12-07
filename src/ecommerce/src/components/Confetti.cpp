@@ -1,6 +1,6 @@
 #include "Confetti.hpp"
 
-const float ConfettiParticles::GRAVITY = 0.98f * 1.175f;
+const float ConfettiParticles::GRAVITY = 0.98f * 1.25f;
 
 ConfettiParticles::ConfettiParticles(int numParticles, int screenWidth,
                                      int screenHeight)
@@ -11,8 +11,6 @@ ConfettiParticles::ConfettiParticles(int numParticles, int screenWidth,
 ConfettiParticles::~ConfettiParticles() { cleanup(); }
 
 void ConfettiParticles::setCanonPosition(Vector2 _) { canonPosition = _; }
-
-bool ConfettiParticles::isFiring() const { return isFired; }
 
 bool ConfettiParticles::isAlive() {
   for (auto& c : confetti)
@@ -39,7 +37,7 @@ Confetti* ConfettiParticles::generateConfetti(Vector2 position) {
                        (unsigned char)GetRandomValue(15, 255), 255};
 
   float angle = (float)GetRandomValue(60, 120);
-  float speed = (float)GetRandomValue(250, 450) / 100.0f;
+  float speed = (float)GetRandomValue(270, 470) / 100.0f;
   const Vector2 velocity = {speed * cosf(angle * DEG2RAD),
                             -speed * sinf(angle * DEG2RAD)};
 

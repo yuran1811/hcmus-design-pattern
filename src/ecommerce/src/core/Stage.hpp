@@ -8,12 +8,17 @@ using std::move;
 // Abstract Order Stage Handler
 class OrderStage {
  protected:
-  OrderStage* nextStage;
+  OrderStage* prevStage = nullptr;
+  OrderStage* nextStage = nullptr;
 
  public:
-  OrderStage() : nextStage(nullptr) {}
-  virtual ~OrderStage() = default;
+  OrderStage() = default;
+  virtual ~OrderStage() {
+    delete prevStage;
+    delete nextStage;
+  }
 
+  void setPrevStage(OrderStage* prev) { nextStage = move(prev); }
   void setNextStage(OrderStage* next) { nextStage = move(next); }
   virtual void handleOrder() const = 0;
 };

@@ -18,7 +18,7 @@ Application::~Application() {
 
 void Application::setItems(const vector<Item>& _) { items = _; }
 
-void Application::setVouchers(const vector<Voucher>& _) { vouchers = _; }
+void Application::setCoupons(const vector<Coupon>& _) { coupons = _; }
 
 void Application::switchStage(const OrderStageState& stage) {
   currentStage = stage;
@@ -75,6 +75,11 @@ void Application::run() {
 }
 
 void Application::stageHandler() {
+  if (gui->isBackProgressClicked() && currentStage > SELECT_ITEM) {
+    currentStage = static_cast<OrderStageState>(currentStage - 1);
+    gui->processStageBacking(currentStage);
+  }
+
   switch (currentStage) {
     case SELECT_ITEM:
       gui->selectItemHandler(items, cart, totalCost);
@@ -113,6 +118,8 @@ void Application::stageHandler() {
     case SHIPPING:
       if (gui->isCTAClicked()) {
         currentStage = COMPLETED;
+
+        if (gui->getConfettiActive()) gui->stopConfetti();
       }
       break;
 

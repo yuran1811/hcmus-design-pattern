@@ -11,7 +11,7 @@ class Application {
   OrderStageState currentStage;
 
   vector<Item> items;
-  vector<Voucher> vouchers;
+  vector<Coupon> coupons;
 
   CartType cart;
   Price totalCost;
@@ -26,7 +26,7 @@ class Application {
   ~Application();
 
   void setItems(const vector<Item>&);
-  void setVouchers(const vector<Voucher>&);
+  void setCoupons(const vector<Coupon>&);
   void switchStage(const OrderStageState&);
   void switchPaymentMethod(const PaymentMethod&);
 

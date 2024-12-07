@@ -5,6 +5,7 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
   ClearBackground(RAYWHITE);
 
   renderHeader("Interactive E-Commerce Order Processing");
+  renderOrderProgress(curStage);
   callback();
   cursorUpdate(curStage);
   GuiButton::releaseButtons();
@@ -15,6 +16,42 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
 void GUI::renderHeader(const string& s) {
   DrawText(s.c_str(), leftMidAlign, 15, 20, BLUE);
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
+}
+
+void GUI::renderOrderProgress(const OrderStageState& curStage) {
+  const int stageCount = 6;
+  const int gap = (SCREEN_SIZE.width - ORDER_PROG_POS.x * 2 -
+                   (stageCount * ORDER_PROG_ITEM_SIZE / 2)) /
+                  (stageCount + 1);
+
+  for (int i = 0; i < stageCount; i++) {
+    const int x = ORDER_PROG_POS.x + gap + (ORDER_PROG_ITEM_SIZE / 2 + gap) * i;
+    const Color color = i == (int)curStage  ? SKYBLUE
+                        : i < (int)curStage ? GREEN
+                                            : LIGHTGRAY;
+
+    if (i && curStage >= i)
+      DrawLineEx({float(x - gap), float(ORDER_PROG_POS.y)},
+                 {float(x - ORDER_PROG_ITEM_SIZE / 2), float(ORDER_PROG_POS.y)},
+                 3, color);
+
+    DrawCircle(x, ORDER_PROG_POS.y, ORDER_PROG_ITEM_SIZE / 2, color);
+    DrawText(to_string(i + 1).c_str(), x - 4, ORDER_PROG_POS.y - 8, 20,
+             DARKGRAY);
+  }
+
+  // Render back arrow button
+  if (curStage > 0) {
+    isShowBackProgress = true;
+    (new GuiButton("<",
+                   {ORDER_PROG_POS.x - ORDER_PROG_ITEM_SIZE / 2,
+                    ORDER_PROG_POS.y - ORDER_PROG_ITEM_SIZE / 2,
+                    ORDER_PROG_ITEM_SIZE, ORDER_PROG_ITEM_SIZE},
+                   RAYWHITE, DARKGRAY, 14, 10))
+        ->render(GetFontDefault(), 0);
+  } else {
+    isShowBackProgress = false;
+  }
 }
 
 void GUI::renderCTAButton(const string& message) {
@@ -40,7 +77,7 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
         ->render(GetFontDefault(), 0);
 
   isShowCTA = !cart.empty();
-  if (isShowCTA) renderCTAButton("Proceed to Address");
+  if (isShowCTA) renderCTAButton("Fill the address info");
 
   DrawText("Cart:", 300, 100, 20, DARKGRAY);
 
@@ -114,7 +151,7 @@ void GUI::renderAddressInfo(const string& address, const string& phone) {
   renderPhoneInput(phone);
 
   isShowCTA = !address.empty() && phone.length() == 10;
-  if (isShowCTA) renderCTAButton("Proceed to Payment Method");
+  if (isShowCTA) renderCTAButton("Goto Payment");
 }
 
 void GUI::renderInput(const InputType& type, const string& info,
@@ -151,9 +188,13 @@ void GUI::renderPhoneInput(const string& phone) {
 void GUI::renderPaymentQR(const string& content,
                           const PaymentMethod& paymentMethod,
                           const Price& price) {
-  if (paymentMethod == COD) return;
-
   const int __leftAlign = paymentMethodRec.x + paymentMethodRec.width + 50;
+
+  if (paymentMethod == COD) {
+    DrawText("Cash on Delivery", __leftAlign, paymentMethodRec.y, 20, DARKGRAY);
+    loadingStates.unset((unsigned int)LoadingState::PAYMENT_QR);
+    return;
+  }
 
   DrawText("Scan the QR code to make payment", __leftAlign, paymentMethodRec.y,
            20, GRAY);
@@ -166,7 +207,7 @@ void GUI::renderPaymentQR(const string& content,
           ? utils::qrcode::saveQRCode(paymentQRFileName, content, 270)
           : utils::getResourcePath(AssetFolder::QRCODE, paymentQRFileName,
                                    AssetType::PNG);
-  isPaymentMethodChanged = false;
+  setPaymentMethodChanged(false);
 
   vector<Texture2D>& itemTextures = getTextureCollection();
 
@@ -194,25 +235,19 @@ void GUI::renderPaymentMethod(const PaymentMethod& paymentMethod,
                               const Price& price) {
   Rectangle rec = paymentMethodRec;
 
-  (new GuiButton("Credit Card", rec, BLACK,
-                 paymentMethod == CREDIT_CARD ? GRAY : LIGHTGRAY, 15, 10))
-      ->render(GetFontDefault(), 0);
+  for (int i = 0; i < PAYMENT_METHOD_COUNT; i++) {
+    if (i) rec.y += 50;
 
-  rec.y += 50;
-  (new GuiButton("PayPal", rec, BLACK,
-                 paymentMethod == PAYPAL ? GRAY : LIGHTGRAY, 15, 10))
-      ->render(GetFontDefault(), 0);
-
-  rec.y += 50;
-  (new GuiButton("COD", rec, BLACK, paymentMethod == COD ? GRAY : LIGHTGRAY, 15,
-                 10))
-      ->render(GetFontDefault(), 0);
+    (new GuiButton(PAYMENT_METHODS[i], rec, BLACK,
+                   paymentMethod == i ? GRAY : LIGHTGRAY, 15, 10))
+        ->render(GetFontDefault(), 0);
+  }
 
   renderPaymentQR(PAYMENT_METHODS[paymentMethod] + "::" + price.format(),
                   paymentMethod, price);
 
   isShowCTA = true;
-  renderCTAButton("Proceed to Payment");
+  renderCTAButton("Select Payment Method");
 }
 
 void GUI::renderPayment() {
@@ -232,6 +267,19 @@ void GUI::renderShipping() {
 
 void GUI::renderCompleted(Price& totalCost, const string& address,
                           const PaymentMethod& paymentMethod) {
+  if (!confettiParticles) {
+    confettiParticles =
+        new ConfettiParticles(400, SCREEN_SIZE.width, SCREEN_SIZE.height);
+    confettiParticles->setCanonPosition(
+        {SCREEN_SIZE.width / 2, SCREEN_SIZE.height});
+    confettiParticles->generateSetOfConfetties();
+
+    isConfettiActive = true;
+  }
+
+  confettiParticles->update();
+  confettiParticles->render();
+
   DrawText("Thank you for your order!", leftMidAlign + 50, 150, 25, DARKBLUE);
   DrawText("Your order has been completed!", leftMidAlign + 55, 200, 20, GRAY);
 

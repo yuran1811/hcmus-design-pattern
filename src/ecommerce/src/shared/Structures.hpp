@@ -1,11 +1,16 @@
 #pragma once
 
+#include <cmath>
 #include <iostream>
 
 using std::max;
 using std::ostream;
 using std::string;
 using std::to_string;
+
+typedef long long ll;
+typedef unsigned long long ull;
+typedef unsigned int uint;
 
 struct Size {
   float width;
@@ -22,6 +27,11 @@ struct Size {
     height = other.height;
     return *this;
   }
+
+  friend ostream& operator<<(std::ostream& os, const Size& size) {
+    os << "(" << size.width << ", " << size.height << ")";
+    return os;
+  }
 };
 
 struct ScreenSize : public Size {
@@ -32,9 +42,13 @@ struct ScreenSize : public Size {
   ~ScreenSize() = default;
 
   ScreenSize& operator=(const ScreenSize& other) {
-    width = other.width;
-    height = other.height;
+    Size::operator=(other);
     return *this;
+  }
+
+  friend ostream& operator<<(std::ostream& os, const ScreenSize& size) {
+    os << (Size)size;
+    return os;
   }
 };
 
@@ -45,6 +59,7 @@ struct Coord {
   Coord(int x, int y) : x(x), y(y) {}
   Coord(int x) : Coord(x, x) {}
   Coord(const Coord& other) : x(other.x), y(other.y) {}
+  ~Coord() = default;
 
   bool operator==(const Coord& other) const {
     return x == other.x && y == other.y;
@@ -93,37 +108,39 @@ struct Coord {
 };
 
 struct Price {
-  long long value;
-  int floatPart;
+  ull value;
+  uint decimal;
 
-  Price() : value(0), floatPart(1) {}
-  Price(long long value, int floatPart) : value(value), floatPart(floatPart) {}
-  Price(long long value) : Price(value, 1) {}
-  Price(const Price& other) : Price(other.value, other.floatPart) {}
+  Price() : value(0), decimal(0) {}
+  Price(ll value, int decimal) : value(abs(value)), decimal(abs(decimal)) {}
+  Price(ll value) : Price(value, 0) {}
+  Price(const Price& other) : Price(other.value, other.decimal) {}
+  ~Price() = default;
 
-  operator float() const { return 1.f * value / floatPart; }
+  operator float() const { return 1.f * value / pow(10, decimal); }
 
   string format() const {
-    return to_string(value / floatPart) + "." + to_string(value % floatPart);
+    const ll exp = pow(10, decimal);
+    return to_string(value / exp) + "." + to_string(value % exp);
   }
 
-  Price operator*(int scalar) const { return Price(value * scalar, floatPart); }
+  Price operator*(int scalar) const { return Price(value * scalar, decimal); }
 
   Price& operator=(const Price& other) {
     value = other.value;
-    floatPart = other.floatPart;
+    decimal = other.decimal;
     return *this;
   }
 
   Price operator+(const Price& other) const {
-    int maxFloatPart = max(floatPart, other.floatPart);
-    long long newValue = value * maxFloatPart / floatPart +
-                         other.value * maxFloatPart / other.floatPart;
-    while (newValue % 10 == 0 && maxFloatPart > 10) {
+    int maxDecimal = max(decimal, other.decimal);
+    ll newValue = value * pow(10, maxDecimal - decimal) +
+                  other.value * pow(10, maxDecimal - other.decimal);
+    while (newValue % 10 == 0 && maxDecimal > 1) {
       newValue /= 10;
-      maxFloatPart /= 10;
+      maxDecimal--;
     }
-    return Price(newValue, maxFloatPart);
+    return Price(newValue, maxDecimal);
   }
 
   Price& operator+=(const Price& other) {
@@ -132,7 +149,7 @@ struct Price {
   }
 
   Price operator-(const Price& other) const {
-    return *this + Price(-other.value, other.floatPart);
+    return *this + Price(-other.value, other.decimal);
   }
 
   Price& operator-=(const Price& other) {
@@ -152,11 +169,12 @@ struct Item {
 };
 
 struct BitState {
-  unsigned long long value;
+  ull value;
 
   BitState() : value(0) {}
-  BitState(unsigned long long value) : value(value) {}
+  BitState(ll value) : value(abs(value)) {}
   BitState(const BitState& other) : value(other.value) {}
+  ~BitState() = default;
 
   bool isSet(unsigned int bit) const { return value & (1 << bit); }
 
@@ -171,6 +189,16 @@ struct Voucher {
   int discount;
 };
 
+struct Coupon {
+  string code;
+
+  float discount;     // Discount percentage or flat amount
+  bool isPercentage;  // true = percentage, false = flat amount
+
+  time_t expiryDate;
+  int usageLimit;
+};
+
 template <class T>
 struct Range {
   T start;
@@ -180,6 +208,7 @@ struct Range {
   Range(T start, T end) : start(start), end(end) {}
   Range(T start) : Range(start, start) {}
   Range(const Range& other) : Range(other.start, other.end) {}
+  ~Range() = default;
 
   bool isInRange(T value) const { return start <= value && value <= end; }
 };

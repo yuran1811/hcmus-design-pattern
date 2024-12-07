@@ -5,6 +5,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "../shared/index.hpp"
+
 using std::cout;
 using std::function;
 using std::pair;
@@ -15,6 +17,8 @@ using std::unordered_map;
 // Abstract Payment Gateway
 class PaymentGateway {
  public:
+  virtual const unsigned char& getMethodID() const = 0;
+  virtual const string& getDisplayName() const = 0;
   virtual pair<bool, string> processPayment(double amount) = 0;
   virtual ~PaymentGateway() = default;
 };
@@ -22,6 +26,14 @@ class PaymentGateway {
 // Concrete Payment Gateways
 class CreditCardPayment : public PaymentGateway {
  public:
+  const unsigned char& getMethodID() const override {
+    static const unsigned char methodID = PaymentMethod::CREDIT_CARD;
+    return methodID;
+  }
+  const string& getDisplayName() const override {
+    return PAYMENT_METHODS[getMethodID()];
+  }
+
   pair<bool, string> processPayment(double amount) override {
     return {true,
             "Processing Credit Card payment of $" + to_string(amount) + "\n"};
@@ -30,8 +42,46 @@ class CreditCardPayment : public PaymentGateway {
 
 class PayPalPayment : public PaymentGateway {
  public:
+  const unsigned char& getMethodID() const override {
+    static const unsigned char methodID = PaymentMethod::PAYPAL;
+    return methodID;
+  }
+  const string& getDisplayName() const override {
+    return PAYMENT_METHODS[getMethodID()];
+  }
+
   pair<bool, string> processPayment(double amount) override {
     return {true, "Processing Paypal payment of $" + to_string(amount) + "\n"};
+  }
+};
+
+class StripePayment : public PaymentGateway {
+ public:
+  const unsigned char& getMethodID() const override {
+    static const unsigned char methodID = PaymentMethod::STRIPE;
+    return methodID;
+  }
+  const string& getDisplayName() const override {
+    return PAYMENT_METHODS[getMethodID()];
+  }
+
+  pair<bool, string> processPayment(double amount) override {
+    return {true, "Processing Stripe payment of $" + to_string(amount) + "\n"};
+  }
+};
+
+class CODPayment : public PaymentGateway {
+ public:
+  const unsigned char& getMethodID() const override {
+    static const unsigned char methodID = PaymentMethod::COD;
+    return methodID;
+  }
+  const string& getDisplayName() const override {
+    return PAYMENT_METHODS[getMethodID()];
+  }
+
+  pair<bool, string> processPayment(double amount) override {
+    return {true, "Processing COD payment of $" + to_string(amount) + "\n"};
   }
 };
 
@@ -55,6 +105,18 @@ class PayPalPaymentFactory : public PaymentGatewayFactory {
   PaymentGateway* createPaymentGateway() override {
     return new PayPalPayment();
   }
+};
+
+class StripePaymentFactory : public PaymentGatewayFactory {
+ public:
+  PaymentGateway* createPaymentGateway() override {
+    return new StripePayment();
+  }
+};
+
+class CODPaymentFactory : public PaymentGatewayFactory {
+ public:
+  PaymentGateway* createPaymentGateway() override { return new CODPayment(); }
 };
 
 // Payment Gateway Registry - Singleton Design Pattern
@@ -88,9 +150,4 @@ class PaymentGatewayRegistry {
 };
 
 // Register factories
-inline void registerPaymentGateways() {
-  PaymentGatewayRegistry::getInstance().registerFactory(
-      "credit", []() { return new CreditCardPayment(); });
-  PaymentGatewayRegistry::getInstance().registerFactory(
-      "paypal", []() { return new PayPalPayment(); });
-}
+void registerPaymentGateways();

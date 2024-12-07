@@ -9,7 +9,11 @@ GUI::~GUI() {
   for (Texture2D& texture : itemTextures) UnloadTexture(texture);
 
   CloseWindow();
+
+  delete confettiParticles;
 }
+
+bool GUI::getConfettiActive() const { return isConfettiActive; }
 
 int GUI::getFrameCounter() const { return frameCounter; }
 
@@ -32,6 +36,12 @@ void GUI::incFrameTimer() {
 
 void GUI::setCTARec(const Rectangle& rec) { ctaRec = rec; }
 
+void GUI::setPaymentMethodChanged(bool flag) {
+  isPaymentMethodChanged = flag;
+
+  if (flag) loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
+}
+
 void GUI::init() {
   SetTraceLogCallback(utils::log::CustomLog);
   SetTargetFPS(TARGET_FPS);
@@ -51,11 +61,9 @@ void GUI::cursorUpdate(const OrderStageState& curStage) {
   if (curStage == OrderStageState::ADDRESS_INPUT) {
     vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
 
-    bool isHovered = false;
     for (const Rectangle& _ : recs)
       if (CheckCollisionPointRec(GetMousePosition(), _)) {
         cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
-        isHovered = true;
         break;
       }
   }
@@ -72,5 +80,18 @@ void GUI::cursorUpdate(const OrderStageState& curStage) {
       }
 
     cursorBitState.reset();
+  }
+}
+
+void GUI::stopConfetti() {
+  if (confettiParticles) {
+    delete confettiParticles;
+    confettiParticles = nullptr;
+  }
+}
+
+void GUI::processStageBacking(const OrderStageState& curStage) {
+  if (curStage == OrderStageState::SELECT_ITEM) {
+    setPaymentMethodChanged(true);
   }
 }

@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <cstring>
-
 #include <vector>
 #include <string>
 #include <sstream>
@@ -40,6 +39,9 @@ class GUI {
   const Rectangle PHONE_INP_REC = {PHONE_INP_POS.x, PHONE_INP_POS.y,
                                    PHONE_INP_SIZE.x, PHONE_INP_SIZE.y};
 
+  const float ORDER_PROG_ITEM_SIZE = 36.f;
+  const Vector2 ORDER_PROG_POS = {120.f, 470 + ORDER_PROG_ITEM_SIZE / 2};
+
  private:
   enum class ItemTexture { PAYMENT_QR };
 
@@ -53,11 +55,15 @@ class GUI {
   BitState cursorBitState;
   Vector2 lastCurPos;
 
+  ConfettiParticles *confettiParticles = nullptr;
+
   const Rectangle paymentMethodRec = {leftAlign, 100, 150, 40};
-  Rectangle ctaRec = {0, 470, 0, 40};
+  Rectangle ctaRec = {0, 530, 0, 40};
 
   bool isShowCTA = false;
+  bool isShowBackProgress = false;
   bool isPaymentMethodChanged = false;
+  bool isConfettiActive = false;
 
   int frameCounter = 0;
   float frameTimer = 0.f;
@@ -66,6 +72,7 @@ class GUI {
   GUI();
   ~GUI();
 
+  bool getConfettiActive() const;
   int getFrameCounter() const;
   float getFrameTimer() const;
   static vector<Texture2D> &getTextureCollection();
@@ -73,13 +80,17 @@ class GUI {
   void incFrameCounter();
   void incFrameTimer();
   void setCTARec(const Rectangle &);
+  void setPaymentMethodChanged(bool);
 
   void init();
 
   void cursorUpdate(const OrderStageState &);
+  void stopConfetti();
+  void processStageBacking(const OrderStageState &);
 
   void render(const OrderStageState &, function<void()>);
   void renderHeader(const string &);
+  void renderOrderProgress(const OrderStageState &);
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
   void renderSelectItem(const vector<Item> &, CartType &, Price &);
@@ -103,4 +114,5 @@ class GUI {
   bool paymentMethodHandler(PaymentMethod &, const Price &);
 
   bool isCTAClicked() const;
+  bool isBackProgressClicked() const;
 };

@@ -29,7 +29,6 @@ class ConfettiParticles {
   int screenWidth;
   int screenHeight;
 
-  bool isFired = false;
   Vector2 canonPosition;
 
  public:
@@ -39,7 +38,6 @@ class ConfettiParticles {
 
   void setCanonPosition(Vector2);
 
-  bool isFiring() const;
   bool isAlive();
   bool isAlive(Confetti*);
   bool outBounds(Confetti*);
@@ -50,6 +48,6 @@ class ConfettiParticles {
   void cleanup();
 
   void update();
-  void update(float deltaTime);
+  void update(float);
   void render();
 };

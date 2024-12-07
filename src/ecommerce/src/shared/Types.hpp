@@ -28,8 +28,10 @@ static const string ASSET_FILE_TYPES[] = {
     "", ".ttf", ".png", ".jpg", ".svg", ".wav", ".mp3", ".txt",
 };
 
-enum PaymentMethod { CREDIT_CARD, PAYPAL, COD };
-static const string PAYMENT_METHODS[] = {"Credit Card", "PayPal", "COD"};
+enum PaymentMethod { COD, CREDIT_CARD, PAYPAL, STRIPE };
+static const string PAYMENT_METHODS[] = {"COD", "Credit Card", "PayPal",
+                                         "Stripe"};
+static const int PAYMENT_METHOD_COUNT = 4;
 
 enum OrderStageState {
   SELECT_ITEM,
@@ -40,6 +42,9 @@ enum OrderStageState {
   SHIPPING,
   COMPLETED
 };
+static const string ORDER_STAGES[] = {
+    "Select Item", "Address Input", "Payment Method", "Payment",
+    "Packaging",   "Shipping",      "Completed"};
 
 // Key: Item name, Value: Pair of Item and quantity
 typedef unordered_map<string, pair<Item, int>> CartType;

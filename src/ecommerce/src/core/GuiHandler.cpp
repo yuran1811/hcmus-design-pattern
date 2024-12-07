@@ -61,23 +61,12 @@ bool GUI::paymentMethodHandler(PaymentMethod& paymentMethod,
   if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
     Rectangle rec = paymentMethodRec;
 
-    if (CheckCollisionPointRec(GetMousePosition(), rec)) {
-      paymentMethod = CREDIT_CARD;
-      isPaymentMethodChanged = true;
-      loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
-    }
+    for (int i = 0; i < PAYMENT_METHOD_COUNT; i++) {
+      if (i) rec.y += 50;
 
-    rec.y += 50;
-    if (CheckCollisionPointRec(GetMousePosition(), rec)) {
-      paymentMethod = PAYPAL;
-      isPaymentMethodChanged = true;
-      loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
-    }
-
-    rec.y += 50;
-    if (CheckCollisionPointRec(GetMousePosition(), rec)) {
-      paymentMethod = COD;
-      isPaymentMethodChanged = true;
+      if (CheckCollisionPointRec(GetMousePosition(), rec)) {
+        setPaymentMethodChanged(true);
+      }
     }
   }
 
@@ -86,4 +75,10 @@ bool GUI::paymentMethodHandler(PaymentMethod& paymentMethod,
 
 bool GUI::isCTAClicked() const {
   return isShowCTA && utils::ui::mousePressedInBox(ctaRec, MOUSE_BUTTON_LEFT);
+}
+
+bool GUI::isBackProgressClicked() const {
+  return isShowBackProgress &&
+         utils::ui::mousePressedInCircle(
+             ORDER_PROG_POS, ORDER_PROG_ITEM_SIZE / 2, MOUSE_BUTTON_LEFT);
 }

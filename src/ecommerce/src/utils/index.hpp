@@ -1,11 +1,10 @@
 #pragma once
 
-#include <ctime>
 #include <cmath>
+#include <ctime>
 #include <cstdio>
-
-#include <sstream>
 #include <chrono>
+#include <sstream>
 
 #include "raylib.h"
 #include "qrcodegen.hpp"
@@ -13,10 +12,10 @@
 
 #include "../shared/index.hpp"
 
+using std::ostringstream;
+
 using qrcodegen::QrCode;
 using qrcodegen::QrSegment;
-
-using std::ostringstream;
 
 namespace utils {
 string getResourcePath(AssetFolder, string, AssetType);
@@ -49,18 +48,21 @@ void CustomLog(int, const char *, va_list);
 }  // namespace log
 
 namespace color {
-Color calcBreathColor(const Color &_, const float &time);
-Color calcPulseColor(const Color &_, const float &time);
+Color calcBreathColor(const Color &, const float &);
+Color calcPulseColor(const Color &, const float &);
 }  // namespace color
+
+namespace ui {
+bool mouseHoveredInBox(Rectangle);
+bool mousePressedInBox(Rectangle, MouseButton);
+
+bool mouseHoveredInCircle(Vector2, float);
+bool mousePressedInCircle(Vector2, float, MouseButton);
+}  // namespace ui
 
 namespace qrcode {
 string generateSVGQRCode(const string &);
 pair<unsigned char *, int> generateQRCodeImage(const string &, const int &);
 string saveQRCode(const string &, const string &, const int &);
 }  // namespace qrcode
-
-namespace ui {
-bool mousePressedInBox(Rectangle, MouseButton);
-}
-
 }  // namespace utils

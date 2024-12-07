@@ -17,7 +17,7 @@ const Color* CatpuccinPaletteBar::getPalette() const {
 }
 
 const Color CatpuccinPaletteBar::getPaletteColor(int index) const {
-  index = abs(index) % getPaletteSize();
+  index = (index > 0 ? index : -index) % getPaletteSize();
   return getPalette()[index];
 }
 
