@@ -66,6 +66,8 @@ bool GUI::paymentMethodHandler(PaymentMethod& paymentMethod,
 
       if (CheckCollisionPointRec(GetMousePosition(), rec)) {
         setPaymentMethodChanged(true);
+
+        paymentMethod = (PaymentMethod)i;
       }
     }
   }
