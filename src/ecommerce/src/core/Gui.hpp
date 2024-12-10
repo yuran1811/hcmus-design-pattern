@@ -93,17 +93,26 @@ class GUI {
   void renderOrderProgress(const OrderStageState &);
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
+
   void renderSelectItem(const vector<Item> &, CartType &, Price &);
-  void renderAddressInfo(const string &, const string &);
+
   void renderInput(const InputType &, const string &, const string &,
                    const Vector2 &, const Vector2 &);
   void renderAddressInput(const string &);
   void renderPhoneInput(const string &);
+  void renderAddressInfo(const string &, const string &);
+
   void renderPaymentQR(const string &, const PaymentMethod &, const Price &);
   void renderPaymentMethod(const PaymentMethod &, const Price &);
+
   void renderPayment();
+
   void renderPackaging();
+
   void renderShipping();
+
+  void renderOrderInfoText(const string &, const string &, const float &,
+                           const Color &, const Color &);
   void renderCompleted(Price &, const string &, const PaymentMethod &);
 
   bool selectItemHandler(const vector<Item> &, CartType &, Price &);

@@ -146,14 +146,6 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
   }
 }
 
-void GUI::renderAddressInfo(const string& address, const string& phone) {
-  renderAddressInput(address);
-  renderPhoneInput(phone);
-
-  isShowCTA = !address.empty() && phone.length() == 10;
-  if (isShowCTA) renderCTAButton("Goto Payment");
-}
-
 void GUI::renderInput(const InputType& type, const string& info,
                       const string& value, const Vector2& pos,
                       const Vector2& size) {
@@ -183,6 +175,14 @@ void GUI::renderAddressInput(const string& address) {
 void GUI::renderPhoneInput(const string& phone) {
   renderInput(InputType::PHONE, "Your Phone Number:", phone, PHONE_INP_POS,
               PHONE_INP_SIZE);
+}
+
+void GUI::renderAddressInfo(const string& address, const string& phone) {
+  renderAddressInput(address);
+  renderPhoneInput(phone);
+
+  isShowCTA = !address.empty() && phone.length() == 10;
+  if (isShowCTA) renderCTAButton("Goto Payment");
 }
 
 void GUI::renderPaymentQR(const string& content,
@@ -265,6 +265,19 @@ void GUI::renderShipping() {
   renderCTAButton("Shipping Order");
 }
 
+void GUI::renderOrderInfoText(const string& label, const string& value,
+                              const float& posY, const Color& labelColor,
+                              const Color& valueColor) {
+  const int infoOffset = 78;
+
+  DrawRectangleRounded(
+      {leftMidAlign + infoOffset + MeasureText(label.c_str(), 20), posY - 5,
+       30.f + MeasureText(value.c_str(), 20), 30},
+      .25f, 40, labelColor);
+  DrawText((label + " " + value).c_str(), leftMidAlign + infoOffset, posY, 20,
+           valueColor);
+}
+
 void GUI::renderCompleted(Price& totalCost, const string& address,
                           const PaymentMethod& paymentMethod) {
   if (!confettiParticles) {
@@ -283,14 +296,15 @@ void GUI::renderCompleted(Price& totalCost, const string& address,
   DrawText("Thank you for your order!", leftMidAlign + 50, 150, 25, DARKBLUE);
   DrawText("Your order has been completed!", leftMidAlign + 55, 200, 20, GRAY);
 
-  const int infoOffset = 78;
-  DrawText(("Shipped to: " + address).c_str(), leftMidAlign + infoOffset, 300,
-           20, DARKGRAY);
-  DrawText(
-      ("Payment Method: " + string(PAYMENT_METHODS[paymentMethod])).c_str(),
-      leftMidAlign + infoOffset, 350, 20, BLUE);
-  DrawText(("Total Cost: $" + totalCost.format()).c_str(),
-           leftMidAlign + infoOffset, 400, 20, DARKGREEN);
+  // renderOrderInfoText("Order ID: ", "123456", 400, LIGHTGRAY, DARKGRAY);
+  // renderOrderInfoText("Order Date: ", "2021-09-01", 450, LIGHTGRAY,
+  // DARKGRAY);
+
+  renderOrderInfoText("Shipped to: ", address, 300, LIGHTGRAY, DARKGRAY);
+  renderOrderInfoText("Payment Method: ", PAYMENT_METHODS[paymentMethod], 350,
+                      SKYBLUE, BLUE);
+  renderOrderInfoText("Total Cost: ", "$" + totalCost.format(), 400, GREEN,
+                      DARKGREEN);
 
   isShowCTA = true;
   renderCTAButton("Place Another Order");

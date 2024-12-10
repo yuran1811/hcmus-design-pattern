@@ -7,7 +7,7 @@ Application::Application()
       totalCost(0),
       address(""),
       phone(""),
-      paymentMethod(CREDIT_CARD) {
+      paymentMethod(COD) {
   init();
 }
 
@@ -75,7 +75,7 @@ void Application::run() {
 }
 
 void Application::stageHandler() {
-  if (gui->isBackProgressClicked() && currentStage > SELECT_ITEM) {
+  if (currentStage > SELECT_ITEM && gui->isBackProgressClicked()) {
     currentStage = static_cast<OrderStageState>(currentStage - 1);
     gui->processStageBacking(currentStage);
   }
