@@ -6,19 +6,19 @@ Copyright (c) 2018 Xavier "Crashoz" Launey
 
 #pragma once
 
-#include <random>
-#include <string>
-#include <limits>
-#include <iostream>
-#include <sstream>
 #include <cstdint>
+#include <random>
+#include <limits>
+#include <string>
 #include <memory>
+#include <sstream>
+#include <iostream>
 
 #include <emmintrin.h>
 #include <smmintrin.h>
 #include <immintrin.h>
 
-#include "endianness.h"
+#include "endianness.hpp"
 
 namespace UUIDv4 {
 
