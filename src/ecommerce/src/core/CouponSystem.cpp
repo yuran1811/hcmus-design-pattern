@@ -4,11 +4,9 @@ CouponSystem* CouponSystem::instance = nullptr;
 std::mutex CouponSystem::mutex_;
 
 CouponSystem* CouponSystem::getInstance() {
-  if (instance == nullptr) {
+  if (!instance) {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (instance == nullptr) {
-      instance = new CouponSystem();
-    }
+    if (!instance) instance = new CouponSystem();
   }
 
   return instance;

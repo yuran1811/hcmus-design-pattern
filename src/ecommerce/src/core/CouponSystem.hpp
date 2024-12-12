@@ -2,24 +2,24 @@
 
 #include <ctime>
 #include <mutex>
+#include <map>
 #include <string>
-#include <unordered_map>
 
 #include "../shared/index.hpp"
 
+using std::map;
 using std::pair;
 using std::string;
 using std::time;
 using std::time_t;
-using std::unordered_map;
 
 class CouponSystem {
  private:
-  unordered_map<string, Coupon> coupons;
-  static std::mutex mutex_;
-  static CouponSystem* instance;
+  map<string, Coupon> coupons;
 
-  // Private constructor for Singleton
+  static std::mutex mutex_;
+  static CouponSystem* instance; 
+
   CouponSystem() = default;
   CouponSystem(const CouponSystem&) = delete;
   ~CouponSystem() = default;
