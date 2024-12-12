@@ -1,5 +1,5 @@
 CXX 		= g++
-CXXFLAGS 	= -march=native -Wall -Wno-narrowing -Wno-enum-compare -Wno-sign-compare -Wl,--subsystem,windows
+CXXFLAGS 	= -O2 -mavx -march=x86-64-v3 -Wall -Wno-narrowing -Wno-enum-compare -Wno-sign-compare -Wl,--subsystem,windows
 
 BIN			= bin
 INCLUDE		= include
