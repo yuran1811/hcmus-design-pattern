@@ -2,12 +2,12 @@
 
 #include <cmath>
 #include <cstring>
+#include <map>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <functional>
-#include <unordered_map>
 
 #include "raylib.h"
 
@@ -21,7 +21,6 @@
 
 using std::function;
 using std::pair;
-using std::unordered_map;
 using std::vector;
 
 class GUI {

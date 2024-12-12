@@ -91,23 +91,19 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
             .c_str(),
         incButtonX + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
 
-    // Draw Increase and Decrease buttons for the item quantity
+    // Decrease Handler
     if (utils::ui::mousePressedInBox({incButtonX, float(cartYPos), 30, 30},
                                      MOUSE_BUTTON_LEFT)) {
-      if (entry.second.second >= 1) {
-        if (entry.second.second == 1)
-          cart.erase(entry.first);
-        else
-          entry.second.second--;
-
+      if (entry.second.second > 0) {
         totalCost -= entry.second.first.price;
+        if (--entry.second.second <= 0) cart.erase(entry.first);
       }
     }
 
+    // Increase Handler
     if (utils::ui::mousePressedInBox(
             {incButtonX + quantityGap, float(cartYPos), 30, 30},
             MOUSE_BUTTON_LEFT)) {
-      // Increase quantity
       entry.second.second++;
       totalCost += entry.second.first.price;
     }

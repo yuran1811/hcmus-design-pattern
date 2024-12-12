@@ -108,11 +108,11 @@ struct Coord {
 };
 
 struct Price {
-  ull value;
+  ll value;
   uint decimal;
 
   Price() : value(0), decimal(0) {}
-  Price(ll value, int decimal) : value(abs(value)), decimal(abs(decimal)) {}
+  Price(ll value, int decimal) : value(value), decimal(abs(decimal)) {}
   Price(ll value) : Price(value, 0) {}
   Price(const Price& other) : Price(other.value, other.decimal) {}
   ~Price() = default;
