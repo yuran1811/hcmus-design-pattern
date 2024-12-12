@@ -2,25 +2,29 @@
 
 #include <iostream>
 #include <functional>
+#include <vector>
 #include <string>
-#include <unordered_map>
+#include <map>
 
 #include "../shared/index.hpp"
 
 using std::cout;
 using std::function;
+using std::map;
 using std::pair;
 using std::string;
 using std::to_string;
-using std::unordered_map;
+using std::vector;
 
 // Abstract Payment Gateway
 class PaymentGateway {
  public:
+  virtual ~PaymentGateway() = default;
+
   virtual const unsigned char& getMethodID() const = 0;
   virtual const string& getDisplayName() const = 0;
-  virtual pair<bool, string> processPayment(double amount) = 0;
-  virtual ~PaymentGateway() = default;
+
+  virtual pair<bool, string> processPayment(const double&) = 0;
 };
 
 // Concrete Payment Gateways
@@ -34,7 +38,7 @@ class CreditCardPayment : public PaymentGateway {
     return PAYMENT_METHODS[getMethodID()];
   }
 
-  pair<bool, string> processPayment(double amount) override {
+  pair<bool, string> processPayment(const double& amount) override {
     return {true,
             "Processing Credit Card payment of $" + to_string(amount) + "\n"};
   }
@@ -50,7 +54,7 @@ class PayPalPayment : public PaymentGateway {
     return PAYMENT_METHODS[getMethodID()];
   }
 
-  pair<bool, string> processPayment(double amount) override {
+  pair<bool, string> processPayment(const double& amount) override {
     return {true, "Processing Paypal payment of $" + to_string(amount) + "\n"};
   }
 };
@@ -65,7 +69,7 @@ class StripePayment : public PaymentGateway {
     return PAYMENT_METHODS[getMethodID()];
   }
 
-  pair<bool, string> processPayment(double amount) override {
+  pair<bool, string> processPayment(const double& amount) override {
     return {true, "Processing Stripe payment of $" + to_string(amount) + "\n"};
   }
 };
@@ -80,7 +84,7 @@ class CODPayment : public PaymentGateway {
     return PAYMENT_METHODS[getMethodID()];
   }
 
-  pair<bool, string> processPayment(double amount) override {
+  pair<bool, string> processPayment(const double& amount) override {
     return {true, "Processing COD payment of $" + to_string(amount) + "\n"};
   }
 };
@@ -88,8 +92,9 @@ class CODPayment : public PaymentGateway {
 // Abstract Factory
 class PaymentGatewayFactory {
  public:
-  virtual PaymentGateway* createPaymentGateway() = 0;
   virtual ~PaymentGatewayFactory() = default;
+
+  virtual PaymentGateway* createPaymentGateway() = 0;
 };
 
 // Concrete Factories
@@ -122,7 +127,7 @@ class CODPaymentFactory : public PaymentGatewayFactory {
 // Payment Gateway Registry - Singleton Design Pattern
 class PaymentGatewayRegistry {
  private:
-  unordered_map<string, function<PaymentGateway*()>> factories;
+  map<string, function<PaymentGateway*()>> factories;
 
   PaymentGatewayRegistry() = default;
   PaymentGatewayRegistry(const PaymentGatewayRegistry&) = delete;
@@ -138,14 +143,13 @@ class PaymentGatewayRegistry {
 
   void registerFactory(const string& type,
                        function<PaymentGateway*()> factory) {
+    if (factories.find(type) != factories.end()) return;
     factories[type] = factory;
   }
 
   PaymentGateway* createPaymentGateway(const string& type) {
-    if (factories.find(type) != factories.end()) {
-      return factories[type]();
-    }
-    return nullptr;
+    if (factories.find(type) == factories.end()) return nullptr;
+    return factories[type]();
   }
 };
 
