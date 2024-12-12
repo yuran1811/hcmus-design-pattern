@@ -1,3 +1,60 @@
+/* // UUIDv4 usage
+
+#include <cmath>
+#include <cstring>
+#include <unordered_map>
+#include <iostream>
+
+#include "uuid_v4.h"
+#include "raylib.h"
+
+using namespace std;
+
+unordered_map<string, int> uuids;
+
+void generateUUID(char *s) {
+  static UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
+  static UUIDv4::UUID test;
+
+  test = uuidGenerator.getUUID();
+  test.str(s);
+  s[strlen(s) - 1] = '\0';
+
+  uuids[s]++;
+}
+
+int main(void) {
+  const int screenWidth = 800;
+  const int screenHeight = 600;
+  InitWindow(screenWidth, screenHeight, "Test UUIDv4");
+  SetTargetFPS(60);
+
+  char txt[37];
+  int countDup = 0;
+  int countSample = 0;
+
+  while (!WindowShouldClose()) {
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    DrawText(txt, 10, 10, 20, DARKGRAY);
+    DrawText(to_string(countDup).c_str(), 10, 30, 20, DARKGRAY);
+    DrawText(to_string(countSample).c_str(), 10, 50, 20, DARKGRAY);
+    DrawText("Press SPACE to generate a new UUID", 10, 70, 20, DARKGRAY);
+
+    countDup += uuids[txt] > 1;
+    countSample++;
+    generateUUID(txt);
+
+    EndDrawing();
+  }
+
+  CloseWindow();
+
+  return 0;
+} */
+
 /* // Confetti
 
 #include "raylib.h"
