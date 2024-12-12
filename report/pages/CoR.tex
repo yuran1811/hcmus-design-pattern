@@ -3,42 +3,54 @@
 \subsubsection{Vấn đề}
 \begin{flushleft}
 	\begin{itemize}
-		\item Ý 1
-		\item Ý 2
+		\item Giả sử bạn làm việc với một hệ thống đặt hàng online. Bạn muốn hạn chế quyền truy cập vào hệ thống, chỉ cho user đã đăng nhập tạo các đơn đặt hàng. Mặt khác những user có quyền admin sẽ được toàn quyền truy cập vào các đơn đặt hàng.
+		\item Sau 1 hồi lên kế hoạch, bạn nhận ra những giai đoạn kiểm tra (như kiểm tra user đã đăng nhập, user có quyền admin) cần phải thực hiện tuần tự. Ví dụ nếu việc kiểm tra user đăng nhập bị thất bại thì chúng ta ko có lí do gì để kiểm tra tiếp tục các điều kiện khác.
 	\end{itemize}
 
-	\begin{enumerate}
-		\item Ý 1
-		\item Ý 2
-	\end{enumerate}
-
-	\begin{description}
-		\item[Ý 1] Mô tả ý 1
-		\item[Ý 2] Mô tả ý 2
-	\end{description}
 \end{flushleft}
 
 \subsubsection{Mục đích}
 \begin{flushleft}
+	\begin{itemize}
+		\item Chain of Responsibility Pattern hoạt động như một danh sách liên kết (Linked list) với việc đệ quy duyệt qua các phần tử (recursive traversal).
+		\item Cho nhiều object cố xử lý yêu cầu một cách tuần tự. Nếu 1 object không xử lý được yêu cầu, object sau sẽ xử lý.
+	\end{itemize}
 
 \end{flushleft}
 
 \subsubsection{Giải pháp}
 \begin{flushleft}
+\begin{itemize}
+		\item
+Chuyển từng hành vi thành những đối tượng cụ thể gọi là handlers. Mỗi kiểm tra sẽ extract thành 1 hàm duy nhất. Yêu cầu sẽ được truyền dọc theo các hàm này. Tất cả tạo nên 1 chuỗi liên kết, cho đến khi yêu cầu được xử lý, đến hết mắt xích cuối.
+\end{itemize}
 
 \end{flushleft}
 
 \subsubsection{Cấu trúc}
 \begin{flushleft}
+\begin{itemize}
+		\item Handler: định nghĩa 1 interface để xử lý các yêu cầu. Gán giá trị cho đối tượng successor (không bắt buộc).
+		\item BaseHandler: lớp trừu tượng không bắt buộc. Có thể cài đặt các hàm chung cho Chain of Responsibility ở đây.
+        \item ConcreteHandler: xử lý yêu cầu. Có thể truy cập đối tượng successor (thuộc class Handler). Nếu đối tượng ConcreateHandler không thể xử lý được yêu cầu, nó sẽ gửi lời yêu cầu cho successor của nó.
+	\end{itemize}
 
 \end{flushleft}
 
 \subsubsection{Khả năng ứng dụng}
 \begin{flushleft}
+\begin{itemize}
+		\item Muốn gửi yêu cầu đến một trong số vài đối tượng nhưng không xác định đối tượng cụ thể nào sẽ xử lý yêu cầu đó.
+		\item Khi cần phải thực thi các trình xử lý theo một thứ tự nhất định.
+        \item Khi một tập hợp các đối tượng xử lý có thể thay đổi động: tập hợp các đối tượng có khả năng xử lý yêu cầu có thể không biết trước, có thể thêm bớt hay thay đổi thứ tự sau này.
+	\end{itemize}
 
 \end{flushleft}
 
 \subsubsection{Ưu nhược điểm}
 \begin{flushleft}
+\begin{itemize}
+		\item Nhược điểm: Một số yêu cầu có thể không được xử lý: Trường hợp tất cả Handler đều không xử lý
+	\end{itemize}
 
 \end{flushleft}
