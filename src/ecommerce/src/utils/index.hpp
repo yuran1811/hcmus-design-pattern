@@ -3,10 +3,12 @@
 #include <cmath>
 #include <ctime>
 #include <cstdio>
+#include <cstring>
 #include <chrono>
 #include <sstream>
 
 #include "raylib.h"
+#include "uuid_v4.hpp"
 #include "qrcodegen.hpp"
 #include "stb_image_write.hpp"
 
@@ -19,6 +21,8 @@ using qrcodegen::QrSegment;
 
 namespace utils {
 string getResourcePath(AssetFolder, string, AssetType);
+
+string uuid_v4();
 
 namespace range {
 template <class T>
