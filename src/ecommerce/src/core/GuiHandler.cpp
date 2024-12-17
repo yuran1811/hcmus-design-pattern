@@ -12,7 +12,7 @@ bool GUI::selectItemHandler(const vector<Item>& items, CartType& cart,
         // Add new item to cart
         cart[items[i].name] = {items[i], 1};
       }
-      
+
       price += items[i].price;
     }
   }
