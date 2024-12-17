@@ -1,60 +1,68 @@
 #pragma once
 
 #include <iostream>
-#include <memory>
-#include <string>
+#include <vector>
 
 #include "CouponSystem.hpp"
 
+#include "../utils/index.hpp"
+
 using std::cout;
 using std::move;
-using std::shared_ptr;
+using std::pair;
 using std::string;
+using std::vector;
 
+// Abstract Order
 class Order {
+ protected:
+  const string ORDER_ID;
+
+  bool isCompleted = false;
+  pair<bool, vector<string>> placeOrderReturn;
+
  public:
-  virtual void placeOrder() const = 0;
-  virtual float calculateTotal() const = 0;
+  Order() : ORDER_ID(utils::uuid_v4()) {}
   virtual ~Order() = default;
+
+  Order& operator=(const Order&) = delete;
+
+  const string& getOrderId() const { return ORDER_ID; }
+  const bool isOrderCompleted() const { return isCompleted; }
+  const pair<bool, vector<string>>& getPlaceOrderReturn() const {
+    return placeOrderReturn;
+  }
+
+  void markOrderCompleted() { isCompleted = true; };
+
+  virtual float calculateTotal() const = 0;
+  virtual pair<bool, vector<string>> placeOrder() = 0;
 };
 
+// Concrete Order: Basic Order
 class BasicOrder : public Order {
  private:
-  float cartTotal;
-  string couponCode;
+  float cartTotal = .0f;
+  string couponCode = "";
 
  public:
-  BasicOrder(float total, const string& code = "")
-      : cartTotal(total), couponCode(code) {}
+  BasicOrder() = default;
+  BasicOrder(float, const string&);
 
-  float calculateTotal() const override {
-    if (couponCode.empty()) return cartTotal;
+  void setCouponCode(const string& _) { couponCode = _; }
 
-    CouponSystem* couponSystem = CouponSystem::getInstance();
-    return couponSystem->applyCoupon(couponCode, cartTotal).first;
-  }
-
-  void placeOrder() const override {
-    CouponSystem* couponSystem = CouponSystem::getInstance();
-    auto validation = couponSystem->validateCoupon(couponCode, cartTotal);
-
-    if (!validation.first) {
-      cout << "Order could not be placed. " << validation.second << "\n";
-      return;
-    }
-
-    float finalTotal = calculateTotal();
-    cout << "Order placed successfully. Final total: $" << finalTotal << "\n";
-  }
+  float calculateTotal() const override;
+  pair<bool, vector<string>> placeOrder() override;
 };
 
 // Abstract Decorator
 class OrderDecorator : public Order {
  protected:
-  shared_ptr<Order> wrappedOrder;
+  Order* wrappedOrder;
 
  public:
-  OrderDecorator(shared_ptr<Order> order) : wrappedOrder(move(order)) {}
+  OrderDecorator() = delete;
+  OrderDecorator(Order* order) : wrappedOrder(move(order)) {}
 };
 
 // Concrete Decorator: Gift Wrap
@@ -63,17 +71,10 @@ class GiftWrapDecorator : public OrderDecorator {
   float giftWrapFee;
 
  public:
-  GiftWrapDecorator(shared_ptr<Order> order, float fee = 5.0f)
-      : OrderDecorator(move(order)), giftWrapFee(fee) {}
+  GiftWrapDecorator(Order*, float);
 
-  float calculateTotal() const override {
-    return wrappedOrder->calculateTotal() + giftWrapFee;
-  }
-
-  void placeOrder() const override {
-    wrappedOrder->placeOrder();
-    cout << "Adding gift wrap. Fee: $" << giftWrapFee << "\n";
-  }
+  float calculateTotal() const override;
+  pair<bool, vector<string>> placeOrder() override;
 };
 
 // Concrete Decorator: Express Delivery
@@ -84,29 +85,13 @@ class ExpressDeliveryDecorator : public OrderDecorator {
 
   void fetchDeliveryDetails() {
     // Mocking API call to fetch express delivery fee and availability
-    expressFee = 20.0f;  // Simulating fee
-    isAvailable = true;  // Simulating availability
+    expressFee = 24.25f;  // Simulating fee
+    isAvailable = true;   // Simulating availability
   }
 
  public:
-  ExpressDeliveryDecorator(shared_ptr<Order> order)
-      : OrderDecorator(move(order)), expressFee(0.0f), isAvailable(false) {
-    fetchDeliveryDetails();
-  }
+  ExpressDeliveryDecorator(Order*);
 
-  float calculateTotal() const override {
-    if (isAvailable) {
-      return wrappedOrder->calculateTotal() + expressFee;
-    }
-    return wrappedOrder->calculateTotal();
-  }
-
-  void placeOrder() const override {
-    if (!isAvailable) {
-      cout << "Express delivery is not available for your location.\n";
-      return;
-    }
-    wrappedOrder->placeOrder();
-    cout << "Adding express delivery. Fee: $" << expressFee << "\n";
-  }
+  float calculateTotal() const override;
+  pair<bool, vector<string>> placeOrder() override;
 };

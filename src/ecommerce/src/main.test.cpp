@@ -1,3 +1,94 @@
+/* // Mock Order
+
+#include <cmath>
+#include <cstring>
+#include <iostream>
+
+#include "raylib.h"
+
+#include "core/index.hpp"
+
+using namespace std;
+
+void renderOrderDetail(Order*& order,
+                       const pair<bool, vector<string>>& orderReturn,
+                       const float& total, int& posY) {
+  DrawText(("Order Details - " + order->getOrderId()).c_str(), 10, posY, 20,
+           DARKGRAY);
+  for (const string& detail : orderReturn.second) {
+    posY += 25;
+    DrawText(detail.c_str(), 10, posY, 20, DARKGRAY);
+  }
+
+  posY += 25;
+  DrawText(("Total: " + to_string(order->calculateTotal())).c_str(), 10, posY,
+           20, DARKGRAY);
+
+  posY += 25;
+  DrawText(("Total: " + to_string(total)).c_str(), 10, posY, 20, DARKGRAY);
+}
+
+int main(void) {
+  const int screenWidth = 800;
+  const int screenHeight = 600;
+  InitWindow(screenWidth, screenHeight, "Test UUIDv4");
+  SetTargetFPS(60);
+
+  time_t now = time(nullptr) + 24 * 60 * 60;
+
+  const vector<Coupon> COUPONS = {{"DISCOUNT_10", 10, false, now, 60},
+                                  {"DISCOUNT_20", 20, false, now, 60},
+                                  {"DISCOUNT_30", 30, false, now, 60}};
+
+  CouponSystem::getInstance()->importCoupons(COUPONS);
+
+  Order* order = new ExpressDeliveryDecorator(
+      new GiftWrapDecorator(new BasicOrder(42.f, "DISCOUNT_20"), 5.f));
+  pair<bool, vector<string>> orderReturn;
+  const auto total = order->calculateTotal();
+
+  Order* order2 = new ExpressDeliveryDecorator(
+      new GiftWrapDecorator(new BasicOrder(30.f, "DISCOUNT_10"), 5.f));
+  pair<bool, vector<string>> orderReturn2;
+  const auto total2 = order2->calculateTotal();
+
+  while (!WindowShouldClose()) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    if (IsKeyPressed(KEY_SPACE)) {
+      if (!order->isOrderCompleted()) {
+        orderReturn = order->placeOrder();
+        orderReturn2 = order2->placeOrder();
+      }
+    }
+
+    int posY = 10;
+    renderOrderDetail(order, orderReturn, total, posY);
+
+    posY += 50;
+    renderOrderDetail(order2, orderReturn2, total2, posY);
+
+    posY += 50;
+    vector<Coupon> savedCoupons = CouponSystem::getInstance()->showCoupons();
+    for (const Coupon& coupon : savedCoupons) {
+      DrawText(("Coupon: " + coupon.code + " - " + to_string(coupon.usageLimit))
+                   .c_str(),
+               10, posY, 20, DARKGRAY);
+      posY += 25;
+    }
+
+    EndDrawing();
+  }
+
+  CloseWindow();
+
+  delete order;
+  delete order2;
+
+  return 0;
+} */
+
 /* // UUIDv4 usage
 
 #include <cmath>

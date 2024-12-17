@@ -2,8 +2,9 @@
 
 #include <ctime>
 #include <mutex>
-#include <map>
 #include <string>
+#include <vector>
+#include <map>
 
 #include "../shared/index.hpp"
 
@@ -12,13 +13,15 @@ using std::pair;
 using std::string;
 using std::time;
 using std::time_t;
+using std::vector;
 
 class CouponSystem {
  private:
   map<string, Coupon> coupons;
+  map<string, bool> appliedOrders;
 
   static std::mutex mutex_;
-  static CouponSystem* instance; 
+  static CouponSystem* instance;
 
   CouponSystem() = default;
   CouponSystem(const CouponSystem&) = delete;
@@ -29,10 +32,13 @@ class CouponSystem {
  public:
   static CouponSystem* getInstance();
 
+  vector<Coupon> showCoupons();
+
   void addCoupon(const string& code, float discount, bool isPercentage,
                  time_t expiry, int usageLimit);
+  void importCoupons(const vector<Coupon>&);
 
-  pair<bool, string> validateCoupon(const string& code, float cartTotal);
-
-  pair<float, string> applyCoupon(const string& code, float cartTotal);
+  pair<bool, string> validateCoupon(const string&, float);
+  pair<float, string> applyCoupon(const string&, const string&, float,
+                                  bool isPreviewd = false);
 };

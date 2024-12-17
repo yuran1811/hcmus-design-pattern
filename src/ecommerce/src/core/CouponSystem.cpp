@@ -12,9 +12,24 @@ CouponSystem* CouponSystem::getInstance() {
   return instance;
 }
 
+vector<Coupon> CouponSystem::showCoupons() {
+  vector<Coupon> returnCoupons;
+
+  for (const auto& [code, coupon] : coupons) {
+    returnCoupons.push_back(coupon);
+  }
+
+  return returnCoupons;
+}
+
 void CouponSystem::addCoupon(const string& code, float discount,
                              bool isPercentage, time_t expiry, int usageLimit) {
   coupons[code] = {code, discount, isPercentage, expiry, usageLimit};
+}
+
+void CouponSystem::importCoupons(const vector<Coupon>& coupons) {
+  for (const Coupon& _ : coupons)
+    addCoupon(_.code, _.discount, _.isPercentage, _.expiryDate, _.usageLimit);
 }
 
 pair<bool, string> CouponSystem::validateCoupon(const string& code,
@@ -31,18 +46,23 @@ pair<bool, string> CouponSystem::validateCoupon(const string& code,
   return {true, "Coupon is valid."};
 }
 
-pair<float, string> CouponSystem::applyCoupon(const string& code,
-                                              float cartTotal) {
+pair<float, string> CouponSystem::applyCoupon(const string& orderID,
+                                              const string& code,
+                                              float cartTotal,
+                                              bool isPreviewed) {
   auto validation = validateCoupon(code, cartTotal);
   if (!validation.first) return {cartTotal, validation.second};
 
   Coupon& coupon = coupons[code];
-  float discountAmount = coupon.isPercentage
-                             ? (cartTotal * (coupon.discount / 100))
-                             : coupon.discount;
+  const float discountAmount = coupon.isPercentage
+                                   ? (cartTotal * (coupon.discount / 100))
+                                   : coupon.discount;
 
-  coupon.usageLimit--;
+  if (!isPreviewed && !appliedOrders[orderID]) {
+    appliedOrders[orderID] = true;
+    coupon.usageLimit--;
+  }
 
-  float finalPrice = cartTotal - discountAmount;
+  const float finalPrice = cartTotal - discountAmount;
   return {finalPrice > 0 ? finalPrice : 0, "Coupon applied successfully."};
 }
