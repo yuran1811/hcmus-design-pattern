@@ -39,8 +39,16 @@ pair<bool, string> CouponSystem::validateCoupon(const string& code,
   Coupon& coupon = coupons[code];
   time_t now = time(nullptr);
 
-  if (coupon.usageLimit <= 0) return {false, "Coupon usage limit exceeded."};
-  if (now > coupon.expiryDate) return {false, "Coupon has expired."};
+  if (coupon.usageLimit <= 0) {
+    coupons.erase(code);
+    return {false, "Coupon usage limit exceeded."};
+  }
+
+  if (now > coupon.expiryDate) {
+    coupons.erase(code);
+    return {false, "Coupon has expired."};
+  }
+
   if (cartTotal <= 0) return {false, "Cart total must be greater than 0."};
 
   return {true, "Coupon is valid."};
