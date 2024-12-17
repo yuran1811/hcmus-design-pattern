@@ -21,10 +21,6 @@ void renderOrderDetail(Order*& order,
   }
 
   posY += 25;
-  DrawText(("Total: " + to_string(order->calculateTotal())).c_str(), 10, posY,
-           20, DARKGRAY);
-
-  posY += 25;
   DrawText(("Total: " + to_string(total)).c_str(), 10, posY, 20, DARKGRAY);
 }
 
@@ -34,23 +30,23 @@ int main(void) {
   InitWindow(screenWidth, screenHeight, "Test UUIDv4");
   SetTargetFPS(60);
 
-  time_t now = time(nullptr) + 24 * 60 * 60;
+  time_t COUPON_ALIVE = time(nullptr) + 3;
 
-  const vector<Coupon> COUPONS = {{"DISCOUNT_10", 10, false, now, 60},
-                                  {"DISCOUNT_20", 20, false, now, 60},
-                                  {"DISCOUNT_30", 30, false, now, 60}};
+  const vector<Coupon> COUPONS = {{"DISCOUNT_10", 10, false, COUPON_ALIVE, 60},
+                                  {"DISCOUNT_20", 20, false, COUPON_ALIVE, 60},
+                                  {"DISCOUNT_30", 30, false, COUPON_ALIVE, 60}};
 
   CouponSystem::getInstance()->importCoupons(COUPONS);
 
   Order* order = new ExpressDeliveryDecorator(
       new GiftWrapDecorator(new BasicOrder(42.f, "DISCOUNT_20"), 5.f));
   pair<bool, vector<string>> orderReturn;
-  const auto total = order->calculateTotal();
+  float total = order->calculateTotal();
 
   Order* order2 = new ExpressDeliveryDecorator(
       new GiftWrapDecorator(new BasicOrder(30.f, "DISCOUNT_10"), 5.f));
   pair<bool, vector<string>> orderReturn2;
-  const auto total2 = order2->calculateTotal();
+  float total2 = order2->calculateTotal();
 
   while (!WindowShouldClose()) {
     BeginDrawing();
@@ -60,6 +56,9 @@ int main(void) {
       if (!order->isOrderCompleted()) {
         orderReturn = order->placeOrder();
         orderReturn2 = order2->placeOrder();
+
+        total = order->calculateTotal();
+        total2 = order2->calculateTotal();
       }
     }
 
