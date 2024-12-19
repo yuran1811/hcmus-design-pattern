@@ -19,12 +19,11 @@ void GUI::renderHeader(const string& s) {
 }
 
 void GUI::renderOrderProgress(const OrderStageState& curStage) {
-  const int stageCount = 6;
   const int gap = (SCREEN_SIZE.width - ORDER_PROG_POS.x * 2 -
-                   (stageCount * ORDER_PROG_ITEM_SIZE / 2)) /
-                  (stageCount + 1);
+                   (ORDER_STAGE_COUNT * ORDER_PROG_ITEM_SIZE / 2)) /
+                  (ORDER_STAGE_COUNT + 1);
 
-  for (int i = 0; i < stageCount; i++) {
+  for (int i = 0; i < ORDER_STAGE_COUNT; i++) {
     const int x = ORDER_PROG_POS.x + gap + (ORDER_PROG_ITEM_SIZE / 2 + gap) * i;
     const Color color = i == (int)curStage  ? SKYBLUE
                         : i < (int)curStage ? GREEN
@@ -55,11 +54,13 @@ void GUI::renderOrderProgress(const OrderStageState& curStage) {
 }
 
 void GUI::renderCTAButton(const string& message) {
-  const float ctaRecWidth = 13.f * message.length();
+  const int padding = 12;
+  const float ctaRecWidth = MeasureText(message.c_str(), 20) + (padding << 1);
   const float rightAlign = SCREEN_SIZE.width - ctaRecWidth - 10;
+
   setCTARec({rightAlign, ctaRec.y, ctaRecWidth, ctaRec.height});
 
-  (new GuiButton(message, ctaRec, RAYWHITE, DARKGRAY, 12))
+  (new GuiButton(message, ctaRec, RAYWHITE, DARKGRAY, padding))
       ->render(GetFontDefault(), 0);
 }
 
@@ -68,31 +69,32 @@ void GUI::renderStageMessage(const string& s) {
            utils::color::calcBreathColor(LIME, frameTimer * 3.75f));
 }
 
-void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
-                           Price& totalCost) {
+void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
+  DrawText("Product:", leftAlign, 100, 20, DARKGRAY);
+
+  int cartYPos = 130;
   for (int i = 0; i < items.size(); i++)
     (new GuiButton(items[i].name,
-                   Rectangle{leftAlign, 100.f + (i * 50), 150, 30}, DARKGRAY,
-                   LIGHTGRAY, 10, 5))
+                   Rectangle{leftAlign, (40.f * i) + cartYPos, 150, 30},
+                   DARKGRAY, LIGHTGRAY, 10, 5))
         ->render(GetFontDefault(), 0);
 
   isShowCTA = !cart.empty();
   if (isShowCTA) renderCTAButton("Fill the address info");
 
-  DrawText("Cart:", 300, 100, 20, DARKGRAY);
-
-  int cartYPos = 130;
-  const int incButtonX = 300;
   const int quantityGap = 35;
+
+  DrawText("Cart:", midAlign, 100, 20, DARKGRAY);
+
   for (auto& entry : cart) {
     DrawText(
         ("x" + to_string(entry.second.second) + " " + entry.first + " - $" +
          (entry.second.first.price * entry.second.second).format())
             .c_str(),
-        incButtonX + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
+        midAlign + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
 
     // Decrease Handler
-    if (utils::ui::mousePressedInBox({incButtonX, float(cartYPos), 30, 30},
+    if (utils::ui::mousePressedInBox({midAlign, float(cartYPos), 30, 30},
                                      MOUSE_BUTTON_LEFT)) {
       if (entry.second.second > 0) {
         totalCost -= entry.second.first.price;
@@ -102,18 +104,18 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
 
     // Increase Handler
     if (utils::ui::mousePressedInBox(
-            {incButtonX + quantityGap, float(cartYPos), 30, 30},
+            {midAlign + quantityGap, float(cartYPos), 30, 30},
             MOUSE_BUTTON_LEFT)) {
       entry.second.second++;
       totalCost += entry.second.first.price;
     }
 
     // Draw the Increase/Decrease buttons
-    Rectangle rec = {incButtonX, float(cartYPos), 30, 30};
+    Rectangle rec = {midAlign, float(cartYPos), 30, 30};
     (new GuiButton("-", rec, GRAY, LIGHTGRAY, 10, 7))
         ->render(GetFontDefault(), 0);
 
-    rec.x = incButtonX + quantityGap;
+    rec.x = midAlign + quantityGap;
     (new GuiButton("+", rec, GRAY, LIGHTGRAY, 10, 7))
         ->render(GetFontDefault(), 0);
 
@@ -121,24 +123,24 @@ void GUI::renderSelectItem(const vector<Item>& items, CartType& cart,
   }
 
   if (cart.size()) {
-    const Rectangle clearBtnRec = {incButtonX, float(cartYPos), 75, 30};
+    const Rectangle clearBtnRec = {midAlign, float(cartYPos), 75, 30};
     (new GuiButton("Clear", clearBtnRec, WHITE, MAROON, 10, 6))
         ->render(GetFontDefault(), 0);
 
-    if (utils::ui::mousePressedInBox({incButtonX, float(cartYPos), 75, 30},
+    if (utils::ui::mousePressedInBox({midAlign, float(cartYPos), 75, 30},
                                      MOUSE_BUTTON_LEFT)) {
       cart.clear();
       totalCost = 0;
     }
 
     cartYPos += 45;
-    DrawLine(incButtonX, cartYPos, 710, cartYPos, LIGHTGRAY);
+    DrawLine(midAlign, cartYPos, 710, cartYPos, LIGHTGRAY);
     cartYPos += 15;
 
-    DrawText(("Total: $" + totalCost.format()).c_str(), incButtonX, cartYPos,
-             20, DARKGREEN);
+    DrawText(("Total: $" + totalCost.format()).c_str(), midAlign, cartYPos, 20,
+             DARKGREEN);
   } else {
-    DrawText("Cart is empty!", incButtonX, cartYPos, 20, GRAY);
+    DrawText("Cart is empty!", midAlign, cartYPos, 20, GRAY);
   }
 }
 
@@ -147,15 +149,18 @@ void GUI::renderInput(const InputType& type, const string& info,
                       const Vector2& size) {
   DrawText(info.c_str(), pos.x, pos.y - 30, 20, DARKGRAY);
 
+  const float inputWidth =
+      std::min(size.x, (value.size() ? 35.f + MeasureText(value.c_str(), 20)
+                                     : 20.f + MeasureText("_", 30)));
+
   if (inputActiveStates[int(type)].isSet((unsigned int)InputState::ACTIVE)) {
-    DrawRectangleV(pos, size, SKYBLUE);
+    DrawRectangleV(pos, {inputWidth, size.y}, SKYBLUE);
     DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, DARKBLUE);
 
     if ((getFrameCounter() / 30) % 2)
       DrawText("_", pos.x + 10 + MeasureText(value.c_str(), 20), pos.y + 6, 30,
                DARKBLUE);
   } else {
-    DrawRectangleV(pos, size, LIGHTGRAY);
     DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, GRAY);
 
     if (value.empty())
@@ -243,22 +248,12 @@ void GUI::renderPaymentMethod(const PaymentMethod& paymentMethod,
                   paymentMethod, price);
 
   isShowCTA = true;
-  renderCTAButton("Select Payment Method");
-}
-
-void GUI::renderPayment() {
-  isShowCTA = true;
-  renderCTAButton("Processing Payment");
-}
-
-void GUI::renderPackaging() {
-  isShowCTA = true;
-  renderCTAButton("Packaging Order");
+  renderCTAButton("Select Shipping Provider");
 }
 
 void GUI::renderShipping() {
   isShowCTA = true;
-  renderCTAButton("Shipping Order");
+  renderCTAButton("Finish");
 }
 
 void GUI::renderOrderInfoText(const string& label, const string& value,

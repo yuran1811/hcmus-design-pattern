@@ -17,7 +17,6 @@
 
 #include "Payment.hpp"
 #include "Order.hpp"
-#include "Stage.hpp"
 
 using std::function;
 using std::pair;
@@ -27,6 +26,7 @@ class GUI {
  public:
   const float leftAlign = 50.f;
   const float leftMidAlign = 140.f;
+  const float midAlign = 300.f;
 
   const Vector2 ADDR_INP_POS = {leftAlign, 140};
   const Vector2 ADDR_INP_SIZE = {440, 40};
@@ -39,9 +39,13 @@ class GUI {
                                    PHONE_INP_SIZE.x, PHONE_INP_SIZE.y};
 
   const float ORDER_PROG_ITEM_SIZE = 36.f;
-  const Vector2 ORDER_PROG_POS = {120.f, 470 + ORDER_PROG_ITEM_SIZE / 2};
+  const Vector2 ORDER_PROG_POS = {
+      120.f, SCREEN_SIZE.height - 110 + ORDER_PROG_ITEM_SIZE / 2};
 
  private:
+  vector<Item> items;
+  vector<Coupon> coupons;
+
   enum class ItemTexture { PAYMENT_QR };
 
   enum class LoadingState { PAYMENT_QR };
@@ -57,7 +61,7 @@ class GUI {
   ConfettiParticles *confettiParticles = nullptr;
 
   const Rectangle paymentMethodRec = {leftAlign, 100, 150, 40};
-  Rectangle ctaRec = {0, 530, 0, 40};
+  Rectangle ctaRec = {0, SCREEN_SIZE.height - 50, 0, 40};
 
   bool isShowCTA = false;
   bool isShowBackProgress = false;
@@ -74,17 +78,20 @@ class GUI {
   bool getConfettiActive() const;
   int getFrameCounter() const;
   float getFrameTimer() const;
+  string getStageMessage(OrderStageState) const;
   static vector<Texture2D> &getTextureCollection();
 
   void incFrameCounter();
   void incFrameTimer();
+  void setShowCTA(bool);
   void setCTARec(const Rectangle &);
   void setPaymentMethodChanged(bool);
+  void setItems(const vector<Item> &);
+  void setCoupons(const vector<Coupon> &);
 
   void init();
-
-  void cursorUpdate(const OrderStageState &);
   void stopConfetti();
+  void cursorUpdate(const OrderStageState &);
   void processStageBacking(const OrderStageState &);
 
   void render(const OrderStageState &, function<void()>);
@@ -93,7 +100,7 @@ class GUI {
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
 
-  void renderSelectItem(const vector<Item> &, CartType &, Price &);
+  void renderSelectItem(CartType &, Price &);
 
   void renderInput(const InputType &, const string &, const string &,
                    const Vector2 &, const Vector2 &);
@@ -104,21 +111,20 @@ class GUI {
   void renderPaymentQR(const string &, const PaymentMethod &, const Price &);
   void renderPaymentMethod(const PaymentMethod &, const Price &);
 
-  void renderPayment();
-
-  void renderPackaging();
-
   void renderShipping();
 
   void renderOrderInfoText(const string &, const string &, const float &,
                            const Color &, const Color &);
   void renderCompleted(Price &, const string &, const PaymentMethod &);
 
-  bool selectItemHandler(const vector<Item> &, CartType &, Price &);
+  bool selectItemHandler(CartType &, Price &);
+
   bool inputHandler(const InputType &, string &, int, const Range<int> &,
                     const Rectangle &);
   bool addressHandler(string &);
   bool phoneHandler(string &);
+  bool addressInfoHandler(string &, string &);
+
   bool paymentMethodHandler(PaymentMethod &, const Price &);
 
   bool isCTAClicked() const;

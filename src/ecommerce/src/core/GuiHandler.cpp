@@ -1,9 +1,8 @@
 #include "Gui.hpp"
 
-bool GUI::selectItemHandler(const vector<Item>& items, CartType& cart,
-                            Price& price) {
+bool GUI::selectItemHandler(CartType& cart, Price& price) {
   for (int i = 0; i < items.size(); i++) {
-    if (utils::ui::mousePressedInBox({50, 100.f + (i * 50), 150, 30},
+    if (utils::ui::mousePressedInBox({leftAlign, (40.f * i) + 130, 150, 30},
                                      MOUSE_BUTTON_LEFT)) {
       if (cart.find(items[i].name) != cart.end()) {
         // Increment quantity if item is already in cart
@@ -55,6 +54,29 @@ bool GUI::addressHandler(string& address) {
 
 bool GUI::phoneHandler(string& phone) {
   return inputHandler(InputType::PHONE, phone, 10, {48, 57}, PHONE_INP_REC);
+}
+
+bool GUI::addressInfoHandler(string& address, string& phone) {
+  addressHandler(address);
+  phoneHandler(phone);
+
+  if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) &&
+      !(utils::ui::mousePressedInBox(ADDR_INP_REC, MOUSE_BUTTON_LEFT) ||
+        utils::ui::mousePressedInBox(PHONE_INP_REC, MOUSE_BUTTON_LEFT))) {
+    bool flag = false;
+    for (BitState& state : inputActiveStates)
+      if (state.isSet((unsigned int)InputState::ACTIVE)) {
+        flag = true;
+        break;
+      }
+
+    if (flag) {
+      for (BitState& state : inputActiveStates)
+        state.unset((unsigned int)InputState::ACTIVE);
+    }
+  }
+
+  return true;
 }
 
 bool GUI::paymentMethodHandler(PaymentMethod& paymentMethod,

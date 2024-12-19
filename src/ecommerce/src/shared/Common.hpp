@@ -2,7 +2,7 @@
 
 #include "Structures.hpp"
 
-static ScreenSize SCREEN_SIZE(720, 580);
+static ScreenSize SCREEN_SIZE(720, 640);
 
 static const string APP_TITLE("Interactive E-Commerce Order Processing");
 

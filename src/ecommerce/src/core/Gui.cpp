@@ -19,6 +19,23 @@ int GUI::getFrameCounter() const { return frameCounter; }
 
 float GUI::getFrameTimer() const { return frameTimer; }
 
+string GUI::getStageMessage(OrderStageState stage) const {
+  switch (stage) {
+    case SELECT_ITEM:
+      return "Select items to add to your cart.";
+    case ADDRESS_INPUT:
+      return "Enter your address details.";
+    case PAYMENT_METHOD:
+      return "Choose your payment method.";
+    case SHIPPING:
+      return "Shipping your order...";
+    case COMPLETED:
+      return "Order completed!";
+    default:
+      return "Unknown stage";
+  }
+}
+
 vector<Texture2D>& GUI::getTextureCollection() {
   static vector<Texture2D> textures(1);
   return textures;
@@ -34,6 +51,8 @@ void GUI::incFrameTimer() {
   if (frameTimer >= 1e6) frameTimer -= 1e6;
 }
 
+void GUI::setShowCTA(bool _) { isShowCTA = _; }
+
 void GUI::setCTARec(const Rectangle& rec) { ctaRec = rec; }
 
 void GUI::setPaymentMethodChanged(bool flag) {
@@ -42,6 +61,10 @@ void GUI::setPaymentMethodChanged(bool flag) {
   if (flag) loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
 }
 
+void GUI::setItems(const vector<Item>& _) { items = _; }
+
+void GUI::setCoupons(const vector<Coupon>& _) { coupons = _; }
+
 void GUI::init() {
   SetTraceLogCallback(utils::log::CustomLog);
   SetTargetFPS(TARGET_FPS);
@@ -49,6 +72,13 @@ void GUI::init() {
   SetExitKey(KEY_NULL);
 
   loadingStates.set((unsigned int)LoadingState::PAYMENT_QR);
+}
+
+void GUI::stopConfetti() {
+  if (confettiParticles) {
+    delete confettiParticles;
+    confettiParticles = nullptr;
+  }
 }
 
 void GUI::cursorUpdate(const OrderStageState& curStage) {
@@ -80,13 +110,6 @@ void GUI::cursorUpdate(const OrderStageState& curStage) {
       }
 
     cursorBitState.reset();
-  }
-}
-
-void GUI::stopConfetti() {
-  if (confettiParticles) {
-    delete confettiParticles;
-    confettiParticles = nullptr;
   }
 }
 

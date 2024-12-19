@@ -37,14 +37,12 @@ enum OrderStageState {
   SELECT_ITEM,
   ADDRESS_INPUT,
   PAYMENT_METHOD,
-  PAYMENT,
-  PACKAGING,
   SHIPPING,
   COMPLETED
 };
 static const string ORDER_STAGES[] = {
-    "Select Item", "Address Input", "Payment Method", "Payment",
-    "Packaging",   "Shipping",      "Completed"};
+    "Select Item", "Address Info", "Payment Method", "Shipping", "Completed"};
+static const int ORDER_STAGE_COUNT = 5;
 
 // Key: Item name, Value: Pair of Item and quantity
 typedef unordered_map<string, pair<Item, int>> CartType;

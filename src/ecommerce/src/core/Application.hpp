@@ -1,42 +1,31 @@
 #pragma once
 
+#include <memory>
+
 #include "Gui.hpp"
+#include "Stage.hpp"
+
+using std::make_shared;
+using std::shared_ptr;
 
 class Application {
  private:
-  bool isRunning;
-
-  GUI* gui;
-
-  OrderStageState currentStage;
-
   vector<Item> items;
   vector<Coupon> coupons;
 
-  CartType cart;
-  Price totalCost;
+  bool isRunning;
+  shared_ptr<GUI> gui;
 
-  string address;
-  string phone;
-
-  PaymentMethod paymentMethod;
+  OrderContext orderContext;
+  OrderStageSystem orderStageSystem;
 
  public:
   Application();
-  ~Application();
+  ~Application() = default;
 
   void setItems(const vector<Item>&);
   void setCoupons(const vector<Coupon>&);
-  void switchStage(const OrderStageState&);
-  void switchPaymentMethod(const PaymentMethod&);
-
-  string getStageMessage(OrderStageState);
-  OrderStageState getStage() const { return currentStage; }
-  PaymentMethod getPaymentMethod() const { return paymentMethod; }
 
   void init();
   void run();
-
-  void stageHandler();
-  void renderHandler();
 };
