@@ -27,7 +27,7 @@ void renderOrderDetail(Order*& order,
 int main(void) {
   const int screenWidth = 800;
   const int screenHeight = 600;
-  InitWindow(screenWidth, screenHeight, "Test UUIDv4");
+  InitWindow(screenWidth, screenHeight, "Order Mock");
   SetTargetFPS(60);
 
   time_t COUPON_ALIVE = time(nullptr) + 3;
@@ -154,7 +154,7 @@ int main(void) {
 int main(void) {
   const int screenWidth = 800;
   const int screenHeight = 450;
-  InitWindow(screenWidth, screenHeight, "Example");
+  InitWindow(screenWidth, screenHeight, "Confetti");
   SetTargetFPS(60);
 
   ConfettiParticles* confettiParticles = nullptr;
@@ -200,7 +200,7 @@ int main(void) {
 int main(void) {
   const int screenWidth = 800;
   const int screenHeight = 450;
-  InitWindow(screenWidth, screenHeight, "Example");
+  InitWindow(screenWidth, screenHeight, "Text Wrap");
   SetTargetFPS(60);
 
   const char text[] =
@@ -362,5 +362,31 @@ GuiText::TextEffect::PULSE, time); DrawText("Rainbow Sliding Bar", screenWidth
   for (Font fontVariant : fontVariants) UnloadFont(fontVariant);
 
   CloseWindow();
+  return 0;
+} */
+
+/* // Testing Template
+
+#include <iostream>
+
+#include "raylib.h"
+
+using namespace std;
+
+int main(void) {
+  const int screenWidth = 800;
+  const int screenHeight = 600;
+  InitWindow(screenWidth, screenHeight, "Test");
+  SetTargetFPS(60);
+
+  while (!WindowShouldClose()) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+
+    EndDrawing();
+  }
+
+  CloseWindow();
+
   return 0;
 } */
