@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <functional>
+#include <memory>
 #include <vector>
 #include <string>
 #include <map>
@@ -10,10 +11,12 @@
 
 using std::cout;
 using std::function;
+using std::make_unique;
 using std::map;
 using std::pair;
 using std::string;
 using std::to_string;
+using std::unique_ptr;
 using std::vector;
 
 // Abstract Payment Gateway
@@ -94,40 +97,42 @@ class PaymentGatewayFactory {
  public:
   virtual ~PaymentGatewayFactory() = default;
 
-  virtual PaymentGateway* createPaymentGateway() = 0;
+  virtual unique_ptr<PaymentGateway> createPaymentGateway() const = 0;
 };
 
 // Concrete Factories
 class CreditCardPaymentFactory : public PaymentGatewayFactory {
  public:
-  PaymentGateway* createPaymentGateway() override {
-    return new CreditCardPayment();
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<CreditCardPayment>();
   }
 };
 
 class PayPalPaymentFactory : public PaymentGatewayFactory {
  public:
-  PaymentGateway* createPaymentGateway() override {
-    return new PayPalPayment();
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<PayPalPayment>();
   }
 };
 
 class StripePaymentFactory : public PaymentGatewayFactory {
  public:
-  PaymentGateway* createPaymentGateway() override {
-    return new StripePayment();
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<StripePayment>();
   }
 };
 
 class CODPaymentFactory : public PaymentGatewayFactory {
  public:
-  PaymentGateway* createPaymentGateway() override { return new CODPayment(); }
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<CODPayment>();
+  }
 };
 
 // Payment Gateway Registry - Singleton Design Pattern
 class PaymentGatewayRegistry {
  private:
-  map<string, function<PaymentGateway*()>> factories;
+  map<string, unique_ptr<PaymentGatewayFactory>> factories;
 
   PaymentGatewayRegistry() = default;
   PaymentGatewayRegistry(const PaymentGatewayRegistry&) = delete;
@@ -142,14 +147,15 @@ class PaymentGatewayRegistry {
   }
 
   void registerFactory(const string& type,
-                       function<PaymentGateway*()> factory) {
+                       unique_ptr<PaymentGatewayFactory> factory) {
     if (factories.find(type) != factories.end()) return;
-    factories[type] = factory;
+    factories[type] = std::move(factory);
   }
 
-  PaymentGateway* createPaymentGateway(const string& type) {
-    if (factories.find(type) == factories.end()) return nullptr;
-    return factories[type]();
+  unique_ptr<PaymentGateway> createPaymentGateway(const string& type) {
+    return factories.find(type) == factories.end()
+               ? nullptr
+               : factories[type]->createPaymentGateway();
   }
 };
 

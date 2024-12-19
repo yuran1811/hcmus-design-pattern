@@ -1,14 +1,10 @@
 #include "Payment.hpp"
 
 void registerPaymentGateways() {
-  static vector<pair<string, function<PaymentGateway*()>>> _ = {
-      {"credit", []() { return new CreditCardPayment(); }},
-      {"paypal", []() { return new PayPalPayment(); }},
-      {"stripe", []() { return new StripePayment(); }},
-      {"cod", []() { return new CODPayment(); }},
-  };
+  PaymentGatewayRegistry& registry = PaymentGatewayRegistry::getInstance();
 
-  for (auto& p : _) {
-    PaymentGatewayRegistry::getInstance().registerFactory(p.first, p.second);
-  }
+  registry.registerFactory("credit", make_unique<CreditCardPaymentFactory>());
+  registry.registerFactory("paypal", make_unique<PayPalPaymentFactory>());
+  registry.registerFactory("stripe", make_unique<StripePaymentFactory>());
+  registry.registerFactory("cod", make_unique<CODPaymentFactory>());
 }
