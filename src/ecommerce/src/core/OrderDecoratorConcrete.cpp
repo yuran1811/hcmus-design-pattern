@@ -1,6 +1,6 @@
 #include "Order.hpp"
 
-GiftWrapDecorator::GiftWrapDecorator(Order* order, float fee)
+GiftWrapDecorator::GiftWrapDecorator(shared_ptr<Order> order, float fee)
     : OrderDecorator(move(order)), giftWrapFee(fee) {}
 
 float GiftWrapDecorator::calculateTotal() const {
@@ -19,7 +19,7 @@ pair<bool, vector<string>> GiftWrapDecorator::placeOrder() {
   return {true, wrappedOrderReturn.second};
 }
 
-ExpressDeliveryDecorator::ExpressDeliveryDecorator(Order* order)
+ExpressDeliveryDecorator::ExpressDeliveryDecorator(shared_ptr<Order> order)
     : OrderDecorator(move(order)), expressFee(0.0f), isAvailable(false) {
   fetchDeliveryDetails();
 }

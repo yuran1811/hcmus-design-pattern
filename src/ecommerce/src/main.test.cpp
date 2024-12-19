@@ -1,4 +1,4 @@
-/* // Mock Order
+// Mock Order
 
 #include <cmath>
 #include <cstring>
@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void renderOrderDetail(Order*& order,
+void renderOrderDetail(shared_ptr<Order> order,
                        const pair<bool, vector<string>>& orderReturn,
                        const float& total, int& posY) {
   DrawText(("Order Details - " + order->getOrderId()).c_str(), 10, posY, 20,
@@ -38,13 +38,15 @@ int main(void) {
 
   CouponSystem::getInstance()->importCoupons(COUPONS);
 
-  Order* order = new ExpressDeliveryDecorator(
-      new GiftWrapDecorator(new BasicOrder(42.f, "DISCOUNT_20"), 5.f));
+  shared_ptr<Order> order = make_shared<BasicOrder>(42.f, "DISCOUNT_10");
+  order = make_shared<GiftWrapDecorator>(order, 5.f);
+  order = make_shared<ExpressDeliveryDecorator>(order);
   pair<bool, vector<string>> orderReturn;
   float total = order->calculateTotal();
 
-  Order* order2 = new ExpressDeliveryDecorator(
-      new GiftWrapDecorator(new BasicOrder(30.f, "DISCOUNT_10"), 5.f));
+  shared_ptr<Order> order2 = make_shared<BasicOrder>(42.f, "DISCOUNT_20");
+  order2 = make_shared<GiftWrapDecorator>(order2, 5.f);
+  order2 = make_shared<ExpressDeliveryDecorator>(order2);
   pair<bool, vector<string>> orderReturn2;
   float total2 = order2->calculateTotal();
 
@@ -82,11 +84,8 @@ int main(void) {
 
   CloseWindow();
 
-  delete order;
-  delete order2;
-
   return 0;
-} */
+}
 
 /* // UUIDv4 usage
 

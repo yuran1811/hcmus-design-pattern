@@ -2,14 +2,17 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "CouponSystem.hpp"
 
 #include "../utils/index.hpp"
 
 using std::cout;
+using std::make_shared;
 using std::move;
 using std::pair;
+using std::shared_ptr;
 using std::string;
 using std::vector;
 
@@ -56,11 +59,11 @@ class BasicOrder : public Order {
 // Abstract Decorator
 class OrderDecorator : public Order {
  protected:
-  Order* wrappedOrder;
+  shared_ptr<Order> wrappedOrder;
 
  public:
   OrderDecorator() = delete;
-  OrderDecorator(Order* order) : wrappedOrder(move(order)) {}
+  OrderDecorator(shared_ptr<Order> order) : wrappedOrder(move(order)) {}
 };
 
 // Concrete Decorator: Gift Wrap
@@ -69,7 +72,7 @@ class GiftWrapDecorator : public OrderDecorator {
   float giftWrapFee;
 
  public:
-  GiftWrapDecorator(Order*, float);
+  GiftWrapDecorator(shared_ptr<Order>, float);
 
   float calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
@@ -84,7 +87,7 @@ class ExpressDeliveryDecorator : public OrderDecorator {
   void fetchDeliveryDetails();
 
  public:
-  ExpressDeliveryDecorator(Order*);
+  ExpressDeliveryDecorator(shared_ptr<Order>);
 
   float calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
