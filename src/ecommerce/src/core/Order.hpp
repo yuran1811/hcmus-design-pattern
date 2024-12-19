@@ -22,18 +22,16 @@ class Order {
   pair<bool, vector<string>> placeOrderReturn;
 
  public:
-  Order() : ORDER_ID(utils::uuid_v4()) {}
+  Order();
   virtual ~Order() = default;
 
   Order& operator=(const Order&) = delete;
 
-  const string& getOrderId() const { return ORDER_ID; }
-  const bool isOrderCompleted() const { return isCompleted; }
-  const pair<bool, vector<string>>& getPlaceOrderReturn() const {
-    return placeOrderReturn;
-  }
+  const string& getOrderId() const;
+  const bool isOrderCompleted() const;
+  const pair<bool, vector<string>>& getPlaceOrderReturn() const;
 
-  void markOrderCompleted() { isCompleted = true; };
+  void markOrderCompleted();
 
   virtual float calculateTotal() const = 0;
   virtual pair<bool, vector<string>> placeOrder() = 0;
@@ -49,7 +47,7 @@ class BasicOrder : public Order {
   BasicOrder() = default;
   BasicOrder(float, const string&);
 
-  void setCouponCode(const string& _) { couponCode = _; }
+  void setCouponCode(const string& _);
 
   float calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
@@ -83,11 +81,7 @@ class ExpressDeliveryDecorator : public OrderDecorator {
   float expressFee;
   bool isAvailable;
 
-  void fetchDeliveryDetails() {
-    // Mocking API call to fetch express delivery fee and availability
-    expressFee = 24.25f;  // Simulating fee
-    isAvailable = true;   // Simulating availability
-  }
+  void fetchDeliveryDetails();
 
  public:
   ExpressDeliveryDecorator(Order*);
