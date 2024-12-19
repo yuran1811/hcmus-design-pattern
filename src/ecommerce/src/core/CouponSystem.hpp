@@ -8,6 +8,7 @@
 
 #include "../shared/index.hpp"
 
+using std::make_pair;
 using std::map;
 using std::pair;
 using std::string;
@@ -18,7 +19,7 @@ using std::vector;
 class CouponSystem {
  private:
   map<string, Coupon> coupons;
-  map<string, bool> appliedOrders;
+  map<string, pair<bool, float>> appliedOrders;
 
   static std::mutex mutex_;
   static CouponSystem* instance;
@@ -38,7 +39,10 @@ class CouponSystem {
                  time_t expiry, int usageLimit);
   void importCoupons(const vector<Coupon>&);
 
+  bool checkExpired(const string&);
+  bool checkExceedUsageLimit(const string&);
   pair<bool, string> validateCoupon(const string&, float);
+  
   pair<float, string> applyCoupon(const string&, const string&, float,
                                   bool isPreviewd = false);
 };

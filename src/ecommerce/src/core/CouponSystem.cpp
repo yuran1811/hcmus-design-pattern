@@ -15,9 +15,9 @@ CouponSystem* CouponSystem::getInstance() {
 vector<Coupon> CouponSystem::showCoupons() {
   vector<Coupon> returnCoupons;
 
-  for (const auto& [code, coupon] : coupons) {
-    returnCoupons.push_back(coupon);
-  }
+  for (const auto& [code, coupon] : coupons)
+    if (!checkExceedUsageLimit(code) && !checkExpired(code))
+      returnCoupons.push_back(coupon);
 
   return returnCoupons;
 }
@@ -32,22 +32,32 @@ void CouponSystem::importCoupons(const vector<Coupon>& coupons) {
     addCoupon(_.code, _.discount, _.isPercentage, _.expiryDate, _.usageLimit);
 }
 
+bool CouponSystem::checkExpired(const string& _) {
+  const time_t now = time(nullptr);
+
+  if (now > coupons[_].expiryDate) {
+    coupons.erase(_);
+    return true;
+  }
+
+  return false;
+}
+
+bool CouponSystem::checkExceedUsageLimit(const string& _) {
+  if (coupons[_].usageLimit <= 0) {
+    coupons.erase(_);
+    return true;
+  }
+
+  return false;
+}
+
 pair<bool, string> CouponSystem::validateCoupon(const string& code,
                                                 float cartTotal) {
   if (coupons.find(code) == coupons.end()) return {false, "Coupon not found."};
-
-  Coupon& coupon = coupons[code];
-  time_t now = time(nullptr);
-
-  if (coupon.usageLimit <= 0) {
-    coupons.erase(code);
+  if (checkExpired(code)) return {false, "Coupon has expired."};
+  if (checkExceedUsageLimit(code))
     return {false, "Coupon usage limit exceeded."};
-  }
-
-  if (now > coupon.expiryDate) {
-    coupons.erase(code);
-    return {false, "Coupon has expired."};
-  }
 
   if (cartTotal <= 0) return {false, "Cart total must be greater than 0."};
 
@@ -58,16 +68,23 @@ pair<float, string> CouponSystem::applyCoupon(const string& orderID,
                                               const string& code,
                                               float cartTotal,
                                               bool isPreviewed) {
+  const auto& orderIDStatus = appliedOrders.find(orderID) == appliedOrders.end()
+                                  ? make_pair(false, .0f)
+                                  : appliedOrders[orderID];
+  const bool isOrderApplied = orderIDStatus.first;
+
   auto validation = validateCoupon(code, cartTotal);
-  if (!validation.first) return {cartTotal, validation.second};
+  if (!validation.first && !isOrderApplied)
+    return {cartTotal, validation.second};
 
   Coupon& coupon = coupons[code];
-  const float discountAmount = coupon.isPercentage
+  const float discountAmount = isOrderApplied ? orderIDStatus.second
+                               : coupon.isPercentage
                                    ? (cartTotal * (coupon.discount / 100))
                                    : coupon.discount;
 
-  if (!isPreviewed && !appliedOrders[orderID]) {
-    appliedOrders[orderID] = true;
+  if (!isPreviewed && !isOrderApplied) {
+    appliedOrders[orderID] = make_pair(true, discountAmount);
     coupon.usageLimit--;
   }
 
