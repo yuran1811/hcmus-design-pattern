@@ -18,3 +18,16 @@ string utils::uuid_v4() {
 
   return string(uuid);
 }
+
+string utils::getDateTimeString() {
+  const time_t now = time(0);
+  const tm *ltm = localtime(&now);
+
+  ostringstream oss;
+  oss << ltm->tm_mday << "-" << 1 + ltm->tm_mon << "-" << 1900 + ltm->tm_year;
+  oss << ", ";
+  oss << ltm->tm_hour << ":" << (ltm->tm_min < 10 ? "0" : "") << ltm->tm_min
+      << ":" << (ltm->tm_sec < 10 ? "0" : "") << ltm->tm_sec;
+
+  return oss.str();
+}

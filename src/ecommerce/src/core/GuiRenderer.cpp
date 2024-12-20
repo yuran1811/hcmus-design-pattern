@@ -15,6 +15,8 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
 
 void GUI::renderHeader(const string& s) {
   DrawText(s.c_str(), leftMidAlign, 15, 20, BLUE);
+  DrawText(utils::getDateTimeString().c_str(), leftAlign, ctaRec.y + 12, 20,
+           DARKGRAY);
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
 }
 
@@ -263,7 +265,7 @@ void GUI::renderOrderInfoText(const string& label, const string& value,
 
   DrawRectangleRounded(
       {leftMidAlign + infoOffset + MeasureText(label.c_str(), 20), posY - 5,
-       30.f + MeasureText(value.c_str(), 20), 30},
+       20.f + MeasureText(value.c_str(), 20), 30},
       .25f, 40, labelColor);
   DrawText((label + " " + value).c_str(), leftMidAlign + infoOffset, posY, 20,
            valueColor);

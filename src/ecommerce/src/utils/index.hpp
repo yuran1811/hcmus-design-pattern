@@ -24,6 +24,8 @@ string getResourcePath(AssetFolder, string, AssetType);
 
 string uuid_v4();
 
+string getDateTimeString();
+
 namespace range {
 template <class T>
 bool is_out_range(T x, T l, T r) {
