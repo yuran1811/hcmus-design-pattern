@@ -1,4 +1,50 @@
-// Mock Order
+/* // Modal Box
+
+#include "components/GuiComponent.hpp"
+
+int main(void) {
+  const int screenWidth = 720;
+  const int screenHeight = 600;
+  InitWindow(screenWidth, screenHeight, "Modal Box");
+  SetTargetFPS(60);
+
+  const string modalId = utils::uuid_v4();
+
+  bool showModal = true;
+  (new GuiModal(
+       modalId, "Modal Title",
+       "\"l-value\" refers to memory location which identifies an object. "
+       "modifiable l-value cannot have an array type, an incomplete type, or a "
+       "identifier is a modifiable lvalue if it refers to a memory location "
+       "that designates the storage region to which ptr points. In C, the "
+       "that locate (designate) objects.\n\n\tyuran1811",
+       {screenWidth / 2 - 200, screenHeight / 2 - 200, 400, 400}))
+      ->setEvent(GuiModal::MODAL_EVENT::CLOSE,
+                 [&showModal]() { showModal = false; });
+
+  while (!WindowShouldClose()) {
+    if (IsKeyPressed(KEY_SPACE)) showModal = !showModal;
+    if (showModal && IsKeyPressed(KEY_ENTER)) showModal = false;
+    GuiModal::eventsHandler();
+
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Press SPACE to toggle modal", 200, screenHeight / 2, 20,
+             DARKGRAY);
+    if (showModal) {
+      GuiModal* modal = GuiModal::getModal(modalId);
+      if (modal) modal->render(GetFontDefault(), true);
+    }
+    EndDrawing();
+  }
+
+  GuiModal::releaseModals();
+  CloseWindow();
+
+  return 0;
+} */
+
+/* // Mock Order
 
 #include <cmath>
 #include <cstring>
@@ -85,9 +131,9 @@ int main(void) {
   CloseWindow();
 
   return 0;
-}
+} */
 
-/* // UUIDv4 usage
+/* // UUIDv4
 
 #include <cmath>
 #include <cstring>
@@ -235,12 +281,8 @@ int main(void) {
 /* // Text effects
 
 #include <cmath>
-#include <iostream>
-
-#include "raylib.h"
 
 #include "components/index.hpp"
-#include "utils/index.hpp"
 
 using namespace std;
 
@@ -285,34 +327,17 @@ int main(void) {
   return 0;
 } */
 
-/* // Demo
+/* // Rainbow Sliding Bar
 
 #include <cmath>
-#include <iostream>
 
 #include "raylib.h"
 
-#include "components/index.hpp"
-#include "utils/index.hpp"
-
-using namespace std;
-
 int main(void) {
-  const int screenWidth = 800;
-  const int screenHeight = 600;
+  const int screenWidth = 400;
+  const int screenHeight = 60;
   InitWindow(screenWidth, screenHeight, "Rainbow Sliding Bar");
   SetTargetFPS(60);
-
-  // Others
-  CatpuccinPaletteBar catpuccinMachiatoPalette;
-
-  // GuiText
-  GuiFont font("IntelOneMono", AssetType::TTF);
-  GuiText text("Rainbow Sliding Bar", {screenWidth / 2 - 145, 20}, 32,
-               catpuccinMachiatoPalette.getPaletteColor(4));
-  GenTextureMipmaps(&GuiFont::getFont(font, 32).texture);
-  SetTextureFilter(GuiFont::getFont(font, 32).texture,
-                   TEXTURE_FILTER_TRILINEAR);
 
   // ⏰ Timing and brightness variables
   float time = 0.0f;
@@ -345,20 +370,8 @@ int main(void) {
                     screenHeight / 2 - barHeight / 2, 1, barHeight, color);
     }
 
-    catpuccinMachiatoPalette.render({0, 0}, {screenWidth, 10},
-
-                                    CatpuccinPaletteBar::Direction::Horizontal);
-
-    // Draw text
-    text.render(GuiFont::getFont(font, 32), true, 1,
-GuiText::TextEffect::PULSE, time); DrawText("Rainbow Sliding Bar", screenWidth
-/ 2 - 120, 60, 20, BLUE);
-
     EndDrawing();
   }
-
-  vector<Font> fontVariants = GuiFont::getFontVariants(font);
-  for (Font fontVariant : fontVariants) UnloadFont(fontVariant);
 
   CloseWindow();
   return 0;

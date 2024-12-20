@@ -1,6 +1,6 @@
 #include "GuiComponent.hpp"
 
-GuiText::GuiText(const string& text, Vector2 pos, int fontSize = 28,
+GuiText::GuiText(const string& text, Vector2 pos = {0, 0}, int fontSize = 28,
                  Color color = BLACK)
     : text(text), pos(pos), fontSize(fontSize), color(color) {}
 
@@ -38,7 +38,7 @@ void GuiText::render(const Font& font, bool withEffect, ...) {
 }
 
 GuiTextWrap::GuiTextWrap(const GuiText& text, Rectangle wrapper,
-                         Color background, Vector4 size)
+                         Color background, Rectangle size)
     : GuiText(text),
       wrapper(wrapper),
       background(background),
@@ -46,11 +46,16 @@ GuiTextWrap::GuiTextWrap(const GuiText& text, Rectangle wrapper,
       resizing(false) {
   minWidth = size.x;
   minHeight = size.y;
-  maxWidth = size.z;
-  maxHeight = size.w;
+  maxWidth = size.width;
+  maxHeight = size.height;
 
   resizer = {wrapper.x + wrapper.width - 17, wrapper.y + wrapper.height - 17,
              14, 14};
+}
+
+void GuiTextWrap::updatePosition(Vector2 _) {
+  wrapper.x = _.x, wrapper.y = _.y;
+  updateResizer();
 }
 
 void GuiTextWrap::toggleWordWrap() { wordWrap = !wordWrap; }
@@ -92,12 +97,10 @@ void GuiTextWrap::renderWrapper() const {
 
 void GuiTextWrap::renderResizer() const {
   DrawRectangleRec(resizer, background);
+  DrawRectangleLinesEx(resizer, 3, getColor());
 }
 
-void GuiTextWrap::render(const Font& font, bool withEffect, ...) {
-  renderWrapper();
-  renderResizer();
-
+void GuiTextWrap::rawRender(const Font& font) {
   const string& text = getText();
   const int length = text.size();
   const Rectangle rec = getBoundsInner();
@@ -218,4 +221,10 @@ void GuiTextWrap::render(const Font& font, bool withEffect, ...) {
     if ((textOffsetX != 0) || (codepoint != ' '))
       textOffsetX += glyphWidth;  // avoid leading spaces
   }
+}
+
+void GuiTextWrap::render(const Font& font, bool withEffect, ...) {
+  renderWrapper();
+  renderResizer();
+  rawRender(font);
 }

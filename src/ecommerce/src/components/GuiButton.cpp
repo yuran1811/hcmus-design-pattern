@@ -20,7 +20,7 @@ GuiButton::GuiButton(const string& text, Rectangle bounds, Color fg, Color bg,
 }
 
 void GuiButton::releaseButtons() {
-  for (GuiButton* btn : buttons) delete btn;
+  for (GuiButton* _ : buttons) delete _;
   buttons.clear();
 }
 

@@ -2,12 +2,14 @@
 
 #include <map>
 #include <vector>
+#include <functional>
 
 #include "raylib.h"
 
 #include "../shared/index.hpp"
 #include "../utils/index.hpp"
 
+using std::function;
 using std::map;
 using std::vector;
 
@@ -89,13 +91,16 @@ class GuiTextWrap : public GuiText {
   bool wordWrap;
   bool resizing;
 
+  float contentHeight;
+
  public:
   GuiTextWrap() = delete;
-  GuiTextWrap(const GuiText&, Rectangle, Color, Vector4);
+  GuiTextWrap(const GuiText&, Rectangle, Color, Rectangle);
   ~GuiTextWrap() = default;
 
   const Rectangle& getWrapper() const { return wrapper; }
   const Rectangle& getResizer() const { return resizer; }
+  const float& getContentHeight() const { return contentHeight; }
 
   Rectangle getBoundsInner() const {
     return {wrapper.x + 4, wrapper.y + 4, wrapper.width - 4,
@@ -104,6 +109,7 @@ class GuiTextWrap : public GuiText {
 
   void toggleWordWrap();
 
+  void updatePosition(Vector2 _);
   void updateWrapper(float, float);
   void updateResizer();
 
@@ -111,6 +117,7 @@ class GuiTextWrap : public GuiText {
 
   void renderWrapper() const;
   void renderResizer() const;
+  void rawRender(const Font&);
   void render(const Font&, bool, ...);
 };
 
@@ -140,4 +147,76 @@ class GuiButton {
   const bool isHovered() const;
 
   GuiButton* render(const Font&, bool, ...);
+};
+
+class GuiScrollableFrame {
+ private:
+  Rectangle viewport;
+  Rectangle content;
+  Vector2 scrollOffset;
+
+ public:
+  GuiScrollableFrame() = delete;
+  GuiScrollableFrame(Rectangle, Rectangle);
+  ~GuiScrollableFrame() = default;
+
+  const Rectangle& getViewport() const { return viewport; }
+  const Rectangle& getContent() const { return content; }
+  const Vector2& getScrollOffset() const { return scrollOffset; }
+  Vector2 getRenderPosition() const {
+    return {content.x + scrollOffset.x, content.y + scrollOffset.y};
+  }
+
+  void handleScrolling();
+  void render(function<void()>);
+};
+
+class GuiModal {
+ public:
+  enum class MODAL_EVENT { CLOSE = 0 };
+
+ private:
+  static map<string, GuiModal*> modals;
+
+  const string modalID;
+  string title;
+  string message;
+  Rectangle bounds;
+
+  float messageContainerHeight;
+
+  GuiTextWrap msgText;
+  GuiScrollableFrame scrollableMessageFrame;
+
+  map<MODAL_EVENT, function<void()>> events;
+
+ public:
+  GuiModal() = delete;
+  GuiModal(const string&, const string&, const string&, Rectangle);
+  GuiModal(const GuiModal&) = delete;
+  ~GuiModal() = default;
+
+  const string& getTitle() const { return title; }
+  const string& getMessage() const { return message; }
+  const Rectangle& getBounds() const { return bounds; }
+
+  Rectangle getTitleBounds() const;
+  Rectangle getTitleContainer() const;
+  Rectangle getTitleWrapperClamp() const;
+  Rectangle getMessageBounds() const;
+  Rectangle getMessageContainer() const;
+  Rectangle getMessageWrapperClamp() const;
+
+  Rectangle getCloseBtnBounds() const;
+
+  static GuiModal* getModal(const string& _) { return modals[_]; }
+  static void releaseModals();
+  static void eventsHandler();
+
+  float calculateMessageHeight();
+
+  GuiModal* render(const Font&, bool, ...);
+
+  void setEvent(MODAL_EVENT, function<void()>);
+  function<void()> getEvent(MODAL_EVENT e) { return events[e]; }
 };
