@@ -1,0 +1,91 @@
+\thispagestyle{empty}
+\subsection{Decorator}
+\begin{flushleft}
+    Decorator là một mẫu thiết kế cấu trúc cho phép mở rộng hoặc thêm chức năng mới cho một đối tượng động mà không làm thay đổi lớp của nó. Decorator hoạt động bằng cách bọc (wrap) đối tượng gốc, sau đó tùy chỉnh hoặc mở rộng hành vi của nó.
+\end{flushleft}
+
+\subsubsection{Vấn đề}
+\begin{itemize}
+    \item Hãy tưởng tượng bạn đang làm việc với một hệ thống xử lý đơn hàng thương mại điện tử. Ban đầu, hệ thống này rất đơn giản: mỗi đơn hàng chỉ chứa danh sách các sản phẩm và thông tin thanh toán cơ bản. Mọi thứ đều theo một quy trình mặc định, từ thanh toán đến vận chuyển tiêu chuẩn, không có tùy chọn bổ sung nào khác.
+    \item Mọi thứ vẫn vận hành suôn sẻ cho tới khi khách hàng đưa ra các yêu cầu mới: \textit{`Tôi muốn đơn hàng được giao hỏa tốc vì tôi cần nó ngay bây giờ'; `Sản phẩm này là một món quà, hãy đóng gói thật đẹp giúp tôi'; `Hàng của tôi dễ vỡ, tôi muốn thêm bảo hiểm để đảm bảo an toàn'; \ldots}
+    \item Bạn cố gắng cập nhật hệ thống để đáp ứng các yêu cầu này bằng cách thêm các thuộc tính mới vào lớp đơn hàng (như \textit{isGiftWrap, isExpressDelivery, hasInsurance\ldots}). Tuy nhiên điều này nhanh chóng trở nên phức tạp bởi vì:
+          \begin{itemize}
+              \item Mỗi yêu cầu bổ sung dẫn đến thêm nhiều điều kiện \textit{if-else} vào mã nguồn.
+              \item Các phương thức xử lý đơn hàng trở nên cồng kềnh và khó bảo trì.
+              \item Khi số lượng dịch vụ bổ sung tăng lên, việc tổ hợp các tùy chọn trở thành một cơn ác mộng.
+          \end{itemize}
+    \item Lúc này, bạn nhận ra cần một cách tiếp cận tốt hơn để mở rộng chức năng của đơn hàng mà không làm phức tạp thêm cấu trúc lớp gốc.
+\end{itemize}
+
+\subsubsection{Mục đích}
+\begin{itemize}
+    \item Để giải quyết vấn đề được đặt ra, bạn bắt đầu nghĩ đến kế thừa (Inheritance) để thay đổi lớp ban đầu. Tuy nhiên kế thừa lại có một số hạn chế nhau sau:
+          \begin{itemize}
+              \item Tính chất tĩnh: Hành vi được xác định tại thời điểm biên dịch, khó thay đổi khi chạy.
+              \item Không hỗ trợ đa kế thừa: Nhiều ngôn ngữ lập trình không cho phép đa kế thừa, hạn chế khả năng mở rộng.
+          \end{itemize}
+
+    \item Bạn tiếp tục tiềm đến những giải pháp khác là tập hợp (Aggregation) hoặc thành phần (Composition) để khắc phục nhược điểm của kế thừa:
+          \begin{itemize}
+              \item Cho phép đối tượng tham chiếu và ủy quyền nhiệm vụ cho các đối tượng khác.
+              \item Thay đổi hành vi linh hoạt tại thời điểm chạy.
+          \end{itemize}
+    \item Hai nguyên tắc này nền tảng cho nhiều mẫu thiết kế, đặc biệt là Decorator Pattern.
+\end{itemize}
+
+\subsubsection{Giải pháp}
+\begin{enumerate}
+    \item \textbf{Cơ chế của Decorator}\newline
+          Decorator Pattern mở rộng hành vi bằng cách `bọc' đối tượng trong các lớp mở rộng, mỗi lớp thêm hoặc thay đổi chức năng mà không ảnh hưởng đến đối tượng gốc.
+          \begin{itemize}
+              \item \underline{Tham chiếu đối tượng gốc:} Các lớp Decorator chứa tham chiếu đến đối tượng cần bọc (có thể là đối tượng cơ bản hoặc một Decorator khác).
+              \item \underline{Giao diện thống nhất:} Decorator và đối tượng gốc tuân theo cùng một giao diện hoặc lớp trừu tượng. Điều này giúp Decorator có thể thay thế đối tượng gốc mà không làm thay đổi logic tổng thể.
+              \item \underline{Thêm hành vi từng bước:} Decorator thực hiện logic riêng trước hoặc sau khi gọi phương thức của đối tượng bọc.
+              \item \underline{Kết hợp các tính năng:}
+                    \begin{itemize}
+                        \item Một đơn hàng cơ bản: sử dụng \textit{BasicOrder}.
+                        \item Đơn hàng cần gói quà và bảo hiểm: sử dụng \textit{GiftWrapDecorator} và \textit{InsuranceDecorator} bọc quanh \textit{BasicOrder}.
+                    \end{itemize}
+          \end{itemize}
+
+    \item \textbf{Ứng dụng vào hệ thống xử lý đơn hàng}
+          \begin{itemize}
+              \item \underline{Đối tượng cơ bản:} \textit{BasicOrder} là đơn hàng tiêu chuẩn, chỉ chứa thông tin sản phẩm và chi phí cơ bản.
+              \item \underline{Thêm Decorator theo yêu cầu:}
+                    \begin{itemize}
+                        \item \textit{GiftWrapDecorator}: Thêm phí và mô tả gói quà.
+                        \item \textit{ExpressDeliveryDecorator}: Thêm phí và thời gian giao hàng nhanh.
+                        \item \textit{InsuranceDecorator}: Thêm chi phí và quyền lợi khi sử dụng bảo hiểm.
+                    \end{itemize}
+              \item \underline{Xử lý tuần tự:} Khi gọi phương thức như \textit{calculateCost()}, mỗi lớp Decorator sẽ thêm logic riêng, sau đó chuyển lời gọi tới lớp tiếp theo, tạo nên một luồng xử lý linh hoạt và có tổ chức.
+          \end{itemize}
+\end{enumerate}
+
+\subsubsection{Cấu trúc}
+\begin{flushleft}
+
+\end{flushleft}
+
+\subsubsection{Khả năng ứng dụng}
+\begin{itemize}
+    \item \textbf{Hệ thống UI/UX:} Thêm hiệu ứng giao diện như viền, màu sắc, hoặc bóng đổ cho các thành phần giao diện (button, textbox).
+    \item \textbf{Lập trình mạng:} Thêm mã hóa, nén dữ liệu khi truyền tải qua mạng.
+    \item \textbf{Logging Systems:} Ghi nhật ký cho các ứng dụng lớn, thêm thông tin chi tiết như thời gian hoặc trạng thái vào log.
+\end{itemize}
+
+\subsubsection{Ưu nhược điểm}
+\begin{enumerate}
+    \item \textbf{Ưu điểm}
+          \begin{itemize}
+              \item Mở rộng hành vi của đối tượng mà không cần tạo lớp con mới.
+              \item Thêm hoặc loại bỏ chức năng của đối tượng tại thời điểm chạy.
+              \item Kết hợp nhiều hành vi bằng cách bọc đối tượng trong nhiều lớp Decorator.
+              \item Tuân thủ nguyên tắc Single Responsibility: Thay vì một lớp đơn lẻ thực hiện nhiều chức năng, Decorator giúp chia nhỏ các chức năng thành nhiều lớp độc lập, mỗi lớp đảm nhận một trách nhiệm duy nhất.
+          \end{itemize}
+    \item \textbf{Nhược điểm}
+          \begin{itemize}
+              \item Khó loại bỏ một lớp Decorator cụ thể trong ngăn xếp.
+              \item Hành vi của Decorator phụ thuộc vào thứ tự áp dụng.
+              \item Mã cấu hình ban đầu có thể trở nên rối rắm.
+          \end{itemize}
+\end{enumerate}
