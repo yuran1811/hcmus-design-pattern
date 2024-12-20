@@ -1,7 +1,9 @@
 **/bin/*.exe
 **/logs/*.txt
 **/qrcode/*.png
+**/release/*
 *.o
+*.zip
 
 **/_minted-*
 *.gz

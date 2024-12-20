@@ -43,4 +43,10 @@ run: all
 test: $(BIN)/$(TARGET)_test
 	./$(BIN)/$(TARGET)_test
 
-.PHONY: all exec clean cleanall run test
+pack: all
+	rm -rf ./release
+	mkdir ./release
+	cp -r ./bin/* ./public/ ./release/
+	zip -9 -r ecommerce.zip . -i "release/*"
+
+.PHONY: all exec clean cleanall run test pack
