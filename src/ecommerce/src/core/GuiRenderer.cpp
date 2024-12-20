@@ -27,9 +27,10 @@ void GUI::renderOrderProgress(const OrderStageState& curStage) {
 
   for (int i = 0; i < ORDER_STAGE_COUNT; i++) {
     const int x = ORDER_PROG_POS.x + gap + (ORDER_PROG_ITEM_SIZE / 2 + gap) * i;
-    const Color color = i == (int)curStage  ? SKYBLUE
-                        : i < (int)curStage ? GREEN
-                                            : LIGHTGRAY;
+    const Color color = (i == (int)curStage && curStage ^ COMPLETED) ? SKYBLUE
+                        : (curStage == COMPLETED || i < (int)curStage)
+                            ? GREEN
+                            : LIGHTGRAY;
 
     if (i && curStage >= i)
       DrawLineEx({float(x - gap), float(ORDER_PROG_POS.y)},
