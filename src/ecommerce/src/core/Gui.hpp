@@ -22,6 +22,8 @@ using std::function;
 using std::pair;
 using std::vector;
 
+class OrderContext;
+
 class GUI {
  public:
   const float leftAlign = 50.f;
@@ -108,8 +110,10 @@ class GUI {
   void renderPhoneInput(const string &);
   void renderAddressInfo(const string &, const string &);
 
-  void renderPaymentQR(const string &, const PaymentMethod &, const Price &);
-  void renderPaymentMethod(const PaymentMethod &, const Price &);
+  void renderPaymentQR(const string &, const PaymentMethod &, const Price &,
+                       function<void()> &);
+  void renderPaymentSuccessInfo(const string &, const Price &);
+  void renderPaymentMethod(const OrderContext &, function<void()> &);
 
   void renderShipping();
 
@@ -130,3 +134,5 @@ class GUI {
   bool isCTAClicked() const;
   bool isBackProgressClicked() const;
 };
+
+#include "Stage.hpp"

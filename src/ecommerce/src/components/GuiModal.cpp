@@ -77,7 +77,7 @@ void GuiModal::eventsHandler() {
     const Rectangle closeBtnBounds = modal.second->getCloseBtnBounds();
     if (CheckCollisionPointRec(GetMousePosition(), closeBtnBounds) &&
         IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-      modal.second->getEvent(MODAL_EVENT::CLOSE)();
+      modal.second->getEvent(EVENT::CLOSE)();
     }
   }
 }
@@ -211,4 +211,7 @@ GuiModal *GuiModal::render(const Font &font, bool withEffect, ...) {
   return this;
 }
 
-void GuiModal::setEvent(MODAL_EVENT e, function<void()> _) { events[e] = _; }
+GuiModal *GuiModal::setEvent(EVENT e, function<void()> _) {
+  events[e] = _;
+  return this;
+}

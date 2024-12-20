@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Gui.hpp"
-#include "Stage.hpp"
+#include "ArchivedOrder.hpp"
 
 using std::make_shared;
 using std::shared_ptr;
@@ -16,8 +16,10 @@ class Application {
   bool isRunning;
   shared_ptr<GUI> gui;
 
+  shared_ptr<Order> currentOrder;
   OrderContext orderContext;
   OrderStageSystem orderStageSystem;
+  vector<unique_ptr<ArchivedOrder>> archivedOrders;
 
  public:
   Application();
@@ -25,6 +27,22 @@ class Application {
 
   void setItems(const vector<Item>&);
   void setCoupons(const vector<Coupon>&);
+
+  shared_ptr<Order> getCurrentOrder() const { return currentOrder; }
+  const OrderContext& getOrderContext() const { return orderContext; }
+  const vector<unique_ptr<ArchivedOrder>>& getArchivedOrders() const {
+    return archivedOrders;
+  }
+
+  void updateTotalCost();
+  void updateOrderTotalCost();
+
+  void applyGiftWrapCost();
+  void applyDeliveryCost();
+
+  void resetOrder();
+  void unwrapOrderDecorator();
+  void addArchivedOrder();
 
   void init();
   void run();

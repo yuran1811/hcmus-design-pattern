@@ -39,6 +39,7 @@ class Order {
 
   virtual Price calculateTotal() const = 0;
   virtual pair<bool, vector<string>> placeOrder() = 0;
+  virtual Order* unwrap() { return this; }
 };
 
 // Concrete Order: Basic Order
@@ -52,6 +53,7 @@ class BasicOrder : public Order {
   BasicOrder(Price, const string&);
 
   const Price& getCartTotal() const { return cartTotal; };
+  const string& getCouponCode() const { return couponCode; };
 
   void setCartTotal(const Price&);
   void setCouponCode(const string& _);
@@ -68,6 +70,10 @@ class OrderDecorator : public Order {
  public:
   OrderDecorator() = delete;
   OrderDecorator(shared_ptr<Order> order) : wrappedOrder(move(order)) {}
+
+  Order* unwrap() override {
+    return wrappedOrder ? wrappedOrder->unwrap() : this;
+  }
 };
 
 // Concrete Decorator: Gift Wrap

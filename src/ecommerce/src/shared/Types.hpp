@@ -36,12 +36,12 @@ static const int PAYMENT_METHOD_COUNT = 4;
 enum OrderStageState {
   SELECT_ITEM,
   ADDRESS_INPUT,
-  PAYMENT_METHOD,
   SHIPPING,
+  PAYMENT_METHOD,
   COMPLETED
 };
 static const string ORDER_STAGES[] = {
-    "Select Item", "Address Info", "Payment Method", "Shipping", "Completed"};
+    "Select Item", "Address Info", "Shipping", "Payment Method", "Completed"};
 static const int ORDER_STAGE_COUNT = 5;
 
 // Key: Item name, Value: Pair of Item and quantity

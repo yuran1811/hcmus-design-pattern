@@ -1,12 +1,7 @@
 #pragma once
 
-#include <memory>
-
 #include "../utils/index.hpp"
 
-using std::shared_ptr;
-
-class Order;
 class OrderContext;
 
 class ArchivedOrder {
@@ -23,8 +18,10 @@ class ArchivedOrder {
 
  public:
   ArchivedOrder() = delete;
-  ArchivedOrder(shared_ptr<Order>, OrderContext&);
+  ArchivedOrder(const string&, const OrderContext&);
   ~ArchivedOrder() = default;
+
+  string toString() const;
 };
 
 #include "Stage.hpp"

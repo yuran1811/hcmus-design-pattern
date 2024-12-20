@@ -19,7 +19,7 @@ int main(void) {
        "that designates the storage region to which ptr points. In C, the "
        "that locate (designate) objects.\n\n\tyuran1811",
        {screenWidth / 2 - 200, screenHeight / 2 - 200, 400, 400}))
-      ->setEvent(GuiModal::MODAL_EVENT::CLOSE,
+      ->setEvent(GuiModal::EVENT::CLOSE,
                  [&showModal]() { showModal = false; });
 
   while (!WindowShouldClose()) {
@@ -84,14 +84,14 @@ int main(void) {
 
   CouponSystem::getInstance()->importCoupons(COUPONS);
 
-  shared_ptr<Order> order = make_shared<BasicOrder>(42.f, "DISCOUNT_10");
-  order = make_shared<GiftWrapDecorator>(order, 5.f);
+  shared_ptr<Order> order = make_shared<BasicOrder>(Price(42), "DISCOUNT_10");
+  order = make_shared<GiftWrapDecorator>(order, Price(55, 1));
   order = make_shared<ExpressDeliveryDecorator>(order);
   pair<bool, vector<string>> orderReturn;
   Price total = order->calculateTotal();
 
-  shared_ptr<Order> order2 = make_shared<BasicOrder>(42.f, "DISCOUNT_20");
-  order2 = make_shared<GiftWrapDecorator>(order2, 5.f);
+  shared_ptr<Order> order2 = make_shared<BasicOrder>(Price(42), "DISCOUNT_20");
+  order2 = make_shared<GiftWrapDecorator>(order2, Price(55, 1));
   order2 = make_shared<ExpressDeliveryDecorator>(order2);
   pair<bool, vector<string>> orderReturn2;
   Price total2 = order2->calculateTotal();

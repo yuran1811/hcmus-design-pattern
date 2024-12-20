@@ -122,6 +122,9 @@ class GuiTextWrap : public GuiText {
 };
 
 class GuiButton {
+ public:
+  enum class EVENT { CLICK = 0 };
+
  private:
   static vector<GuiButton*> buttons;
 
@@ -130,6 +133,8 @@ class GuiButton {
   Color textColor;
   Color color;
   int px, py;
+
+  map<EVENT, function<void()>> events;
 
  public:
   GuiButton() = delete;
@@ -143,10 +148,14 @@ class GuiButton {
 
   static vector<GuiButton*>& getButtons() { return buttons; }
   static void releaseButtons();
+  static void eventsHandler();
 
   const bool isHovered() const;
 
   GuiButton* render(const Font&, bool, ...);
+
+  GuiButton* setEvent(EVENT, function<void()>);
+  function<void()> getEvent(EVENT e) { return events[e]; }
 };
 
 class GuiScrollableFrame {
@@ -173,7 +182,7 @@ class GuiScrollableFrame {
 
 class GuiModal {
  public:
-  enum class MODAL_EVENT { CLOSE = 0 };
+  enum class EVENT { CLOSE = 0 };
 
  private:
   static map<string, GuiModal*> modals;
@@ -188,7 +197,7 @@ class GuiModal {
   GuiTextWrap msgText;
   GuiScrollableFrame scrollableMessageFrame;
 
-  map<MODAL_EVENT, function<void()>> events;
+  map<EVENT, function<void()>> events;
 
  public:
   GuiModal() = delete;
@@ -217,6 +226,6 @@ class GuiModal {
 
   GuiModal* render(const Font&, bool, ...);
 
-  void setEvent(MODAL_EVENT, function<void()>);
-  function<void()> getEvent(MODAL_EVENT e) { return events[e]; }
+  GuiModal* setEvent(EVENT, function<void()>);
+  function<void()> getEvent(EVENT e) { return events[e]; }
 };
