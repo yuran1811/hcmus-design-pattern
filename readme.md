@@ -37,14 +37,14 @@
 ## Progress
 
 - [x] Project Idea
-- [ ] Problem Analysis and Design Patterns Selection
+- [x] Problem Analysis and Design Patterns Selection
 - [ ] System Design and UML Diagrams
 - [x] Design Pattern Implementation in the System
 - [x] Code structure
 - [x] System Correctness
 - [x] Effectiveness of Design Patterns
 - [x] Demo Application
-- [ ] [Report](./report/) + Documentation
+- [x] [Report](./report/) + Documentation
 - [ ] [Slide](./slide/) + Presentation Video
 
 ## References
