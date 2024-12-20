@@ -13,7 +13,7 @@ pair<bool, vector<string>> GiftWrapDecorator::placeOrder() {
   auto wrappedOrderReturn = wrappedOrder->placeOrder();
   if (!wrappedOrderReturn.first) return wrappedOrderReturn;
 
-  wrappedOrderReturn.second.push_back("Adding gift wrap. Fee: $" +
+  wrappedOrderReturn.second.push_back("Added gift wrap. Fee: $" +
                                       giftWrapFee.format());
 
   return {true, wrappedOrderReturn.second};
@@ -26,8 +26,8 @@ ExpressDeliveryDecorator::ExpressDeliveryDecorator(shared_ptr<Order> order)
 
 void ExpressDeliveryDecorator::fetchDeliveryDetails() {
   // Mocking API call to fetch express delivery fee and availability
-  expressFee = Price(2425, 2);  // Simulating fee
-  isAvailable = true;           // Simulating availability
+  expressFee = Price(2425, 2);
+  isAvailable = true;
 }
 
 Price ExpressDeliveryDecorator::calculateTotal() const {
@@ -43,7 +43,7 @@ pair<bool, vector<string>> ExpressDeliveryDecorator::placeOrder() {
   if (!wrappedOrderReturn.first) return wrappedOrderReturn;
 
   wrappedOrderReturn.second.push_back(
-      isAvailable ? "Adding express delivery. Fee: $" + expressFee.format()
+      isAvailable ? "Added express delivery. Fee: $" + expressFee.format()
                   : "Express delivery is not available for your location.");
 
   return {isAvailable, wrappedOrderReturn.second};

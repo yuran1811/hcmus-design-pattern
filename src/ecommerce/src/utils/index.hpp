@@ -26,6 +26,8 @@ string uuid_v4();
 
 string getDateTimeString();
 
+float calcTextWrapHeight(const string &, const float &);
+
 namespace range {
 template <class T>
 bool is_out_range(T x, T l, T r) {

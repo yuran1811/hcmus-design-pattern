@@ -222,8 +222,6 @@ class GuiModal {
   static void releaseModals();
   static void eventsHandler();
 
-  float calculateMessageHeight();
-
   GuiModal* render(const Font&, bool, ...);
 
   GuiModal* setEvent(EVENT, function<void()>);

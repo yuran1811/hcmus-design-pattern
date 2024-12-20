@@ -6,7 +6,9 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
 
   renderHeader("Interactive E-Commerce Order Processing");
   renderOrderProgress(curStage);
+  renderCurrentTime();
   callback();
+
   cursorUpdate(curStage);
   GuiButton::eventsHandler();
   GuiButton::releaseButtons();
@@ -16,8 +18,6 @@ void GUI::render(const OrderStageState& curStage, function<void()> callback) {
 
 void GUI::renderHeader(const string& s) {
   DrawText(s.c_str(), leftMidAlign, 15, 20, BLUE);
-  DrawText(utils::getDateTimeString().c_str(), leftAlign, ctaRec.y + 12, 20,
-           DARKGRAY);
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
 }
 
@@ -55,6 +55,11 @@ void GUI::renderOrderProgress(const OrderStageState& curStage) {
   } else {
     isShowBackProgress = false;
   }
+}
+
+void GUI::renderCurrentTime() {
+  DrawText(utils::getDateTimeString().c_str(), leftAlign, ctaRec.y + 12, 20,
+           DARKGRAY);
 }
 
 void GUI::renderCTAButton(const string& message) {
@@ -97,31 +102,23 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
             .c_str(),
         midAlign + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
 
-    // Decrease Handler
-    if (utils::ui::mousePressedInBox({midAlign, float(cartYPos), 30, 30},
-                                     MOUSE_BUTTON_LEFT)) {
-      if (entry.second.second > 0) {
-        totalCost -= entry.second.first.price;
-        if (--entry.second.second <= 0) cart.erase(entry.first);
-      }
-    }
-
-    // Increase Handler
-    if (utils::ui::mousePressedInBox(
-            {midAlign + quantityGap, float(cartYPos), 30, 30},
-            MOUSE_BUTTON_LEFT)) {
-      entry.second.second++;
-      totalCost += entry.second.first.price;
-    }
-
-    // Draw the Increase/Decrease buttons
     Rectangle rec = {midAlign, float(cartYPos), 30, 30};
     (new GuiButton("-", rec, GRAY, LIGHTGRAY, 10, 7))
-        ->render(GetFontDefault(), 0);
+        ->render(GetFontDefault(), 0)
+        ->setEvent(GuiButton::EVENT::CLICK, [&]() {
+          if (entry.second.second > 0) {
+            totalCost -= entry.second.first.price;
+            if (--entry.second.second <= 0) cart.erase(entry.first);
+          }
+        });
 
     rec.x = midAlign + quantityGap;
     (new GuiButton("+", rec, GRAY, LIGHTGRAY, 10, 7))
-        ->render(GetFontDefault(), 0);
+        ->render(GetFontDefault(), 0)
+        ->setEvent(GuiButton::EVENT::CLICK, [&]() {
+          entry.second.second++;
+          totalCost += entry.second.first.price;
+        });
 
     cartYPos += 40;
   }
@@ -129,13 +126,12 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
   if (cart.size()) {
     const Rectangle clearBtnRec = {midAlign, float(cartYPos), 75, 30};
     (new GuiButton("Clear", clearBtnRec, WHITE, MAROON, 10, 6))
+        ->setEvent(GuiButton::EVENT::CLICK,
+                   [&]() {
+                     cart.clear();
+                     totalCost = 0;
+                   })
         ->render(GetFontDefault(), 0);
-
-    if (utils::ui::mousePressedInBox({midAlign, float(cartYPos), 75, 30},
-                                     MOUSE_BUTTON_LEFT)) {
-      cart.clear();
-      totalCost = 0;
-    }
 
     cartYPos += 45;
     DrawLine(midAlign, cartYPos, 710, cartYPos, LIGHTGRAY);
@@ -276,12 +272,19 @@ void GUI::renderPaymentQR(const string& content,
 }
 
 void GUI::renderPaymentSuccessInfo(const string& msg, const Price& price) {
-  const int __l = paymentMethodRec.x + paymentMethodRec.width + 50;
+  const float __l = paymentMethodRec.x + paymentMethodRec.width + 50;
+  const float __w = SCREEN_SIZE.width - __l;
+  const float __h = utils::calcTextWrapHeight(msg, SCREEN_SIZE.width - __l);
 
-  DrawText(msg.c_str(), __l, paymentMethodRec.y, 20, DARKGRAY);
-  DrawText("Payment Successful!", __l, paymentMethodRec.y + 40, 20, DARKGREEN);
-  DrawText("Thank you for shopping with us!", __l, paymentMethodRec.y + 60, 20,
+  GuiTextWrap(GuiText(msg, {0, 0}, 20, DARKGRAY),
+              {__l, paymentMethodRec.y, __w, __h}, LIGHTGRAY,
+              {__w, __h, __w, __h})
+      .rawRender(GetFontDefault());
+
+  DrawText("Payment Successful!", __l, paymentMethodRec.y + __h + 32, 20,
            DARKGREEN);
+  DrawText("Thank you for shopping with us!", __l,
+           paymentMethodRec.y + __h + 52, 20, DARKGREEN);
 }
 
 void GUI::renderPaymentMethod(const OrderContext& ctx,
@@ -319,7 +322,8 @@ void GUI::renderOrderInfoText(const string& label, const string& value,
            valueColor);
 }
 
-void GUI::renderCompleted(Price& totalCost, const string& address,
+void GUI::renderCompleted(const string& orderID, const string& timestamp,
+                          Price& totalCost, const string& address,
                           const PaymentMethod& paymentMethod) {
   if (!confettiParticles) {
     confettiParticles =
@@ -334,17 +338,17 @@ void GUI::renderCompleted(Price& totalCost, const string& address,
   confettiParticles->update();
   confettiParticles->render();
 
-  DrawText("Thank you for your order!", leftMidAlign + 50, 150, 25, DARKBLUE);
-  DrawText("Your order has been completed!", leftMidAlign + 55, 200, 20, GRAY);
+  DrawText("Thank you for your order!", leftMidAlign + 50, 120, 25, DARKBLUE);
+  DrawText("Your order has been completed!", leftMidAlign + 55, 160, 20, GRAY);
 
-  // renderOrderInfoText("Order ID: ", "123456", 400, LIGHTGRAY, DARKGRAY);
-  // renderOrderInfoText("Order Date: ", "2021-09-01", 450, LIGHTGRAY,
-  // DARKGRAY);
+  renderOrderInfoText("Order ID: ", orderID.substr(0, 8), 250, LIGHTGRAY,
+                      DARKGRAY);
+  renderOrderInfoText("Order Date: ", timestamp, 290, LIGHTGRAY, DARKGRAY);
 
-  renderOrderInfoText("Shipped to: ", address, 300, LIGHTGRAY, DARKGRAY);
-  renderOrderInfoText("Payment Method: ", PAYMENT_METHODS[paymentMethod], 350,
+  renderOrderInfoText("Shipped to: ", address, 330, LIGHTGRAY, DARKGRAY);
+  renderOrderInfoText("Payment Method: ", PAYMENT_METHODS[paymentMethod], 370,
                       SKYBLUE, BLUE);
-  renderOrderInfoText("Total Cost: ", "$" + totalCost.format(), 400, GREEN,
+  renderOrderInfoText("Total Cost: ", "$" + totalCost.format(), 410, GREEN,
                       DARKGREEN);
 
   isShowCTA = true;

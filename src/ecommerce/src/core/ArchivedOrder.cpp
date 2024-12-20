@@ -9,8 +9,10 @@ ArchivedOrder::ArchivedOrder(const string &id, const OrderContext &ctx)
       paymentMethod(ctx.paymentMethod) {}
 
 string ArchivedOrder::toString() const {
-  return "Order ID: " + ORDER_ID + "\n" + "Order Date: " + ORDER_DATE + "\n" +
-         "Total Cost: " + to_string(totalCost) + "\n" + "Address: " + address +
-         "\n" + "Phone: " + phone + "\n" +
-         "Payment Method: " + PAYMENT_METHODS[paymentMethod];
+  return "Order ID: " + ORDER_ID
+          + "\nOrder Date: " + ORDER_DATE
+          + "\nTotal Cost: " + totalCost.format()
+          + "\nAddress: " + address
+          + "\nPhone: " + phone
+          + "\nPayment Method: " + PAYMENT_METHODS[paymentMethod];
 }

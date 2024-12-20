@@ -50,10 +50,6 @@ void Application::unwrapOrderDecorator() {
     BasicOrder* originalOrder =
         dynamic_cast<BasicOrder*>(currentOrder->unwrap());
 
-    utils::log::logging(true, "Cost: %s - %s",
-                        originalOrder->getCartTotal().format().c_str(),
-                        originalOrder->getCouponCode().c_str());
-
     currentOrder = make_shared<BasicOrder>(originalOrder->getCartTotal(),
                                            originalOrder->getCouponCode());
     updateTotalCost();

@@ -21,6 +21,9 @@ class ArchivedOrder {
   ArchivedOrder(const string&, const OrderContext&);
   ~ArchivedOrder() = default;
 
+  const string& getOrderId() const { return ORDER_ID; };
+  const string& getOrderDate() const { return ORDER_DATE; };
+
   string toString() const;
 };
 

@@ -25,7 +25,7 @@ pair<bool, vector<string>> BasicOrder::placeOrder() {
 
   return {
       true,
-      {!validation.first ? "Order placed without coupon: " + validation.second
+      {!validation.first ? "No coupons are applied: " + validation.second
                          : "Order placed with coupon. New price: $" +
                                calculateTotal().format()}};
 }

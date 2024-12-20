@@ -43,7 +43,7 @@ class CreditCardPayment : public PaymentGateway {
 
   pair<bool, string> processPayment(const double& amount) override {
     return {true,
-            "Processing Credit Card payment of $" + to_string(amount) + "\n"};
+            "Processed Credit Card payment of $" + to_string(amount) + "\n"};
   }
 };
 
@@ -58,7 +58,7 @@ class PayPalPayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processing Paypal payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed Paypal payment of $" + to_string(amount) + "\n"};
   }
 };
 
@@ -73,7 +73,7 @@ class StripePayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processing Stripe payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed Stripe payment of $" + to_string(amount) + "\n"};
   }
 };
 
@@ -88,7 +88,7 @@ class CODPayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processing COD payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed COD payment of $" + to_string(amount) + "\n"};
   }
 };
 

@@ -17,9 +17,9 @@ void SelectItemStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
   gui->selectItemHandler(ctx.cart, ctx.totalCost);
 
   if (gui->isCTAClicked()) {
-    app->updateOrderTotalCost();
-
     gui->setShowCTA(false);
+
+    app->updateOrderTotalCost();
 
     ctx.currentStage = static_cast<OrderStageState>(ctx.currentStage + 1);
     if (nextStage) nextStage->handle(stageSystem, ctx, gui, app);
@@ -59,10 +59,9 @@ void ShippingStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
   }
 
   if (gui->isCTAClicked()) {
-    app->applyDeliveryCost();
-
     gui->setShowCTA(false);
 
+    app->applyDeliveryCost();
     if (gui->getConfettiActive()) gui->stopConfetti();
 
     ctx.currentStage = static_cast<OrderStageState>(ctx.currentStage + 1);
@@ -84,9 +83,9 @@ void PaymentStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
   gui->paymentMethodHandler(ctx.paymentMethod, ctx.totalCost);
 
   if (gui->isCTAClicked()) {
-    app->addArchivedOrder();
-
     gui->setShowCTA(false);
+
+    app->addArchivedOrder();
 
     ctx.currentStage = static_cast<OrderStageState>(ctx.currentStage + 1);
     if (nextStage) nextStage->handle(stageSystem, ctx, gui, app);
@@ -109,22 +108,19 @@ void PaymentStage::render(OrderContext& ctx, GUI* gui, Application* app) {
 void CompletionStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
                              GUI* gui, Application* app) {
   if (gui->isCTAClicked()) {
-    app->resetOrder();
-
     gui->setShowCTA(false);
 
     ctx.currentStage = SELECT_ITEM;
     ctx.cart.clear();
     ctx.totalCost = 0;
-
-    for (const auto& item : app->getArchivedOrders()) {
-      utils::log::logging(true, "%s", item->toString().c_str());
-    }
+    app->resetOrder();
   }
 }
 
 void CompletionStage::render(OrderContext& ctx, GUI* gui, Application* app) {
-  gui->renderCompleted(ctx.totalCost, ctx.address, ctx.paymentMethod);
+  gui->renderCompleted(app->getArchivedOrders().back()->getOrderId(),
+                       app->getArchivedOrders().back()->getOrderDate(),
+                       ctx.totalCost, ctx.address, ctx.paymentMethod);
 }
 
 OrderStageSystem::OrderStageSystem() {

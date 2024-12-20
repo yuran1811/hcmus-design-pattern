@@ -99,6 +99,7 @@ class GUI {
   void render(const OrderStageState &, function<void()>);
   void renderHeader(const string &);
   void renderOrderProgress(const OrderStageState &);
+  void renderCurrentTime();
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
 
@@ -119,7 +120,8 @@ class GUI {
 
   void renderOrderInfoText(const string &, const string &, const float &,
                            const Color &, const Color &);
-  void renderCompleted(Price &, const string &, const PaymentMethod &);
+  void renderCompleted(const string &, const string &, Price &, const string &,
+                       const PaymentMethod &);
 
   bool selectItemHandler(CartType &, Price &);
 
