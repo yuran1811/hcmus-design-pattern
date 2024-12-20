@@ -67,7 +67,7 @@
   \item \textbf{Thành viên:}
         \begin{center}
           \renewcommand{\arraystretch}{1.5}
-          \begin{tabular}{|c|l|l|c|l|}
+          \begin{tabular}{|c|l|c|l|}
             \hline
             \textbf{STT} & \textbf{Họ và tên}  & \textbf{MSSV} & \textbf{Email}                                                       \\\hline
             1            & Ngô Nguyễn Thế Khoa & 23127065      & \href{mailto:nntkhoa23@clc.fitus.edu.vn}{nntkhoa23@clc.fitus.edu.vn} \\\hline
@@ -88,11 +88,12 @@
 \pagebreak
 \section{Nội dung}
 \subsection{Thông tin chung về đồ án:}
-\begin{enumerate}
-  \item \textbf{Tên đồ án:} Design Pattern
+\begin{itemize}
+  \item \textbf{Tên đồ án:} Design Pattern Video Project
   \item \textbf{Môi trường lập trình:} Visual Studio Code
   \item \textbf{Ngôn ngữ lập trình:} C++
-\end{enumerate}
+  \item \textbf{Thư viện sử dụng:} raylib
+\end{itemize}
 
 % \pagebreak
 \section{Bảng phân công việc}
@@ -110,13 +111,12 @@
 
 \pagebreak
 \section{Chi tiết về các Design Pattern được sử dụng}
-\input{pages/PatternTemplate.tex}
 \input{pages/Factory.tex}
 \input{pages/Decorator.tex}
 \input{pages/CoR.tex}
 
 \pagebreak
-\section{Source}
+\section{Simple Demo Source}
 \codeimport{cpp}{../src/ecommerce-demo/main.cpp}
 \codeimport{cpp}{../src/ecommerce-demo/Payment.hpp}
 \codeimport{cpp}{../src/ecommerce-demo/Order.hpp}

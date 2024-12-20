@@ -2,73 +2,55 @@
 \subsection{Factory}
 \subsubsection{Vấn đề}
 \begin{flushleft}
-	\begin{itemize}
-		\item Ban đầu, hệ thống chỉ hỗ trợ thanh toán qua Credit Card và hoạt động hiệu quả, giúp tăng doanh thu và uy tín. Tuy nhiên, khi số lượng khách hàng tăng, cần đa dạng hóa hình thức thanh toán (Paypal, Stripe, v,v). 
+    \begin{itemize}
+        \item Ban đầu, hệ thống chỉ hỗ trợ thanh toán qua Credit Card và hoạt động hiệu quả, giúp tăng doanh thu và uy tín. Tuy nhiên, khi số lượng khách hàng tăng, cần đa dạng hóa hình thức thanh toán (Paypal, Stripe, v,v).
 
-		\item Việc này gặp khó khăn vì code hiện tại chỉ tập trung vào Credit Card, dẫn đến việc hệ thống trở nên phức tạp và khó quản lý khi thêm các hình thức thanh toán mới.
-	\end{itemize}
-
-	\begin{enumerate}
-		\item Ý 1
-		\item Ý 2
-	\end{enumerate}
-
+        \item Việc này gặp khó khăn vì code hiện tại chỉ tập trung vào Credit Card, dẫn đến việc hệ thống trở nên phức tạp và khó quản lý khi thêm các hình thức thanh toán mới.
+    \end{itemize}
 \end{flushleft}
 
 \subsubsection{Mục đích}
 \begin{flushleft}
-
-\begin{itemize}
-    \item Sử dụng Factory Pattern để cung cấp một giao diện ở lớp cha nhằm tạo ra những đối tượng nhưng vẫn cho phép những lớp con tùy chỉnh loại đối tượng được tạo ra. 
-
-\end{itemize}
-
-
-
+    \begin{itemize}
+        \item Sử dụng Factory Pattern để cung cấp một giao diện ở lớp cha nhằm tạo ra những đối tượng nhưng vẫn cho phép những lớp con tùy chỉnh loại đối tượng được tạo ra.
+    \end{itemize}
 \end{flushleft}
 
 \subsubsection{Giải pháp}
 \begin{flushleft}
-
-\begin{itemize}
-    \item Chúng ta sẽ cài đặt một số phương thức ảo “Factory”. Thay vì tạo mới loại hình thanh toán một cách trực tiếp, giờ đây chúng ta sẽ tạo mới thông qua các phương thức ảo trên. 
-    \item Điều này cho phép những loại hình thanh toán mới có thể được thêm vào hệ thống và điều chỉnh độc lập ở những lớp con thay vì phải điều chỉnh lại toàn bộ code của hệ thống. 
-    \item Tuy nhiên ở lớp con cần phải tuân thủ trả về đầy đủ các kiểu trả về của Factory method đã được khai báo ở lớp cha. 
-\end{itemize}
-
+    \begin{itemize}
+        \item Chúng ta sẽ cài đặt một số phương thức ảo “Factory”. Thay vì tạo mới loại hình thanh toán một cách trực tiếp, giờ đây chúng ta sẽ tạo mới thông qua các phương thức ảo trên.
+        \item Điều này cho phép những loại hình thanh toán mới có thể được thêm vào hệ thống và điều chỉnh độc lập ở những lớp con thay vì phải điều chỉnh lại toàn bộ code của hệ thống.
+        \item Tuy nhiên ở lớp con cần phải tuân thủ trả về đầy đủ các kiểu trả về của Factory method đã được khai báo ở lớp cha.
+    \end{itemize}
 \end{flushleft}
 
 \subsubsection{Cấu trúc}
 \begin{flushleft}
-
     \begin{enumerate}
-        \item Tạo một “Payment Interface” (hay còn gọi là một abstract class) với đầy đủ các tính chất và phương thức mà một giao dịch cần phải tuân theo. 
-        \item Xây dựng những loại hình giao dịch cụ thể tuân theo Payment Interface trên (CreditCardPayment, PaypalPayment, StripePayment, v.v). 
-        \item Ta cũng xây dựng một lớp “Creator” các loại giao dịch dưới dạng một abstract class để creator cho mỗi loại hình giao dịch khác nhau cũng phải tuân theo một số quy tắc được đặt ra của lớp creator trước đó. 
+        \item Tạo một “Payment Interface” (hay còn gọi là một abstract class) với đầy đủ các tính chất và phương thức mà một giao dịch cần phải tuân theo.
+        \item Xây dựng những loại hình giao dịch cụ thể tuân theo Payment Interface trên (CreditCardPayment, PaypalPayment, StripePayment, v.v).
+        \item Ta cũng xây dựng một lớp “Creator” các loại giao dịch dưới dạng một abstract class để creator cho mỗi loại hình giao dịch khác nhau cũng phải tuân theo một số quy tắc được đặt ra của lớp creator trước đó.
         \item Thực hiện các lớp creator đối với mỗi loại hình giao dịch được kế thừa từ lớp ảo creator trước đó trong mỗi lớp này sẽ gọi đến interface class của giao dịch để tạo ra loại hình giao dịch mà lớp này đang chịu trách nhiệm.
-
     \end{enumerate}
-
 \end{flushleft}
 
 \subsubsection{Khả năng ứng dụng}
 \begin{flushleft}
-
 \end{flushleft}
 
 \subsubsection{Ưu nhược điểm}
 \begin{flushleft}
     \begin{itemize}
         \item Ưu điểm
-            \begin{itemize}
-                \item Tránh những ảnh hưởng lẫn nhau giữa thành phần tạo ra đối tượng (creator) và các sản phẩm cụ thể (concrete product).
-                \item Nguyên tắc trách nhiệm duy nhất: Tập trung mã tạo sản phẩm vào một nơi trong chương trình, giúp mã dễ dàng bảo trì hơn.
-                \item Nguyên tắc Mở/Đóng: Bạn có thể thêm các loại sản phẩm mới vào chương trình mà không làm ảnh hưởng đến mã của các thành phần khác.
-            \end{itemize}
+              \begin{itemize}
+                  \item Tránh những ảnh hưởng lẫn nhau giữa thành phần tạo ra đối tượng (creator) và các sản phẩm cụ thể (concrete product).
+                  \item Nguyên tắc trách nhiệm duy nhất: Tập trung mã tạo sản phẩm vào một nơi trong chương trình, giúp mã dễ dàng bảo trì hơn.
+                  \item Nguyên tắc Mở/Đóng: Bạn có thể thêm các loại sản phẩm mới vào chương trình mà không làm ảnh hưởng đến mã của các thành phần khác.
+              \end{itemize}
         \item Nhược điểm
-            \begin{itemize}
-                \item Mã có thể trở nên phức tạp hơn vì cần tạo thêm nhiều lớp con mới để triển khai mẫu thiết kế.
-            \end{itemize}
+              \begin{itemize}
+                  \item Mã có thể trở nên phức tạp hơn vì cần tạo thêm nhiều lớp con mới để triển khai mẫu thiết kế.
+              \end{itemize}
     \end{itemize}
-
 \end{flushleft}
