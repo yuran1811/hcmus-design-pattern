@@ -19,7 +19,7 @@ using std::vector;
 class CouponSystem {
  private:
   map<string, Coupon> coupons;
-  map<string, pair<bool, float>> appliedOrders;
+  map<string, pair<bool, Price>> appliedOrders;
 
   static std::mutex mutex_;
   static CouponSystem* instance;
@@ -35,14 +35,14 @@ class CouponSystem {
 
   vector<Coupon> showCoupons();
 
-  void addCoupon(const string& code, float discount, bool isPercentage,
+  void addCoupon(const string& code, Price discount, bool isPercentage,
                  time_t expiry, int usageLimit);
   void importCoupons(const vector<Coupon>&);
 
   bool checkExpired(const string&);
   bool checkExceedUsageLimit(const string&);
-  pair<bool, string> validateCoupon(const string&, float);
+  pair<bool, string> validateCoupon(const string&, Price);
   
-  pair<float, string> applyCoupon(const string&, const string&, float,
+  pair<Price, string> applyCoupon(const string&, const string&, Price,
                                   bool isPreviewd = false);
 };

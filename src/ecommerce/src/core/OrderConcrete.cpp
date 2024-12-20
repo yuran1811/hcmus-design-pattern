@@ -1,11 +1,13 @@
 #include "Order.hpp"
 
-BasicOrder::BasicOrder(float total, const string& code)
+BasicOrder::BasicOrder(Price total, const string& code)
     : cartTotal(total), couponCode(code) {}
+
+void BasicOrder::setCartTotal(const Price& _) { cartTotal = _; }
 
 void BasicOrder::setCouponCode(const string& _) { couponCode = _; }
 
-float BasicOrder::calculateTotal() const {
+Price BasicOrder::calculateTotal() const {
   if (couponCode.empty()) return cartTotal;
 
   return CouponSystem::getInstance()
@@ -25,5 +27,5 @@ pair<bool, vector<string>> BasicOrder::placeOrder() {
       true,
       {!validation.first ? "Order placed without coupon: " + validation.second
                          : "Order placed with coupon. New price: $" +
-                               std::to_string(calculateTotal())}};
+                               calculateTotal().format()}};
 }

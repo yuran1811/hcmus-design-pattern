@@ -6,6 +6,7 @@
 
 #include "CouponSystem.hpp"
 
+#include "../shared/index.hpp"
 #include "../utils/index.hpp"
 
 using std::cout;
@@ -36,23 +37,26 @@ class Order {
 
   void markOrderCompleted();
 
-  virtual float calculateTotal() const = 0;
+  virtual Price calculateTotal() const = 0;
   virtual pair<bool, vector<string>> placeOrder() = 0;
 };
 
 // Concrete Order: Basic Order
 class BasicOrder : public Order {
  private:
-  float cartTotal = .0f;
+  Price cartTotal;
   string couponCode = "";
 
  public:
   BasicOrder() = default;
-  BasicOrder(float, const string&);
+  BasicOrder(Price, const string&);
 
+  const Price& getCartTotal() const { return cartTotal; };
+
+  void setCartTotal(const Price&);
   void setCouponCode(const string& _);
 
-  float calculateTotal() const override;
+  Price calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
 };
 
@@ -69,19 +73,19 @@ class OrderDecorator : public Order {
 // Concrete Decorator: Gift Wrap
 class GiftWrapDecorator : public OrderDecorator {
  private:
-  float giftWrapFee;
+  Price giftWrapFee;
 
  public:
-  GiftWrapDecorator(shared_ptr<Order>, float);
+  GiftWrapDecorator(shared_ptr<Order>, Price);
 
-  float calculateTotal() const override;
+  Price calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
 };
 
 // Concrete Decorator: Express Delivery
 class ExpressDeliveryDecorator : public OrderDecorator {
  private:
-  float expressFee;
+  Price expressFee;
   bool isAvailable;
 
   void fetchDeliveryDetails();
@@ -89,6 +93,6 @@ class ExpressDeliveryDecorator : public OrderDecorator {
  public:
   ExpressDeliveryDecorator(shared_ptr<Order>);
 
-  float calculateTotal() const override;
+  Price calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;
 };

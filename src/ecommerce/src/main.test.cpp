@@ -58,7 +58,7 @@ using namespace std;
 
 void renderOrderDetail(shared_ptr<Order> order,
                        const pair<bool, vector<string>>& orderReturn,
-                       const float& total, int& posY) {
+                       const Price& total, int& posY) {
   DrawText(("Order Details - " + order->getOrderId()).c_str(), 10, posY, 20,
            DARKGRAY);
   for (const string& detail : orderReturn.second) {
@@ -67,7 +67,7 @@ void renderOrderDetail(shared_ptr<Order> order,
   }
 
   posY += 25;
-  DrawText(("Total: " + to_string(total)).c_str(), 10, posY, 20, DARKGRAY);
+  DrawText(("Total: " + total.format()).c_str(), 10, posY, 20, DARKGRAY);
 }
 
 int main(void) {
@@ -88,13 +88,13 @@ int main(void) {
   order = make_shared<GiftWrapDecorator>(order, 5.f);
   order = make_shared<ExpressDeliveryDecorator>(order);
   pair<bool, vector<string>> orderReturn;
-  float total = order->calculateTotal();
+  Price total = order->calculateTotal();
 
   shared_ptr<Order> order2 = make_shared<BasicOrder>(42.f, "DISCOUNT_20");
   order2 = make_shared<GiftWrapDecorator>(order2, 5.f);
   order2 = make_shared<ExpressDeliveryDecorator>(order2);
   pair<bool, vector<string>> orderReturn2;
-  float total2 = order2->calculateTotal();
+  Price total2 = order2->calculateTotal();
 
   while (!WindowShouldClose()) {
     BeginDrawing();

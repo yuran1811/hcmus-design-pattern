@@ -126,6 +126,29 @@ struct Price {
 
   Price operator*(int scalar) const { return Price(value * scalar, decimal); }
 
+  Price operator*(float scalar) const {
+    // Scale the value based on scalar
+    ll newValue = static_cast<ll>(round(value * scalar));
+    // Adjust the decimal for potential fractional results
+    int newDecimal = decimal;
+
+    // If scalar introduces decimal precision, increase `decimal`
+    string scalarStr = to_string(scalar);
+    size_t decimalPos = scalarStr.find('.');
+    if (decimalPos != string::npos) {
+      int scalarDecimal = scalarStr.size() - decimalPos - 1;
+      newDecimal += scalarDecimal;
+    }
+
+    // Normalize to remove trailing zeroes
+    while (newValue % 10 == 0 && newDecimal > 0) {
+      newValue /= 10;
+      newDecimal--;
+    }
+
+    return Price(newValue, newDecimal);
+  }
+
   Price& operator=(const Price& other) {
     value = other.value;
     decimal = other.decimal;
@@ -192,7 +215,7 @@ struct Voucher {
 struct Coupon {
   string code;
 
-  float discount;     // Discount percentage or flat amount
+  Price discount;     // Discount percentage or flat amount
   bool isPercentage;  // true = percentage, false = flat amount
 
   time_t expiryDate;

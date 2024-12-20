@@ -22,7 +22,7 @@ vector<Coupon> CouponSystem::showCoupons() {
   return returnCoupons;
 }
 
-void CouponSystem::addCoupon(const string& code, float discount,
+void CouponSystem::addCoupon(const string& code, Price discount,
                              bool isPercentage, time_t expiry, int usageLimit) {
   coupons[code] = {code, discount, isPercentage, expiry, usageLimit};
 }
@@ -53,7 +53,7 @@ bool CouponSystem::checkExceedUsageLimit(const string& _) {
 }
 
 pair<bool, string> CouponSystem::validateCoupon(const string& code,
-                                                float cartTotal) {
+                                                Price cartTotal) {
   if (coupons.find(code) == coupons.end()) return {false, "Coupon not found."};
   if (checkExpired(code)) return {false, "Coupon has expired."};
   if (checkExceedUsageLimit(code))
@@ -64,12 +64,12 @@ pair<bool, string> CouponSystem::validateCoupon(const string& code,
   return {true, "Coupon is valid."};
 }
 
-pair<float, string> CouponSystem::applyCoupon(const string& orderID,
+pair<Price, string> CouponSystem::applyCoupon(const string& orderID,
                                               const string& code,
-                                              float cartTotal,
+                                              Price cartTotal,
                                               bool isPreviewed) {
   const auto& orderIDStatus = appliedOrders.find(orderID) == appliedOrders.end()
-                                  ? make_pair(false, .0f)
+                                  ? make_pair(false, Price(0))
                                   : appliedOrders[orderID];
   const bool isOrderApplied = orderIDStatus.first;
 
@@ -78,16 +78,17 @@ pair<float, string> CouponSystem::applyCoupon(const string& orderID,
     return {cartTotal, validation.second};
 
   Coupon& coupon = coupons[code];
-  const float discountAmount = isOrderApplied ? orderIDStatus.second
+  const Price discountAmount = isOrderApplied ? orderIDStatus.second
                                : coupon.isPercentage
-                                   ? (cartTotal * (coupon.discount / 100))
-                                   : coupon.discount;
+                                   ? Price(cartTotal * (coupon.discount / 100.f))
+                                   : Price(coupon.discount);
 
   if (!isPreviewed && !isOrderApplied) {
     appliedOrders[orderID] = make_pair(true, discountAmount);
     coupon.usageLimit--;
   }
 
-  const float finalPrice = cartTotal - discountAmount;
-  return {finalPrice > 0 ? finalPrice : 0, "Coupon applied successfully."};
+  const Price finalPrice = cartTotal - discountAmount;
+  return {finalPrice > 0 ? finalPrice : Price(0),
+          "Coupon applied successfully."};
 }
