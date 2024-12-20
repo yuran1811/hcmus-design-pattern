@@ -64,10 +64,9 @@ pair<bool, string> CouponSystem::validateCoupon(const string& code,
   return {true, "Coupon is valid."};
 }
 
-pair<Price, string> CouponSystem::applyCoupon(const string& orderID,
-                                              const string& code,
-                                              Price cartTotal,
-                                              bool isPreviewed) {
+pair<pair<Price, Price>, string> CouponSystem::applyCoupon(
+    const string& orderID, const string& code, Price cartTotal,
+    bool isPreviewed) {
   const auto& orderIDStatus = appliedOrders.find(orderID) == appliedOrders.end()
                                   ? make_pair(false, Price(0))
                                   : appliedOrders[orderID];
@@ -75,13 +74,13 @@ pair<Price, string> CouponSystem::applyCoupon(const string& orderID,
 
   auto validation = validateCoupon(code, cartTotal);
   if (!validation.first && !isOrderApplied)
-    return {cartTotal, validation.second};
+    return {{cartTotal, Price(0)}, validation.second};
 
   Coupon& coupon = coupons[code];
-  const Price discountAmount = isOrderApplied ? orderIDStatus.second
-                               : coupon.isPercentage
-                                   ? Price(cartTotal * (coupon.discount / 100.f))
-                                   : Price(coupon.discount);
+  const Price discountAmount =
+      isOrderApplied        ? orderIDStatus.second
+      : coupon.isPercentage ? Price(cartTotal * (coupon.discount / 100.f))
+                            : Price(coupon.discount);
 
   if (!isPreviewed && !isOrderApplied) {
     appliedOrders[orderID] = make_pair(true, discountAmount);
@@ -89,6 +88,6 @@ pair<Price, string> CouponSystem::applyCoupon(const string& orderID,
   }
 
   const Price finalPrice = cartTotal - discountAmount;
-  return {finalPrice > 0 ? finalPrice : Price(0),
+  return {{finalPrice > 0 ? finalPrice : Price(0), discountAmount},
           "Coupon applied successfully."};
 }

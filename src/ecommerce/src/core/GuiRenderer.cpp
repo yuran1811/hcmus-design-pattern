@@ -78,10 +78,27 @@ void GUI::renderStageMessage(const string& s) {
            utils::color::calcBreathColor(LIME, frameTimer * 3.75f));
 }
 
-void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
-  DrawText("Product:", leftAlign, 100, 20, DARKGRAY);
+void GUI::renderCoupons(function<void(const string&)>& onClick) {
+  int couponYPos = 165 + 40 * items.size();
 
+  DrawText("Coupons:", leftAlign, couponYPos - 30, 20, DARKGRAY);
+
+  for (int i = 0; i < coupons.size(); i++) {
+    const Coupon& coupon = coupons[i];
+
+    (new GuiButton(coupon.code,
+                   Rectangle{leftAlign, (40.f * i) + couponYPos,
+                             20.f + MeasureText(coupon.code.c_str(), 20), 30},
+                   LIGHTGRAY, DARKGRAY, 10, 5))
+        ->setEvent(GuiButton::EVENT::CLICK, [&]() { onClick(coupon.code); })
+        ->render(GetFontDefault(), 0);
+  }
+}
+
+void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
   int cartYPos = 130;
+
+  DrawText("Product:", leftAlign, cartYPos - 30, 20, DARKGRAY);
   for (int i = 0; i < items.size(); i++)
     (new GuiButton(items[i].name,
                    Rectangle{leftAlign, (40.f * i) + cartYPos, 150, 30},
@@ -93,7 +110,7 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
 
   const int quantityGap = 35;
 
-  DrawText("Cart:", midAlign, 100, 20, DARKGRAY);
+  DrawText("Cart:", midAlign, cartYPos - 30, 20, DARKGRAY);
 
   for (auto& entry : cart) {
     DrawText(
@@ -136,6 +153,12 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost) {
     cartYPos += 45;
     DrawLine(midAlign, cartYPos, 710, cartYPos, LIGHTGRAY);
     cartYPos += 15;
+
+    if (discount > 0) {
+      DrawText(("Discount: $" + discount.format()).c_str(), midAlign, cartYPos,
+               20, GRAY);
+      cartYPos += 30;
+    }
 
     DrawText(("Total: $" + totalCost.format()).c_str(), midAlign, cartYPos, 20,
              DARKGREEN);

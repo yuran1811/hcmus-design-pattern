@@ -103,7 +103,8 @@ class GUI {
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
 
-  void renderSelectItem(CartType &, Price &);
+  void renderCoupons(function<void(const string &)> &);
+  void renderSelectItem(CartType &, Price &, Price &);
 
   void renderInput(const InputType &, const string &, const string &,
                    const Vector2 &, const Vector2 &);

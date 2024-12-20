@@ -30,6 +30,9 @@ class Application {
 
   shared_ptr<Order> getCurrentOrder() const { return currentOrder; }
   const OrderContext& getOrderContext() const { return orderContext; }
+  const OrderStageSystem& getOrderStageSystem() const {
+    return orderStageSystem;
+  }
   const vector<unique_ptr<ArchivedOrder>>& getArchivedOrders() const {
     return archivedOrders;
   }

@@ -12,7 +12,7 @@ Price BasicOrder::calculateTotal() const {
 
   return CouponSystem::getInstance()
       ->applyCoupon(getOrderId(), couponCode, cartTotal, !isCompleted)
-      .first;
+      .first.first;
 }
 
 pair<bool, vector<string>> BasicOrder::placeOrder() {
@@ -23,9 +23,8 @@ pair<bool, vector<string>> BasicOrder::placeOrder() {
   CouponSystem* couponSystem = CouponSystem::getInstance();
   auto validation = couponSystem->validateCoupon(couponCode, cartTotal);
 
-  return {
-      true,
-      {!validation.first ? "No coupons are applied: " + validation.second
-                         : "Order placed with coupon. New price: $" +
-                               calculateTotal().format()}};
+  return {true,
+          {!validation.first ? "No coupons are applied: " + validation.second
+                             : "Order placed with coupon. New price: $" +
+                                   calculateTotal().format()}};
 }

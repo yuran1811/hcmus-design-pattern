@@ -27,7 +27,22 @@ void SelectItemStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
 }
 
 void SelectItemStage::render(OrderContext& ctx, GUI* gui, Application* app) {
-  gui->renderSelectItem(ctx.cart, ctx.totalCost);
+  shared_ptr<Order> order = app->getCurrentOrder();
+  static pair<Price, Price> finalPrice;
+
+  static function<void(const string&)> onClick = [&](const string& code) {
+    if (order) {
+      std::dynamic_pointer_cast<BasicOrder>(order)->setCouponCode(code);
+
+      CouponSystem* cs = CouponSystem::getInstance();
+      finalPrice =
+          cs->applyCoupon(order->getOrderId(), code, ctx.totalCost, true).first;
+    }
+  };
+
+  gui->renderSelectItem(ctx.cart, finalPrice.first, finalPrice.second);
+
+  if (ctx.totalCost > 0) gui->renderCoupons(onClick);
 }
 
 void AddressInfoStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,

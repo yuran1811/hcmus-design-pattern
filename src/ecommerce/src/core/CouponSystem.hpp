@@ -43,6 +43,6 @@ class CouponSystem {
   bool checkExceedUsageLimit(const string&);
   pair<bool, string> validateCoupon(const string&, Price);
   
-  pair<Price, string> applyCoupon(const string&, const string&, Price,
+  pair<pair<Price, Price>, string> applyCoupon(const string&, const string&, Price,
                                   bool isPreviewd = false);
 };

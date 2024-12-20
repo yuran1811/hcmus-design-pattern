@@ -12,6 +12,8 @@ const vector<Coupon> COUPONS = {{"DISCOUNT_10", 10, false, MOCK_TIME, 10},
                                 {"DISCOUNT_30", 30, false, MOCK_TIME, 10}};
 
 int main() {
+  CouponSystem::getInstance()->importCoupons(COUPONS);
+
   Application* app = new Application();
   app->setItems(ITEMS);
   app->setCoupons(COUPONS);
