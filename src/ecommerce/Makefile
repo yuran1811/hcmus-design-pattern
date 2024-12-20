@@ -32,7 +32,10 @@ exec:
 	./$(BIN)/$(TARGET)
 
 clean:
-	rm -f ./$(BIN)/$(TARGET) ./$(BIN)/$(TARGET)_test $(OBJS_MAIN) $(OBJS_TEST)
+	rm -f ./$(BIN)/$(TARGET)* ./src/**/*.o
+
+cleanall:
+	rm -f ./$(BIN)/$(TARGET)* $(OBJS_MAIN) $(OBJS_TEST)
 
 run: all
 	make exec
@@ -40,4 +43,4 @@ run: all
 test: $(BIN)/$(TARGET)_test
 	./$(BIN)/$(TARGET)_test
 
-.PHONY: all exec clean run test
+.PHONY: all exec clean cleanall run test
