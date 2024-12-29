@@ -1,9 +1,10 @@
 #include "ArchivedOrder.hpp"
 
-ArchivedOrder::ArchivedOrder(const string &id, const OrderContext &ctx)
+ArchivedOrder::ArchivedOrder(const string &id, const OrderContext &ctx,
+                             shared_ptr<Order> order)
     : ORDER_ID(id),
       ORDER_DATE(utils::getDateTimeString()),
-      totalCost(ctx.totalCost),
+      totalCost(order->calculateTotal()),
       address(ctx.address),
       phone(ctx.phone),
       paymentMethod(ctx.paymentMethod) {}

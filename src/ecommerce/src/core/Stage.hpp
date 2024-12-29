@@ -41,9 +41,12 @@ class OrderContext {
 
   CartType cart;
   Price totalCost;
+  Price discount;
 
   string address;
   string phone;
+
+  string deliveryProvider;
 
   PaymentMethod paymentMethod;
   pair<string, Price> paymentInfo;
@@ -51,6 +54,10 @@ class OrderContext {
  public:
   OrderContext();
   ~OrderContext() = default;
+
+  Price getFinalCost() const {
+    return totalCost > discount ? totalCost - discount : Price(0, 0);
+  }
 };
 
 // Concrete Order Stages

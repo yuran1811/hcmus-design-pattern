@@ -96,9 +96,10 @@ class GUI {
   void cursorUpdate(const OrderStageState &);
   void processStageBacking(const OrderStageState &);
 
-  void render(const OrderStageState &, function<void()>);
+  void render(shared_ptr<Order>, const OrderContext &, function<void()>,
+              function<void()>);
   void renderHeader(const string &);
-  void renderOrderProgress(const OrderStageState &);
+  void renderOrderProgress(const OrderStageState &, bool);
   void renderCurrentTime();
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
@@ -115,14 +116,16 @@ class GUI {
   void renderPaymentQR(const string &, const PaymentMethod &, const Price &,
                        function<void()> &);
   void renderPaymentSuccessInfo(const string &, const Price &);
-  void renderPaymentMethod(const OrderContext &, function<void()> &);
+  void renderPaymentMethod(const string &, const Price &, const OrderContext &,
+                           function<void()> &);
 
-  void renderShipping();
+  void renderShippingProvider(const string &, function<void(const string &)> &);
+  void renderShipping(const OrderContext &, function<void(const string &)> &);
 
   void renderOrderInfoText(const string &, const string &, const float &,
                            const Color &, const Color &);
-  void renderCompleted(const string &, const string &, Price &, const string &,
-                       const PaymentMethod &);
+  void renderCompleted(const string &, const string &, const Price &,
+                       const string &, const PaymentMethod &);
 
   bool selectItemHandler(CartType &, Price &);
 

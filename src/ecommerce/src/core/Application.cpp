@@ -18,7 +18,8 @@ void Application::setCoupons(const vector<Coupon>& _) {
 }
 
 void Application::updateTotalCost() {
-  orderContext.totalCost = currentOrder->calculateTotal();
+  orderContext.totalCost =
+      std::dynamic_pointer_cast<BasicOrder>(currentOrder)->getCartTotal();
 }
 
 void Application::updateOrderTotalCost() {
@@ -36,8 +37,11 @@ void Application::applyGiftWrapCost() {
 
 void Application::applyDeliveryCost() {
   if (currentOrder) {
-    currentOrder = make_shared<ExpressDeliveryDecorator>(currentOrder);
-    updateTotalCost();
+    if (!dynamic_cast<ExpressDeliveryDecorator*>(currentOrder.get()))
+      currentOrder = make_shared<ExpressDeliveryDecorator>(currentOrder);
+
+    std::dynamic_pointer_cast<ExpressDeliveryDecorator>(currentOrder)
+        ->updateDeliveryProvider(orderContext.deliveryProvider);
   }
 }
 
@@ -52,13 +56,14 @@ void Application::unwrapOrderDecorator() {
 
     currentOrder = make_shared<BasicOrder>(originalOrder->getCartTotal(),
                                            originalOrder->getCouponCode());
+
     updateTotalCost();
   }
 }
 
 void Application::addArchivedOrder() {
-  archivedOrders.push_back(
-      make_unique<ArchivedOrder>(currentOrder->getOrderId(), orderContext));
+  archivedOrders.push_back(make_unique<ArchivedOrder>(
+      currentOrder->getOrderId(), orderContext, currentOrder));
   currentOrder->markOrderCompleted();
 }
 
@@ -78,9 +83,13 @@ void Application::run() {
     gui->incFrameTimer();
     gui->incFrameCounter();
 
-    gui->render(orderContext.currentStage, [&]() {
-      orderStageSystem.renderHandler(orderContext, gui.get(), this);
-      orderStageSystem.stageHandler(orderContext, gui.get(), this);
-    });
+    gui->render(
+        currentOrder, orderContext,
+        [&]() {
+          orderStageSystem.renderHandler(orderContext, gui.get(), this);
+        },
+        [&]() {
+          orderStageSystem.stageHandler(orderContext, gui.get(), this);
+        });
   }
 }

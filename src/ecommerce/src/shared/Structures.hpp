@@ -117,11 +117,29 @@ struct Price {
   Price(const Price& other) : Price(other.value, other.decimal) {}
   ~Price() = default;
 
-  operator float() const { return 1.f * value / pow(10, decimal); }
+  operator double() const { return 1.0 * value / pow(10, decimal); }
 
   string format() const {
     const ll exp = pow(10, decimal);
     return to_string(value / exp) + "." + to_string(value % exp);
+  }
+
+  bool operator==(const Price& other) const {
+    return value == other.value && decimal == other.decimal;
+  }
+
+  bool operator!=(const Price& other) const { return !(*this == other); }
+
+  bool operator<(const Price& other) const {
+    return value * pow(10, -decimal + other.decimal) < other.value;
+  }
+  friend bool operator<(const Price& price, int value) {
+    return price < Price(value);
+  }
+
+  bool operator>(const Price& other) const { return other < *this; }
+  friend bool operator>(const Price& price, int value) {
+    return price > Price(value);
   }
 
   Price operator*(int scalar) const { return Price(value * scalar, decimal); }
@@ -157,13 +175,14 @@ struct Price {
 
   Price operator+(const Price& other) const {
     int maxDecimal = max(decimal, other.decimal);
-    ll newValue = value * pow(10, maxDecimal - decimal) +
-                  other.value * pow(10, maxDecimal - other.decimal);
+    const ll rawValue = value * pow(10, maxDecimal - decimal) +
+                        other.value * pow(10, maxDecimal - other.decimal);
+    ll newValue = abs(rawValue);
     while (newValue % 10 == 0 && maxDecimal > 1) {
       newValue /= 10;
       maxDecimal--;
     }
-    return Price(newValue, maxDecimal);
+    return Price(newValue * (rawValue > 0 ? 1 : -1), maxDecimal);
   }
 
   Price& operator+=(const Price& other) {

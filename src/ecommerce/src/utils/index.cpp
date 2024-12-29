@@ -32,6 +32,12 @@ string utils::getDateTimeString() {
   return oss.str();
 }
 
+string utils::toStringWithPrecision(double value, int precision) {
+  ostringstream oss;
+  oss << std::fixed << std::setprecision(precision) << value;
+  return oss.str();
+}
+
 float utils::calcTextWrapHeight(const string &text, const float &boundsWidth) {
   const Font &font = GetFontDefault();
   const float spacing = 2.f;

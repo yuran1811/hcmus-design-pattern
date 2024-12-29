@@ -8,6 +8,7 @@
 #include <map>
 
 #include "../shared/index.hpp"
+#include "../utils/index.hpp"
 
 using std::cout;
 using std::function;
@@ -15,7 +16,6 @@ using std::make_unique;
 using std::map;
 using std::pair;
 using std::string;
-using std::to_string;
 using std::unique_ptr;
 using std::vector;
 
@@ -42,8 +42,8 @@ class CreditCardPayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true,
-            "Processed Credit Card payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed Credit Card payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 
@@ -58,7 +58,8 @@ class PayPalPayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processed Paypal payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed Paypal payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 
@@ -73,7 +74,8 @@ class StripePayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processed Stripe payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed Stripe payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 
@@ -88,7 +90,8 @@ class CODPayment : public PaymentGateway {
   }
 
   pair<bool, string> processPayment(const double& amount) override {
-    return {true, "Processed COD payment of $" + to_string(amount) + "\n"};
+    return {true, "Processed COD payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 

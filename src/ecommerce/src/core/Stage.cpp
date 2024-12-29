@@ -3,8 +3,11 @@
 OrderContext::OrderContext()
     : currentStage(SELECT_ITEM),
       totalCost(0),
+      discount(0),
       address(""),
       phone(""),
+      deliveryProvider(
+          ExpressDeliveryDecorator::availableProviders.begin()->first),
       paymentMethod(COD) {}
 
 void SelectItemStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
@@ -27,20 +30,18 @@ void SelectItemStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
 }
 
 void SelectItemStage::render(OrderContext& ctx, GUI* gui, Application* app) {
-  shared_ptr<Order> order = app->getCurrentOrder();
-  static pair<Price, Price> finalPrice;
+  gui->renderSelectItem(ctx.cart, ctx.totalCost, ctx.discount);
 
   static function<void(const string&)> onClick = [&](const string& code) {
-    if (order) {
-      std::dynamic_pointer_cast<BasicOrder>(order)->setCouponCode(code);
+    shared_ptr<Order> order = app->getCurrentOrder();
 
-      CouponSystem* cs = CouponSystem::getInstance();
-      finalPrice =
-          cs->applyCoupon(order->getOrderId(), code, ctx.totalCost, true).first;
-    }
+    std::dynamic_pointer_cast<BasicOrder>(order)->setCouponCode(code);
+
+    CouponSystem* cs = CouponSystem::getInstance();
+    ctx.discount =
+        cs->applyCoupon(order->getOrderId(), code, ctx.totalCost, true)
+            .first.second;
   };
-
-  gui->renderSelectItem(ctx.cart, finalPrice.first, finalPrice.second);
 
   if (ctx.totalCost > 0) gui->renderCoupons(onClick);
 }
@@ -77,7 +78,6 @@ void ShippingStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
     gui->setShowCTA(false);
 
     app->applyDeliveryCost();
-    if (gui->getConfettiActive()) gui->stopConfetti();
 
     ctx.currentStage = static_cast<OrderStageState>(ctx.currentStage + 1);
     if (nextStage) nextStage->handle(stageSystem, ctx, gui, app);
@@ -85,7 +85,11 @@ void ShippingStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
 }
 
 void ShippingStage::render(OrderContext& ctx, GUI* gui, Application* app) {
-  gui->renderShipping();
+  static function<void(const string&)> onClick = [&](const string& provider) {
+    ctx.deliveryProvider = provider;
+  };
+
+  gui->renderShipping(ctx, onClick);
 }
 
 void PaymentStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
@@ -95,12 +99,13 @@ void PaymentStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
     return;
   }
 
-  gui->paymentMethodHandler(ctx.paymentMethod, ctx.totalCost);
+  gui->paymentMethodHandler(ctx.paymentMethod,
+                            app->getCurrentOrder()->calculateTotal());
 
   if (gui->isCTAClicked()) {
     gui->setShowCTA(false);
 
-    app->addArchivedOrder();
+    if (gui->getConfettiActive()) gui->stopConfetti();
 
     ctx.currentStage = static_cast<OrderStageState>(ctx.currentStage + 1);
     if (nextStage) nextStage->handle(stageSystem, ctx, gui, app);
@@ -108,16 +113,23 @@ void PaymentStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
 }
 
 void PaymentStage::render(OrderContext& ctx, GUI* gui, Application* app) {
+  static function<Price()> getPaymentAmount = [&]() {
+    return app->getCurrentOrder()->calculateTotal();
+  };
+
   static function<void()> onPaymentSuccess = [&]() {
     PaymentGatewayRegistry& registry = PaymentGatewayRegistry::getInstance();
     ctx.paymentInfo = make_pair(
         registry.createPaymentGateway(PAYMENT_METHODS[ctx.paymentMethod])
-            ->processPayment(float(ctx.totalCost))
+            ->processPayment(double(getPaymentAmount()))
             .second,
         ctx.totalCost);
+
+    app->addArchivedOrder();
   };
 
-  gui->renderPaymentMethod(ctx, onPaymentSuccess);
+  gui->renderPaymentMethod(app->getCurrentOrder()->getOrderId(),
+                           getPaymentAmount(), ctx, onPaymentSuccess);
 }
 
 void CompletionStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
@@ -135,7 +147,8 @@ void CompletionStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
 void CompletionStage::render(OrderContext& ctx, GUI* gui, Application* app) {
   gui->renderCompleted(app->getArchivedOrders().back()->getOrderId(),
                        app->getArchivedOrders().back()->getOrderDate(),
-                       ctx.totalCost, ctx.address, ctx.paymentMethod);
+                       app->getArchivedOrders().back()->getTotalCost(),
+                       ctx.address, ctx.paymentMethod);
 }
 
 OrderStageSystem::OrderStageSystem() {

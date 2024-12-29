@@ -9,3 +9,5 @@
 
 #include "Gui.hpp"
 #include "Application.hpp"
+
+#include "Screen.hpp"

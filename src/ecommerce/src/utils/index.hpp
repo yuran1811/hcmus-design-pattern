@@ -6,6 +6,7 @@
 #include <cstring>
 #include <chrono>
 #include <sstream>
+#include <iomanip>
 
 #include "raylib.h"
 #include "uuid_v4.hpp"
@@ -25,6 +26,8 @@ string getResourcePath(AssetFolder, string, AssetType);
 string uuid_v4();
 
 string getDateTimeString();
+
+string toStringWithPrecision(double value, int precision);
 
 float calcTextWrapHeight(const string &, const float &);
 

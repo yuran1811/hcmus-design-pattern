@@ -20,20 +20,28 @@ pair<bool, vector<string>> GiftWrapDecorator::placeOrder() {
 }
 
 ExpressDeliveryDecorator::ExpressDeliveryDecorator(shared_ptr<Order> order)
-    : OrderDecorator(move(order)), expressFee(Price(0)), isAvailable(false) {
-  fetchDeliveryDetails();
-}
+    : OrderDecorator(move(order)),
+      currentProvider(availableProviders.begin()->first),
+      expressFee(availableProviders[currentProvider]),
+      isAvailable(true) {}
 
-void ExpressDeliveryDecorator::fetchDeliveryDetails() {
-  // Mocking API call to fetch express delivery fee and availability
-  expressFee = Price(2425, 2);
-  isAvailable = true;
+void ExpressDeliveryDecorator::updateDeliveryProvider(const string& provider) {
+  if (availableProviders.find(provider) != availableProviders.end()) {
+    currentProvider = provider;
+    expressFee = availableProviders[provider];
+  }
 }
 
 Price ExpressDeliveryDecorator::calculateTotal() const {
-  if (isAvailable) return wrappedOrder->calculateTotal() + expressFee;
+  return wrappedOrder->calculateTotal() + expressFee;
+}
 
-  return wrappedOrder->calculateTotal();
+const string& ExpressDeliveryDecorator::getCurrentDeliveryProvider() const {
+  return currentProvider;
+}
+
+const Price& ExpressDeliveryDecorator::getExpressFee() const {
+  return expressFee;
 }
 
 pair<bool, vector<string>> ExpressDeliveryDecorator::placeOrder() {

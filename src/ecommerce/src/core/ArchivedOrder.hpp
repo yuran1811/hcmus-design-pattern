@@ -1,6 +1,11 @@
 #pragma once
 
+#include <memory>
+
+#include "Order.hpp"
 #include "../utils/index.hpp"
+
+using std::shared_ptr;
 
 class OrderContext;
 
@@ -18,11 +23,12 @@ class ArchivedOrder {
 
  public:
   ArchivedOrder() = delete;
-  ArchivedOrder(const string&, const OrderContext&);
+  ArchivedOrder(const string&, const OrderContext&, shared_ptr<Order>);
   ~ArchivedOrder() = default;
 
   const string& getOrderId() const { return ORDER_ID; };
   const string& getOrderDate() const { return ORDER_DATE; };
+  const Price& getTotalCost() const { return totalCost; };
 
   string toString() const;
 };

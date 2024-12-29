@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include "CouponSystem.hpp"
 
@@ -11,6 +12,7 @@
 
 using std::cout;
 using std::make_shared;
+using std::map;
 using std::move;
 using std::pair;
 using std::shared_ptr;
@@ -90,14 +92,25 @@ class GiftWrapDecorator : public OrderDecorator {
 
 // Concrete Decorator: Express Delivery
 class ExpressDeliveryDecorator : public OrderDecorator {
- private:
-  Price expressFee;
-  bool isAvailable;
+ public:
+  inline static map<string, Price> availableProviders = {
+      {"J&T Express", Price(23'15, 2)},
+      {"Viettel Post", Price(25'35, 2)},
+      {"Ninja Van", Price(21'55, 2)}};
 
-  void fetchDeliveryDetails();
+ private:
+  string currentProvider;
+  Price expressFee;
+
+  bool isAvailable;
 
  public:
   ExpressDeliveryDecorator(shared_ptr<Order>);
+
+  void updateDeliveryProvider(const string&);
+
+  const string& getCurrentDeliveryProvider() const;
+  const Price& getExpressFee() const;
 
   Price calculateTotal() const override;
   pair<bool, vector<string>> placeOrder() override;

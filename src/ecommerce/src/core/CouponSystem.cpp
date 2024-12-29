@@ -79,7 +79,7 @@ pair<pair<Price, Price>, string> CouponSystem::applyCoupon(
   Coupon& coupon = coupons[code];
   const Price discountAmount =
       isOrderApplied        ? orderIDStatus.second
-      : coupon.isPercentage ? Price(cartTotal * (coupon.discount / 100.f))
+      : coupon.isPercentage ? Price(cartTotal * int(coupon.discount / 100.f))
                             : Price(coupon.discount);
 
   if (!isPreviewed && !isOrderApplied) {

@@ -1,15 +1,16 @@
 #include "Gui.hpp"
 
-void GUI::render(const OrderStageState& curStage, function<void()> callback) {
+void GUI::render(shared_ptr<Order> curOrder, const OrderContext& ctx,
+                 function<void()> renderer, function<void()> handler) {
   BeginDrawing();
   ClearBackground(RAYWHITE);
 
   renderHeader("Interactive E-Commerce Order Processing");
-  renderOrderProgress(curStage);
+  renderOrderProgress(ctx.currentStage, curOrder->isOrderCompleted());
   renderCurrentTime();
-  callback();
-
-  cursorUpdate(curStage);
+  renderer();
+  handler();
+  cursorUpdate(ctx.currentStage);
   GuiButton::eventsHandler();
   GuiButton::releaseButtons();
 
@@ -21,7 +22,8 @@ void GUI::renderHeader(const string& s) {
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
 }
 
-void GUI::renderOrderProgress(const OrderStageState& curStage) {
+void GUI::renderOrderProgress(const OrderStageState& curStage,
+                              bool isCompleted) {
   const int gap = (SCREEN_SIZE.width - ORDER_PROG_POS.x * 2 -
                    (ORDER_STAGE_COUNT * ORDER_PROG_ITEM_SIZE / 2)) /
                   (ORDER_STAGE_COUNT + 1);
@@ -44,7 +46,7 @@ void GUI::renderOrderProgress(const OrderStageState& curStage) {
   }
 
   // Render back arrow button
-  if (0 < curStage && curStage < COMPLETED) {
+  if (0 < curStage && curStage < COMPLETED && !isCompleted) {
     isShowBackProgress = true;
     (new GuiButton("<",
                    {ORDER_PROG_POS.x - ORDER_PROG_ITEM_SIZE / 2,
@@ -86,6 +88,9 @@ void GUI::renderCoupons(function<void(const string&)>& onClick) {
   for (int i = 0; i < coupons.size(); i++) {
     const Coupon& coupon = coupons[i];
 
+    CouponSystem* cs = CouponSystem::getInstance();
+    if (!cs->validateCoupon(coupon.code, Price(1, 0)).first) continue;
+
     (new GuiButton(coupon.code,
                    Rectangle{leftAlign, (40.f * i) + couponYPos,
                              20.f + MeasureText(coupon.code.c_str(), 20), 30},
@@ -109,6 +114,7 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
   if (isShowCTA) renderCTAButton("Fill the address info");
 
   const int quantityGap = 35;
+  Rectangle iconButtonRec = {midAlign, float(cartYPos), 30, 30};
 
   DrawText("Cart:", midAlign, cartYPos - 30, 20, DARKGRAY);
 
@@ -119,8 +125,7 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
             .c_str(),
         midAlign + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
 
-    Rectangle rec = {midAlign, float(cartYPos), 30, 30};
-    (new GuiButton("-", rec, GRAY, LIGHTGRAY, 10, 7))
+    (new GuiButton("-", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
         ->render(GetFontDefault(), 0)
         ->setEvent(GuiButton::EVENT::CLICK, [&]() {
           if (entry.second.second > 0) {
@@ -129,8 +134,8 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
           }
         });
 
-    rec.x = midAlign + quantityGap;
-    (new GuiButton("+", rec, GRAY, LIGHTGRAY, 10, 7))
+    iconButtonRec.x = midAlign + quantityGap;
+    (new GuiButton("+", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
         ->render(GetFontDefault(), 0)
         ->setEvent(GuiButton::EVENT::CLICK, [&]() {
           entry.second.second++;
@@ -138,6 +143,8 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
         });
 
     cartYPos += 40;
+    iconButtonRec.x = midAlign;
+    iconButtonRec.y = cartYPos;
   }
 
   if (cart.size()) {
@@ -157,11 +164,23 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
     if (discount > 0) {
       DrawText(("Discount: $" + discount.format()).c_str(), midAlign, cartYPos,
                20, GRAY);
+
+      iconButtonRec.x = midAlign - 35;
+      iconButtonRec.y = cartYPos - 5;
+      (new GuiButton("-", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
+          ->render(GetFontDefault(), 0)
+          ->setEvent(GuiButton::EVENT::CLICK, [&]() { discount = 0; });
+      cartYPos += 30;
+
+      DrawText(("Total: $" + totalCost.format()).c_str(), midAlign, cartYPos,
+               20, BLUE);
       cartYPos += 30;
     }
 
-    DrawText(("Total: $" + totalCost.format()).c_str(), midAlign, cartYPos, 20,
-             DARKGREEN);
+    DrawText(("Cost: $" +
+              (totalCost > discount ? totalCost - discount : Price(0)).format())
+                 .c_str(),
+             midAlign, cartYPos, 20, DARKGREEN);
   } else {
     DrawText("Cart is empty!", midAlign, cartYPos, 20, GRAY);
   }
@@ -209,9 +228,33 @@ void GUI::renderAddressInfo(const string& address, const string& phone) {
   if (isShowCTA) renderCTAButton("Shipping Info");
 }
 
-void GUI::renderShipping() {
-  DrawText(("Delivery Cost is default = " + Price(2425, 2).format()).c_str(),
-           leftAlign, 100, 20, DARKGRAY);
+void GUI::renderShippingProvider(
+    const string& curProvider,
+    function<void(const string&)>& shippingProviderHandler) {
+  map<string, Price> providers = ExpressDeliveryDecorator::availableProviders;
+
+  Rectangle rec = {leftAlign, 150, 0, 40};
+
+  for (const auto& [provider, price] : providers) {
+    const string msg = provider + " - " + price.format();
+
+    rec.width = 15.f * 2 + MeasureText(msg.c_str(), 20);
+    (new GuiButton(msg, rec, curProvider == provider ? DARKBLUE : BLACK,
+                   curProvider == provider ? SKYBLUE : LIGHTGRAY, 15, 10))
+        ->setEvent(GuiButton::EVENT::CLICK,
+                   [&]() { shippingProviderHandler(provider); })
+        ->render(GetFontDefault(), 0);
+
+    rec.y += 50;
+  }
+}
+
+void GUI::renderShipping(
+    const OrderContext& ctx,
+    function<void(const string&)>& shippingProviderHandler) {
+  DrawText("Select Shipping Provider:", leftAlign, 100, 20, DARKGRAY);
+
+  renderShippingProvider(ctx.deliveryProvider, shippingProviderHandler);
 
   isShowCTA = true;
   renderCTAButton("Goto Payment");
@@ -221,9 +264,9 @@ void GUI::renderPaymentQR(const string& content,
                           const PaymentMethod& paymentMethod,
                           const Price& price,
                           function<void()>& onPaymentSuccess) {
-  const int __leftAlign = paymentMethodRec.x + paymentMethodRec.width + 50;
+  const float __leftAlign = paymentMethodRec.x + paymentMethodRec.width + 50;
 
-  DrawText(("Total: $" + price.format()).c_str(), __leftAlign,
+  DrawText(("Total: $" + price.format()).c_str(), int(__leftAlign),
            paymentMethodRec.y + 35, 20, DARKGREEN);
 
   if (paymentMethod == COD) {
@@ -233,8 +276,7 @@ void GUI::renderPaymentQR(const string& content,
     if (!isShowCTA)
       (new GuiButton(
            "Confirm",
-           {paymentMethodRec.x + paymentMethodRec.width + 50,
-            paymentMethodRec.y + 70,
+           {__leftAlign, paymentMethodRec.y + 70,
             15.f * 2 + MeasureText((char*)"Confirm", 20), 20.f + 20.f},
            BLACK, LIGHTGRAY, 15, 10))
           ->setEvent(GuiButton::EVENT::CLICK,
@@ -281,8 +323,9 @@ void GUI::renderPaymentQR(const string& content,
     if (!isShowCTA)
       (new GuiButton(
            "Confirm",
-           {paymentMethodRec.x + paymentMethodRec.width + 50,
-            paymentMethodRec.y + 270.f + 90.f,
+           {__leftAlign +
+                MeasureText(("Total: $" + price.format()).c_str(), 20) + 20.f,
+            paymentMethodRec.y + 25,
             15.f * 2 + MeasureText((char*)"Confirm", 20), 20.f + 20.f},
            BLACK, LIGHTGRAY, 15, 10))
           ->setEvent(GuiButton::EVENT::CLICK,
@@ -296,8 +339,8 @@ void GUI::renderPaymentQR(const string& content,
 
 void GUI::renderPaymentSuccessInfo(const string& msg, const Price& price) {
   const float __l = paymentMethodRec.x + paymentMethodRec.width + 50;
-  const float __w = SCREEN_SIZE.width - __l;
-  const float __h = utils::calcTextWrapHeight(msg, SCREEN_SIZE.width - __l);
+  const float __w = SCREEN_SIZE.width - __l - leftAlign;
+  const float __h = utils::calcTextWrapHeight(msg, __w);
 
   GuiTextWrap(GuiText(msg, {0, 0}, 20, DARKGRAY),
               {__l, paymentMethodRec.y, __w, __h}, LIGHTGRAY,
@@ -310,7 +353,8 @@ void GUI::renderPaymentSuccessInfo(const string& msg, const Price& price) {
            paymentMethodRec.y + __h + 52, 20, DARKGREEN);
 }
 
-void GUI::renderPaymentMethod(const OrderContext& ctx,
+void GUI::renderPaymentMethod(const string& orderID, const Price& paymentAmount,
+                              const OrderContext& ctx,
                               function<void()>& onPaymentSuccess) {
   Rectangle rec = paymentMethodRec;
 
@@ -323,9 +367,9 @@ void GUI::renderPaymentMethod(const OrderContext& ctx,
   }
 
   if (!isShowCTA)
-    renderPaymentQR(
-        PAYMENT_METHODS[ctx.paymentMethod] + "::" + ctx.totalCost.format(),
-        ctx.paymentMethod, ctx.totalCost, onPaymentSuccess);
+    renderPaymentQR(orderID + "::" + PAYMENT_METHODS[ctx.paymentMethod] +
+                        "::" + paymentAmount.format(),
+                    ctx.paymentMethod, paymentAmount, onPaymentSuccess);
   else {
     renderPaymentSuccessInfo(ctx.paymentInfo.first, ctx.paymentInfo.second);
     renderCTAButton("Finish");
@@ -346,7 +390,7 @@ void GUI::renderOrderInfoText(const string& label, const string& value,
 }
 
 void GUI::renderCompleted(const string& orderID, const string& timestamp,
-                          Price& totalCost, const string& address,
+                          const Price& totalCost, const string& address,
                           const PaymentMethod& paymentMethod) {
   if (!confettiParticles) {
     confettiParticles =
