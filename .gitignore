@@ -3,6 +3,7 @@
 **/qrcode/*.png
 **/release/*
 *.o
+*.d
 *.zip
 
 **/_minted-*
