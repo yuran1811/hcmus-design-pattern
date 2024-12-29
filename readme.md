@@ -54,15 +54,9 @@
 - [Class Diagram](https://www.youtube.com/watch?v=oBykLn64AUc)
 - [Google Docs](https://docs.google.com/document/d/15TcY6pMLa6TX5yh1ZzohrWlP5h4e0eEz0bof7O6rhNQ/edit)
 - [Refactoring Guru (PDF)](https://drive.google.com/file/d/16rFOFMC4pIhXA9Vhczq5nJKG7FLvJyHC/view)
+- [Design Pattern in C++](https://medium.com/@lokeshbihani99/design-patterns-in-c-5cdf245d594d)
+- [SE Principles & Clean Code](https://medium.com/@hlfdev/kiss-dry-solid-yagni-a-simple-guide-to-some-principles-of-software-engineering-and-clean-code-05e60233c79f)
 - Raylib
   - [Cheatsheet](https://www.raylib.com/cheatsheet/cheatsheet.html)
   - [Examples (Text)](https://www.raylib.com/examples.html)
   - [Raygui Collection](https://raylibtech.itch.io/)
-
-### Internal
-
-- [Editor Source Code using Command Design Pattern](./src/editor/)
-- [Examples](./src/examples/)
-  - [Basic (From Guru)](./src/examples/demo/main.cpp)
-  - [Remote Control (From GeeksforGeeks)](./src/examples/gfg/)
-  - [Calculator](./src/examples/calc/)
