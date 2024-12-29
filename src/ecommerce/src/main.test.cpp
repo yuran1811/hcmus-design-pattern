@@ -19,8 +19,7 @@ int main(void) {
        "that designates the storage region to which ptr points. In C, the "
        "that locate (designate) objects.\n\n\tyuran1811",
        {screenWidth / 2 - 200, screenHeight / 2 - 200, 400, 400}))
-      ->setEvent(GuiModal::EVENT::CLOSE,
-                 [&showModal]() { showModal = false; });
+      ->setEvent(GuiModal::EVENT::CLOSE, [&showModal]() { showModal = false; });
 
   while (!WindowShouldClose()) {
     if (IsKeyPressed(KEY_SPACE)) showModal = !showModal;
