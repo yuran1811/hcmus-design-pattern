@@ -12,6 +12,7 @@ OBJS_MAIN 	= $(SRCS_MAIN:.cpp=.o)
 OBJS_TEST 	= $(SRCS_TEST:.cpp=.o)
 DEPFILES 	= $(SRCS_MAIN:.cpp=.d) $(SRCS_TEST:.cpp=.d)
 TARGET		= main
+TARGET_TEST	= main_test
 
 RAYLIB_VER	= -5.0
 RAYLIB_INC 	= -I../raylib$(RAYLIB_VER)/src -I../raylib$(RAYLIB_VER)/src/external -I../raylib$(RAYLIB_VER)/src/extras
@@ -22,8 +23,8 @@ LDFLAGS 	= -L$(SRC) ../raylib$(RAYLIB_VER)/src/raylib.rc.data -static -lopengl32
 $(BIN)/$(TARGET): $(OBJS_MAIN)
 	$(CXX) $(CXXFLAGS) $(OBJS_MAIN) -o ./$(BIN)/$(TARGET) $(RAYLIB_INC) $(RAYLIB_LIB) $(LDFLAGS) -I$(INCLUDE)
 
-$(BIN)/$(TARGET)_test: $(OBJS_TEST)
-	$(CXX) $(CXXFLAGS) $(OBJS_TEST) -o ./$(BIN)/$(TARGET)_test $(RAYLIB_INC) $(RAYLIB_LIB) $(LDFLAGS) -I$(INCLUDE)
+$(BIN)/$(TARGET_TEST): $(OBJS_TEST)
+	$(CXX) $(CXXFLAGS) $(OBJS_TEST) -o ./$(BIN)/$(TARGET_TEST) $(RAYLIB_INC) $(RAYLIB_LIB) $(LDFLAGS) -I$(INCLUDE)
 
 # Pattern rules for object files
 %.o: %.cpp
@@ -40,14 +41,14 @@ exec:
 clean:
 	rm -f ./$(BIN)/$(TARGET)* ./src/**/*.o $(DEPFILES)
 
-cleanall:
-	rm -f ./$(BIN)/$(TARGET)* $(OBJS_MAIN) $(OBJS_TEST) $(DEPFILES)
+cleanall: clean
+	rm -f $(OBJS_MAIN) $(OBJS_TEST)
 
 run: all
 	make exec
 
-test: $(BIN)/$(TARGET)_test
-	./$(BIN)/$(TARGET)_test
+test: $(BIN)/$(TARGET_TEST)
+	./$(BIN)/$(TARGET_TEST)
 
 pack: all
 	rm -rf ./release
