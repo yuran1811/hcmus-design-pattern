@@ -31,7 +31,7 @@ class GUI {
   const float midAlign = 300.f;
 
   const Vector2 ADDR_INP_POS = {leftAlign, 140};
-  const Vector2 ADDR_INP_SIZE = {440, 40};
+  const Vector2 ADDR_INP_SIZE = {SCREEN_SIZE.width - 2 * leftAlign, 40};
   const Rectangle ADDR_INP_REC = {ADDR_INP_POS.x, ADDR_INP_POS.y,
                                   ADDR_INP_SIZE.x, ADDR_INP_SIZE.y};
 
