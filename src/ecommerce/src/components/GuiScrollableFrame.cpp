@@ -3,6 +3,10 @@
 GuiScrollableFrame::GuiScrollableFrame(Rectangle _v, Rectangle _c)
     : viewport(_v), content(_c), scrollOffset({0, 0}) {}
 
+void GuiScrollableFrame::updateContentHeight(float _) {
+  content.height = max(_, viewport.height);
+}
+
 void GuiScrollableFrame::handleScrolling() {
   if (!utils::ui::mouseHoveredInBox(viewport)) return;
 
@@ -20,7 +24,7 @@ void GuiScrollableFrame::handleScrolling() {
   // Clamp scrolling to content bounds
   if (scrollOffset.x > 0) scrollOffset.x = 0;
   if (scrollOffset.y > 0) scrollOffset.y = 0;
-  
+
   if (scrollOffset.x < viewport.width - content.width)
     scrollOffset.x = viewport.width - content.width;
   if (scrollOffset.y < viewport.height - content.height)

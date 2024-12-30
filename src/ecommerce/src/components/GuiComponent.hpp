@@ -176,6 +176,8 @@ class GuiScrollableFrame {
     return {content.x + scrollOffset.x, content.y + scrollOffset.y};
   }
 
+  void updateContentHeight(float);
+
   void handleScrolling();
   void render(function<void()>);
 };

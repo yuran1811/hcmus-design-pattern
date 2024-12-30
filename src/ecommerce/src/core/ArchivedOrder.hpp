@@ -30,6 +30,9 @@ class ArchivedOrder {
   const string& getOrderId() const { return ORDER_ID; };
   const string& getOrderDate() const { return ORDER_DATE; };
   const Price& getTotalCost() const { return totalCost; };
+  const string& getAddress() const { return address; };
+  const string& getPhone() const { return phone; };
+  const PaymentMethod& getPaymentMethod() const { return paymentMethod; };
 
   string toString() const;
 };
