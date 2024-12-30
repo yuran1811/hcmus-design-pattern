@@ -19,6 +19,13 @@ string utils::uuid_v4() {
   return string(uuid);
 }
 
+string utils::getTimestampString() {
+  const time_t now = time(0);
+  char buffer[64];
+  strftime(buffer, sizeof(buffer), "%Y%m%d_%H%M%S", localtime(&now));
+  return string(buffer);
+}
+
 string utils::getDateTimeString() {
   const time_t now = time(0);
   const tm *ltm = localtime(&now);

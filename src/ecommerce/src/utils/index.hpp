@@ -25,6 +25,7 @@ string getResourcePath(AssetFolder, string, AssetType);
 
 string uuid_v4();
 
+string getTimestampString();
 string getDateTimeString();
 
 string toStringWithPrecision(double value, int precision);
