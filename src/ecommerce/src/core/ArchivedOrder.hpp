@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "Order.hpp"
 #include "../utils/index.hpp"
+
+#include "Order.hpp"
 
 using std::shared_ptr;
 

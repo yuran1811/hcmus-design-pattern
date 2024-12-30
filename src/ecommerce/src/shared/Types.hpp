@@ -9,6 +9,8 @@ using std::pair;
 using std::string;
 using std::unordered_map;
 
+enum class GUIScreen { SPLASH, MAIN, ARCHIVED };
+
 enum class AssetFolder {
   FONTS,
   ICONS,
@@ -40,8 +42,8 @@ enum OrderStageState {
   PAYMENT_METHOD,
   COMPLETED
 };
-static const string ORDER_STAGES[] = {
-    "Select Item", "Address Info", "Shipping", "Payment Method", "Completed"};
+static const string ORDER_STAGES[] = {"Select Item", "Address Info", "Shipping",
+                                      "Payment Method", "Completed"};
 static const int ORDER_STAGE_COUNT = 5;
 
 // Key: Item name, Value: Pair of Item and quantity

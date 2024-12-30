@@ -5,7 +5,7 @@ BIN			= bin
 INCLUDE		= include
 SRC			= src
 
-SRCS 		= $(wildcard $(INCLUDE)/*.cpp $(SRC)/components/*.cpp $(SRC)/core/*.cpp $(SRC)/shared/*.cpp $(SRC)/utils/*.cpp)
+SRCS 		= $(wildcard $(INCLUDE)/*.cpp $(SRC)/components/*.cpp $(SRC)/core/*.cpp $(SRC)/gui/*.cpp $(SRC)/shared/*.cpp $(SRC)/utils/*.cpp)
 SRCS_MAIN 	= $(SRCS) $(SRC)/main.cpp
 SRCS_TEST 	= $(SRCS) $(SRC)/main.test.cpp
 OBJS_MAIN 	= $(SRCS_MAIN:.cpp=.o)

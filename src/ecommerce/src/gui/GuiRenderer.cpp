@@ -191,19 +191,25 @@ void GUI::renderInput(const InputType& type, const string& info,
                       const Vector2& size) {
   DrawText(info.c_str(), pos.x, pos.y - 30, 20, DARKGRAY);
 
+  const int maxDisplayLength = size.x / MeasureText("X", 20) - 3;
+  const char* displayValue = (value.size() > maxDisplayLength
+                                  ? value.substr(0, maxDisplayLength) + "..."
+                                  : value)
+                                 .c_str();
+
   const float inputWidth =
-      std::min(size.x, (value.size() ? 35.f + MeasureText(value.c_str(), 20)
+      std::min(size.x, (value.size() ? 35.f + MeasureText(displayValue, 20)
                                      : 20.f + MeasureText("_", 30)));
 
   if (inputActiveStates[int(type)].isSet((unsigned int)InputState::ACTIVE)) {
     DrawRectangleV(pos, {inputWidth, size.y}, SKYBLUE);
-    DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, DARKBLUE);
+    DrawText(displayValue, pos.x + 10, pos.y + 10, 20, DARKBLUE);
 
     if ((getFrameCounter() / 30) % 2)
-      DrawText("_", pos.x + 10 + MeasureText(value.c_str(), 20), pos.y + 6, 30,
+      DrawText("_", pos.x + 10 + MeasureText(displayValue, 20), pos.y + 6, 30,
                DARKBLUE);
   } else {
-    DrawText(value.c_str(), pos.x + 10, pos.y + 10, 20, GRAY);
+    DrawText(displayValue, pos.x + 10, pos.y + 10, 20, GRAY);
 
     if (value.empty())
       DrawText("Click to type", pos.x + 10, pos.y + 10, 20, GRAY);

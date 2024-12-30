@@ -12,11 +12,11 @@
 #include "raylib.h"
 
 #include "../components/index.hpp"
+#include "../core/index.hpp"
 #include "../shared/index.hpp"
 #include "../utils/index.hpp"
 
-#include "Payment.hpp"
-#include "Order.hpp"
+#include "Screen.hpp"
 
 using std::function;
 using std::pair;
@@ -141,4 +141,4 @@ class GUI {
   bool isBackProgressClicked() const;
 };
 
-#include "Stage.hpp"
+#include "../core/Stage.hpp"
