@@ -140,6 +140,8 @@ void CompletionStage::handle(OrderStageSystem& stageSystem, OrderContext& ctx,
     ctx.currentStage = SELECT_ITEM;
     ctx.cart.clear();
     ctx.totalCost = 0;
+    ctx.discount = 0;
+
     app->resetOrder();
   }
 }

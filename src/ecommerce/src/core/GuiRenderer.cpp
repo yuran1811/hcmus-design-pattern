@@ -361,8 +361,9 @@ void GUI::renderPaymentMethod(const string& orderID, const Price& paymentAmount,
   for (int i = 0; i < PAYMENT_METHOD_COUNT; i++) {
     if (i) rec.y += 50;
 
-    (new GuiButton(PAYMENT_METHODS[i], rec, BLACK,
-                   ctx.paymentMethod == i ? GRAY : LIGHTGRAY, 15, 10))
+    (new GuiButton(PAYMENT_METHODS[i], rec,
+                   ctx.paymentMethod == i ? DARKBLUE : BLACK,
+                   ctx.paymentMethod == i ? SKYBLUE : LIGHTGRAY, 15, 10))
         ->render(GetFontDefault(), 0);
   }
 
