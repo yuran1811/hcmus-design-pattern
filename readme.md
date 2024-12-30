@@ -38,7 +38,7 @@
 
 - [x] Project Idea
 - [x] Problem Analysis and Design Patterns Selection
-- [ ] System Design and UML Diagrams
+- [x] System Design and UML Diagrams
 - [x] Design Pattern Implementation in the System
 - [x] Code structure
 - [x] System Correctness
