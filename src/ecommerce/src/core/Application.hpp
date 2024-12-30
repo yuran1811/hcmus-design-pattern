@@ -2,7 +2,8 @@
 
 #include <memory>
 
-#include "Gui.hpp"
+#include "../gui/index.hpp"
+
 #include "ArchivedOrder.hpp"
 
 using std::make_shared;
@@ -48,5 +49,6 @@ class Application {
   void addArchivedOrder();
 
   void init();
+  void initScreens();
   void run();
 };

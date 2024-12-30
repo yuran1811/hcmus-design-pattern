@@ -5,10 +5,10 @@
 #include <memory>
 #include <map>
 
-#include "CouponSystem.hpp"
-
 #include "../shared/index.hpp"
 #include "../utils/index.hpp"
+
+#include "CouponSystem.hpp"
 
 using std::cout;
 using std::make_shared;

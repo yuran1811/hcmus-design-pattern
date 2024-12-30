@@ -1,5 +1,4 @@
-#include "core/index.hpp"
-#include "utils/index.hpp"
+#include "core/Application.hpp"
 
 const vector<Item> ITEMS = {
     {"Laptop", {999'99, 2}},  {"Mouse", {19'99, 2}},

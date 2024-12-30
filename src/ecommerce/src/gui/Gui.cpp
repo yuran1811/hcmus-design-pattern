@@ -81,22 +81,31 @@ void GUI::stopConfetti() {
   }
 }
 
-void GUI::cursorUpdate(const OrderStageState& curStage) {
+void GUI::cursorUpdate(Application* app, const GUIScreen& guiScreen) {
+  switch (guiScreen) {
+    case GUIScreen::MAIN:
+      if (app->getOrderContext().currentStage ==
+          OrderStageState::ADDRESS_INPUT) {
+        vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
+
+        for (const Rectangle& _ : recs)
+          if (CheckCollisionPointRec(GetMousePosition(), _)) {
+            cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
+            break;
+          }
+      }
+
+      break;
+
+    default:
+      break;
+  }
+
   for (GuiButton* btn : GuiButton::getButtons())
     if (btn->isHovered()) {
       cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_POINTING_HAND);
       break;
     }
-
-  if (curStage == OrderStageState::ADDRESS_INPUT) {
-    vector<Rectangle> recs = {ADDR_INP_REC, PHONE_INP_REC};
-
-    for (const Rectangle& _ : recs)
-      if (CheckCollisionPointRec(GetMousePosition(), _)) {
-        cursorBitState.set((unsigned int)MouseCursor::MOUSE_CURSOR_IBEAM);
-        break;
-      }
-  }
 
   // Handling cursor state
   if (!cursorBitState.value)
