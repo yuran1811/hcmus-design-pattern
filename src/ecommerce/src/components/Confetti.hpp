@@ -20,7 +20,7 @@ struct Confetti {
 
 class ConfettiParticles {
  public:
-  static const float GRAVITY;
+  inline static const float GRAVITY = 0.98f * 1.25f;
 
  private:
   vector<Confetti*> confetti;

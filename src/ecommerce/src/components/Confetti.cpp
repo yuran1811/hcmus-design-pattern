@@ -1,7 +1,5 @@
 #include "Confetti.hpp"
 
-const float ConfettiParticles::GRAVITY = 0.98f * 1.25f;
-
 ConfettiParticles::ConfettiParticles(int numParticles, int screenWidth,
                                      int screenHeight)
     : numParticles(numParticles),
