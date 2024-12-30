@@ -9,7 +9,8 @@ using std::pair;
 using std::string;
 using std::unordered_map;
 
-enum class GUIScreen { SPLASH, MAIN, ARCHIVED };
+enum class GUIScreen { NOT_FOUND = -1, MAIN, ARCHIVED };
+static const int GUI_SCREEN_COUNT = 3;
 
 enum class AssetFolder {
   FONTS,

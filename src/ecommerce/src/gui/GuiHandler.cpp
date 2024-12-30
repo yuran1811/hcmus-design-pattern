@@ -1,5 +1,10 @@
 #include "Gui.hpp"
 
+bool GUI::archivedOrderHandler() {
+  archivedOrdersContainer->handleScrolling();
+  return true;
+}
+
 bool GUI::selectItemHandler(CartType& cart, Price& price) {
   for (int i = 0; i < items.size(); i++) {
     if (utils::ui::mousePressedInBox({leftAlign, (40.f * i) + 130, 150, 30},
@@ -42,6 +47,15 @@ bool GUI::inputHandler(const InputType& inputType, string& value, int maxLen,
 
     if (IsKeyPressed(KEY_ENTER))
       inputActiveStates[(int)inputType].unset((unsigned int)InputState::ACTIVE);
+
+    if ((IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)) &&
+        IsKeyPressed(KEY_V)) {
+      const char* clipboard = GetClipboardText();
+      if (clipboard) {
+        value += clipboard;
+        if (value.length() > maxLen) value = value.substr(0, maxLen);
+      }
+    }
   }
 
   return true;

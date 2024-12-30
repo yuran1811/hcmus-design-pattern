@@ -68,12 +68,52 @@ void Application::addArchivedOrder() {
 }
 
 void Application::init() {
-  if (!gui)
-    TraceLog(LOG_ERROR, "GUI is not set.");
-  else
-    gui->init();
+  if (!gui) return void(TraceLog(LOG_ERROR, "GUI is not set."));
 
   registerPaymentGateways();
+
+  gui->init();
+  initScreens();
+}
+
+void Application::initScreens() {
+  ScreenManager& instance = ScreenManager::getInstance();
+
+  instance.addScreen(
+      GUIScreen::NOT_FOUND,
+      [&]() {
+        gui->renderHeader("Interactive E-Commerce Order Processing");
+
+        const float text404Width = MeasureText("404", 124);
+        DrawText("404", SCREEN_SIZE.width / 2 - text404Width / 2,
+                 SCREEN_SIZE.height / 3 - 50, 124, VIOLET);
+
+        const float textNotFoundWidth = MeasureText("Page Not Found", 28);
+        DrawText("Page Not Found",
+                 SCREEN_SIZE.width / 2 - textNotFoundWidth / 2,
+                 SCREEN_SIZE.height / 2, 28, VIOLET);
+      },
+      [&]() {});
+
+  instance.addScreen(
+      GUIScreen::MAIN,
+      [&]() {
+        gui->renderHeader("Interactive E-Commerce Order Processing");
+        gui->renderOrderProgress(orderContext.currentStage,
+                                 currentOrder->isOrderCompleted());
+
+        orderStageSystem.renderHandler(orderContext, gui.get(), this);
+      },
+      [&]() { orderStageSystem.stageHandler(orderContext, gui.get(), this); });
+
+  instance.addScreen(
+      GUIScreen::ARCHIVED,
+      [&]() {
+        gui->renderHeader("Archived Orders");
+        gui->renderStageMessage("Viewing archived orders");
+        gui->renderArchivedOrderList(archivedOrders);
+      },
+      [&]() { gui->archivedOrderHandler(); });
 }
 
 void Application::run() {
@@ -84,12 +124,7 @@ void Application::run() {
     gui->incFrameCounter();
 
     gui->render(
-        currentOrder, orderContext,
-        [&]() {
-          orderStageSystem.renderHandler(orderContext, gui.get(), this);
-        },
-        [&]() {
-          orderStageSystem.stageHandler(orderContext, gui.get(), this);
-        });
+        this, [&]() { ScreenManager::getInstance().renderCurrentScreen(); },
+        [&]() { ScreenManager::getInstance().handleCurrentScreen(); });
   }
 }

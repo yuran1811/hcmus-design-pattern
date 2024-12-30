@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 #include <functional>
 
 #include "raylib.h"
@@ -44,6 +44,10 @@ class GUI {
   const Vector2 ORDER_PROG_POS = {
       120.f, SCREEN_SIZE.height - 110 + ORDER_PROG_ITEM_SIZE / 2};
 
+  const Rectangle ARCHIVED_ORDERS_REC = {leftAlign, 100,
+                                         SCREEN_SIZE.width - 2 * leftAlign,
+                                         SCREEN_SIZE.height - 150};
+
  private:
   vector<Item> items;
   vector<Coupon> coupons;
@@ -61,6 +65,9 @@ class GUI {
   Vector2 lastCurPos;
 
   ConfettiParticles *confettiParticles = nullptr;
+
+  unique_ptr<GuiScrollableFrame> archivedOrdersContainer =
+      make_unique<GuiScrollableFrame>(ARCHIVED_ORDERS_REC, ARCHIVED_ORDERS_REC);
 
   const Rectangle paymentMethodRec = {leftAlign, 100, 150, 40};
   Rectangle ctaRec = {0, SCREEN_SIZE.height - 50, 0, 40};
@@ -93,16 +100,20 @@ class GUI {
 
   void init();
   void stopConfetti();
-  void cursorUpdate(const OrderStageState &);
+  void cursorUpdate(Application *, const GUIScreen &);
   void processStageBacking(const OrderStageState &);
 
-  void render(shared_ptr<Order>, const OrderContext &, function<void()>,
-              function<void()>);
+  // Render methods
+  void render(Application *, function<void()>, function<void()>);
   void renderHeader(const string &);
   void renderOrderProgress(const OrderStageState &, bool);
   void renderCurrentTime();
   void renderCTAButton(const string &);
   void renderStageMessage(const string &);
+  void renderSwitchScreenButton();
+
+  void renderArchivedOrder(ArchivedOrder *, const Vector2 &);
+  void renderArchivedOrderList(const vector<unique_ptr<ArchivedOrder>> &);
 
   void renderCoupons(function<void(const string &)> &);
   void renderSelectItem(CartType &, Price &, Price &);
@@ -126,6 +137,9 @@ class GUI {
                            const Color &, const Color &);
   void renderCompleted(const string &, const string &, const Price &,
                        const string &, const PaymentMethod &);
+
+  // Event handlers
+  bool archivedOrderHandler();
 
   bool selectItemHandler(CartType &, Price &);
 

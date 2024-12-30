@@ -1,16 +1,16 @@
 #include "Gui.hpp"
 
-void GUI::render(shared_ptr<Order> curOrder, const OrderContext& ctx,
-                 function<void()> renderer, function<void()> handler) {
+void GUI::render(Application* app, function<void()> renderer,
+                 function<void()> handler) {
   BeginDrawing();
   ClearBackground(RAYWHITE);
 
-  renderHeader("Interactive E-Commerce Order Processing");
-  renderOrderProgress(ctx.currentStage, curOrder->isOrderCompleted());
-  renderCurrentTime();
+  renderSwitchScreenButton();
+
   renderer();
   handler();
-  cursorUpdate(ctx.currentStage);
+
+  cursorUpdate(app, ScreenManager::getInstance().getCurrentScreen());
   GuiButton::eventsHandler();
   GuiButton::releaseButtons();
 
@@ -18,7 +18,9 @@ void GUI::render(shared_ptr<Order> curOrder, const OrderContext& ctx,
 }
 
 void GUI::renderHeader(const string& s) {
-  DrawText(s.c_str(), leftMidAlign, 15, 20, BLUE);
+  const float xPos = (SCREEN_SIZE.width - MeasureText(s.c_str(), 20)) / 2;
+
+  DrawText(s.c_str(), xPos, 15, 20, BLUE);
   DrawLine(0, 45, SCREEN_SIZE.width, 45, LIGHTGRAY);
 }
 
@@ -80,6 +82,96 @@ void GUI::renderStageMessage(const string& s) {
            utils::color::calcBreathColor(LIME, frameTimer * 3.75f));
 }
 
+void GUI::renderSwitchScreenButton() {
+  ScreenManager& sm = ScreenManager::getInstance();
+  const string btnText = sm.getCurrentScreen() == GUIScreen::MAIN
+                             ? "View Archived Order"
+                             : "Back to Main";
+
+  const float btnWidth = MeasureText(btnText.c_str(), 20) + 20;
+  const float btnHeight = 40;
+  const float btnX = leftAlign;
+  const float btnY = ctaRec.y;
+
+  (new GuiButton(btnText, {btnX, btnY, btnWidth, btnHeight}, RAYWHITE, DARKGRAY,
+                 10))
+      ->setEvent(GuiButton::EVENT::CLICK,
+                 [&]() {
+                   sm.switchScreen(sm.getCurrentScreen() == GUIScreen::MAIN
+                                       ? GUIScreen::ARCHIVED
+                                       : GUIScreen::MAIN);
+                 })
+      ->render(GetFontDefault(), 0);
+}
+
+void GUI::renderArchivedOrder(ArchivedOrder* order, const Vector2& pos) {
+  DrawRectangleLinesEx({pos.x, pos.y, SCREEN_SIZE.width - 2 * pos.x, 110}, 2,
+                       DARKGRAY);
+
+  const char* orderID = (order->getOrderId().substr(0, 28)).c_str();
+  const char* orderDate = (order->getOrderDate()).c_str();
+  const char* orderAddress = (order->getAddress().substr(0, 58)).c_str();
+  const char* orderPaymentMethod =
+      (PAYMENT_METHODS[order->getPaymentMethod()]).c_str();
+
+  const float originTopOffset = pos.y + 5;
+  const float originLeftOffset = pos.x + 5;
+
+  float topOffset = originTopOffset;
+  float leftOffset = originLeftOffset;
+  float segmentWidth = MeasureText(orderID, 20) + 20;
+
+  DrawRectangleRounded({leftOffset, topOffset, segmentWidth, 30}, 0.25f, 40,
+                       PURPLE);
+  DrawText(orderID, leftOffset + 10, topOffset + 5, 20, DARKPURPLE);
+  leftOffset += segmentWidth + 20;
+
+  segmentWidth = MeasureText(orderDate, 20) + 20;
+  DrawRectangleRounded({SCREEN_SIZE.width - originLeftOffset - segmentWidth,
+                        topOffset, segmentWidth, 30},
+                       0.25f, 40, LIGHTGRAY);
+  DrawText(orderDate, SCREEN_SIZE.width - originLeftOffset - segmentWidth + 10,
+           topOffset + 5, 20, DARKGRAY);
+
+  leftOffset = originLeftOffset;
+  topOffset += 40;
+
+  segmentWidth = MeasureText(orderAddress, 20) + 20;
+  DrawText(orderAddress, leftOffset + 10, topOffset, 20, DARKGRAY);
+
+  topOffset += 30;
+
+  segmentWidth = MeasureText(orderPaymentMethod, 20) + 20;
+  DrawRectangleRounded({leftOffset, topOffset, segmentWidth, 30}, 0.25f, 40,
+                       SKYBLUE);
+  DrawText(orderPaymentMethod, leftOffset + 10, topOffset + 5, 20, DARKBLUE);
+  leftOffset += segmentWidth + 5;
+
+  segmentWidth =
+      MeasureText(("$" + order->getTotalCost().format()).c_str(), 20) + 20;
+  DrawRectangleRounded({leftOffset, topOffset, segmentWidth, 30}, 0.25f, 40,
+                       GOLD);
+  DrawText(("$" + order->getTotalCost().format()).c_str(), leftOffset + 10,
+           topOffset + 5, 20, DARKBROWN);
+}
+
+void GUI::renderArchivedOrderList(
+    const vector<unique_ptr<ArchivedOrder>>& list) {
+  if (list.empty())
+    return DrawText("No archived orders found!", leftAlign, 100, 20, GRAY);
+
+  float yPos = 0.f;
+  archivedOrdersContainer->updateContentHeight(125 * list.size());
+  archivedOrdersContainer->render([&]() {
+    const Vector2 offset = archivedOrdersContainer->getRenderPosition();
+
+    for (auto it = list.rbegin(); it != list.rend(); ++it) {
+      renderArchivedOrder((*it).get(), {leftAlign, yPos + offset.y});
+      yPos += 125.f;
+    }
+  });
+}
+
 void GUI::renderCoupons(function<void(const string&)>& onClick) {
   int couponYPos = 165 + 40 * items.size();
 
@@ -126,21 +218,23 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
         midAlign + quantityGap * 2 + 10, cartYPos + 7, 20, DARKBLUE);
 
     (new GuiButton("-", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
-        ->render(GetFontDefault(), 0)
-        ->setEvent(GuiButton::EVENT::CLICK, [&]() {
-          if (entry.second.second > 0) {
-            totalCost -= entry.second.first.price;
-            if (--entry.second.second <= 0) cart.erase(entry.first);
-          }
-        });
+        ->setEvent(GuiButton::EVENT::CLICK,
+                   [&]() {
+                     if (entry.second.second > 0) {
+                       totalCost -= entry.second.first.price;
+                       if (--entry.second.second <= 0) cart.erase(entry.first);
+                     }
+                   })
+        ->render(GetFontDefault(), 0);
 
     iconButtonRec.x = midAlign + quantityGap;
     (new GuiButton("+", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
-        ->render(GetFontDefault(), 0)
-        ->setEvent(GuiButton::EVENT::CLICK, [&]() {
-          entry.second.second++;
-          totalCost += entry.second.first.price;
-        });
+        ->setEvent(GuiButton::EVENT::CLICK,
+                   [&]() {
+                     entry.second.second++;
+                     totalCost += entry.second.first.price;
+                   })
+        ->render(GetFontDefault(), 0);
 
     cartYPos += 40;
     iconButtonRec.x = midAlign;
@@ -168,8 +262,8 @@ void GUI::renderSelectItem(CartType& cart, Price& totalCost, Price& discount) {
       iconButtonRec.x = midAlign - 35;
       iconButtonRec.y = cartYPos - 5;
       (new GuiButton("-", iconButtonRec, GRAY, LIGHTGRAY, 10, 7))
-          ->render(GetFontDefault(), 0)
-          ->setEvent(GuiButton::EVENT::CLICK, [&]() { discount = 0; });
+          ->setEvent(GuiButton::EVENT::CLICK, [&]() { discount = 0; })
+          ->render(GetFontDefault(), 0);
       cartYPos += 30;
 
       DrawText(("Total: $" + totalCost.format()).c_str(), midAlign, cartYPos,
@@ -419,7 +513,10 @@ void GUI::renderCompleted(const string& orderID, const string& timestamp,
                       DARKGRAY);
   renderOrderInfoText("Order Date: ", timestamp, 290, LIGHTGRAY, DARKGRAY);
 
-  renderOrderInfoText("Shipped to: ", address, 330, LIGHTGRAY, DARKGRAY);
+  renderOrderInfoText(
+      "Shipped to: ",
+      address.size() > 16 ? address.substr(0, 16) + "..." : address, 330,
+      LIGHTGRAY, DARKGRAY);
   renderOrderInfoText("Payment Method: ", PAYMENT_METHODS[paymentMethod], 370,
                       SKYBLUE, BLUE);
   renderOrderInfoText("Total Cost: ", "$" + totalCost.format(), 410, GREEN,

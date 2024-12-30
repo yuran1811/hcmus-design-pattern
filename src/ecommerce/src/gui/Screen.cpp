@@ -1,18 +1,9 @@
 #include "Screen.hpp"
 
-void ScreenManager::init() {
-  ScreenManager& instance = getInstance();
+GUIScreen ScreenManager::getCurrentScreen() const { return currentScreen; }
 
-  instance.addScreen(
-      GUIScreen::MAIN, []() -> any { return nullptr; },
-      []() -> any { return nullptr; });
-  instance.addScreen(
-      GUIScreen::ARCHIVED, []() -> any { return nullptr; },
-      []() -> any { return nullptr; });
-}
-
-void ScreenManager::addScreen(const GUIScreen& name, function<any()> renderF,
-                              function<any()> handleF) {
+void ScreenManager::addScreen(const GUIScreen& name, ScreenFunc renderF,
+                              ScreenFunc handleF) {
   screens[name] = make_unique<Screen>();
 
   auto& newSreen = screens[name];
@@ -21,14 +12,16 @@ void ScreenManager::addScreen(const GUIScreen& name, function<any()> renderF,
 }
 
 void ScreenManager::switchScreen(const GUIScreen& name) {
-  if (screens.find(name) == screens.end()) return;
-  currentScreen = name;
+  currentScreen =
+      (screens.find(name) == screens.end()) ? GUIScreen::NOT_FOUND : name;
 }
 
-void ScreenManager::renderCurrentScreen(Application* app) {
+void ScreenManager::renderCurrentScreen() {
   if (screens.find(currentScreen) == screens.end()) return;
+  screens[currentScreen]->render();
 }
 
-void ScreenManager::handleCurrentScreen(Application* app) {
+void ScreenManager::handleCurrentScreen() {
   if (screens.find(currentScreen) == screens.end()) return;
+  screens[currentScreen]->handle();
 }

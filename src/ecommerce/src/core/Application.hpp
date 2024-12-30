@@ -49,5 +49,6 @@ class Application {
   void addArchivedOrder();
 
   void init();
+  void initScreens();
   void run();
 };
