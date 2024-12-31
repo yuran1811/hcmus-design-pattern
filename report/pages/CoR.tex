@@ -41,6 +41,12 @@
 		\item \textbf{BaseHandler:} Lớp trừu tượng triển khai giao diện \verb|OrderHandler|, cung cấp một thuộc tính \verb|next| để lưu trữ handler tiếp theo.
 		\item \textbf{SelectItemStage, AddressInfoStage, PaymentStage, ShippingStage, CompletionStage:} Các lớp cụ thể kế thừa từ \verb|BaseHandler|, đại diện cho các giai đoạn xử lý khác nhau trong một đơn hàng. Mỗi giai đoạn sẽ thực hiện một nhiệm vụ cụ thể và quyết định có chuyển yêu cầu đến giai đoạn tiếp theo hay không.
 	\end{itemize}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textwidth]{../assets/screenshots/uml/cor.png}
+        \caption{Chain of Responsibility UML Class Diagram}
+    \end{figure}
 \end{flushleft}
 
 \subsubsection{Hoạt động}
