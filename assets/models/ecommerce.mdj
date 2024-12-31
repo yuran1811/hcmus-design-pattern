@@ -3391,7 +3391,7 @@
 			"_parent": {
 				"$ref": "AAAAAAFF+h6SjaM2Hec="
 			},
-			"name": "Chain of Responsibilities",
+			"name": "Chain of Responsibility",
 			"ownedElements": [
 				{
 					"_type": "UMLClassDiagram",
@@ -3462,7 +3462,7 @@
 											"top": -64,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -3688,7 +3688,7 @@
 											"top": 192,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -3894,7 +3894,7 @@
 											"top": 144,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -4100,7 +4100,7 @@
 											"top": 144,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -4306,7 +4306,7 @@
 											"top": 208,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -4512,7 +4512,7 @@
 											"top": 112,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
@@ -5860,7 +5860,7 @@
 											"left": -64,
 											"width": 180.62255859375,
 											"height": 13,
-											"text": "(from Chain of Responsibilities)"
+											"text": "(from Chain of Responsibility)"
 										},
 										{
 											"_type": "LabelView",
