@@ -981,7 +981,7 @@
 											"top": 168,
 											"width": 279,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(): null",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1187,7 +1187,7 @@
 											"top": 72,
 											"width": 279,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(): null",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1393,7 +1393,7 @@
 											"top": 264,
 											"width": 279,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(): null",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1599,7 +1599,7 @@
 											"top": 72,
 											"width": 279,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(): null",
 											"horizontalAlignment": 0
 										}
 									],
@@ -1805,7 +1805,7 @@
 											"top": 264,
 											"width": 279,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(): null",
 											"horizontalAlignment": 0
 										}
 									],
@@ -3172,9 +3172,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGUGIANZw6q3R8="
 									},
-									"type": {
-										"$ref": "AAAAAAGUGATIsAxle+s="
-									},
 									"direction": "return"
 								}
 							],
@@ -3220,9 +3217,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGUGIIKsw7lVfA="
 									},
-									"type": {
-										"$ref": "AAAAAAGUGATIsAxle+s="
-									},
 									"direction": "return"
 								}
 							]
@@ -3265,9 +3259,6 @@
 									"_id": "AAAAAAGUGIK2vA9xQOs=",
 									"_parent": {
 										"$ref": "AAAAAAGUGIKnyA9qtZ8="
-									},
-									"type": {
-										"$ref": "AAAAAAGUGATIsAxle+s="
 									},
 									"direction": "return"
 								}
@@ -3312,9 +3303,6 @@
 									"_parent": {
 										"$ref": "AAAAAAGUGILavw93qCI="
 									},
-									"type": {
-										"$ref": "AAAAAAGUGATIsAxle+s="
-									},
 									"direction": "return"
 								}
 							]
@@ -3357,9 +3345,6 @@
 									"_id": "AAAAAAGUGIMvLw+IUH0=",
 									"_parent": {
 										"$ref": "AAAAAAGUGIModw+B37k="
-									},
-									"type": {
-										"$ref": "AAAAAAGUGATIsAxle+s="
 									},
 									"direction": "return"
 								}
@@ -9134,7 +9119,8 @@
 								"$ref": "AAAAAAGUGKmhGox5BpY="
 							},
 							"name": "cartTotal",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9143,7 +9129,8 @@
 								"$ref": "AAAAAAGUGKmhGox5BpY="
 							},
 							"name": "couponCode",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -9272,7 +9259,8 @@
 								"$ref": "AAAAAAGUGKyFYY0l2qc="
 							},
 							"name": "currentProvider",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -9281,7 +9269,8 @@
 								"$ref": "AAAAAAGUGKyFYY0l2qc="
 							},
 							"name": "deliveryFee",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -10099,7 +10088,7 @@
 											"top": 257,
 											"width": 343,
 											"height": 13,
-											"text": "+createPaymentGateway(): PaymentGateway",
+											"text": "+createPaymentGateway(type): PaymentGateway",
 											"horizontalAlignment": 0
 										}
 									],
@@ -10593,7 +10582,8 @@
 								"$ref": "AAAAAAGUGMvB2z77V7I="
 							},
 							"name": "factories",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -10676,6 +10666,15 @@
 										"$ref": "AAAAAAGUGInw4RBMTR0="
 									},
 									"direction": "return"
+								},
+								{
+									"_type": "UMLParameter",
+									"_id": "AAAAAAGUHHKM907AiOE=",
+									"_parent": {
+										"$ref": "AAAAAAGUGM4HH0Oix1E="
+									},
+									"name": "type",
+									"type": ""
 								}
 							]
 						}

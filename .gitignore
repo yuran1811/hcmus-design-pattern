@@ -8,7 +8,6 @@
 
 **/_minted-*
 *.gz
-*.pdf
 *.log
 
 **/raylib*
