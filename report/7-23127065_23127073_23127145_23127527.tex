@@ -41,14 +41,14 @@
 ]{largetocline}{section}
 
 % Title page data
-\title{Báo cáo đồ án OOP}
+\title{Báo cáo đồ án OOP Video Project}
 \author{\begin{tabular}{r c}
   Ngô Nguyễn Thế Khoa & 23127065\\
   Phi Anh Khôi        & 23127073\\
   Khưu Ngọc Ý Vy      & 23127145\\
   Trần Phụng Đình     & 23127527\\
 \end{tabular}}
-\date{Ngày 1 tháng 11 năm 2024}
+\date{Ngày 31 tháng 12 năm 2024}
 
 \begin{document}
 \input{envs/code}
@@ -59,83 +59,111 @@
 
 % Report contents
 \pagebreak
-\section{Thông tin nhóm}
-\begin{itemize}
-  \item \textbf{Môn:} Phương pháp lập trình hướng đối tượng
-  \item \textbf{Lớp học phần:} 23CLC09
-  \item \textbf{Giảng viên hướng dẫn:} Bùi Tiến Lên
-  \item \textbf{Thành viên:}
-        \begin{center}
-          \renewcommand{\arraystretch}{1.5}
-          \begin{tabular}{|c|l|c|l|}
-            \hline
-            \textbf{STT} & \textbf{Họ và tên}  & \textbf{MSSV} & \textbf{Email}                                                       \\\hline
-            1            & Ngô Nguyễn Thế Khoa & 23127065      & \href{mailto:nntkhoa23@clc.fitus.edu.vn}{nntkhoa23@clc.fitus.edu.vn} \\\hline
-            2            & Phi Anh Khôi        & 23127073      & \href{mailto:pakhoi23@clc.fitus.edu.vn}{pakhoi23@clc.fitus.edu.vn}   \\\hline
-            3            & Khưu Ngọc Ý Vy      & 23127145      & \href{mailto:knyvy23@clc.fitus.edu.vn}{knyvy23@clc.fitus.edu.vn}     \\\hline
-            4            & Trần Phụng Đình     & 23127527      & \href{mailto:tpdinh23@clc.fitus.edu.vn}{tpdinh23@clc.fitus.edu.vn}   \\\hline
-          \end{tabular}
-        \end{center}
-  \item \textbf{Công cụ hỗ trợ:}
-        \begin{itemize}
-          \item \href{https://git-scm.com/}{\textbf{Git}}, \href{https://github.com/}{\textbf{GitHub}}
-          \item \href{https://docs.google.com/docs/}{\textbf{Google Docs}}
-          \item \href{https://staruml.io/}{\textbf{StarUML}}
-          \item \href{https://www.capcut.com/}{\textbf{CapCut}}
-        \end{itemize}
-\end{itemize}
+\input{pages/GroupInfo.tex}
 
 \pagebreak
-\section{Nội dung}
-\subsection{Thông tin chung về đồ án:}
-\begin{itemize}
-  \item \textbf{Tên đồ án:} Design Pattern Video Project
-  \item \textbf{Môi trường lập trình:} Visual Studio Code
-  \item \textbf{Ngôn ngữ lập trình:} C++
-  \item \textbf{Thư viện sử dụng:} raylib
-\end{itemize}
+\input{pages/ProjectInfo.tex}
+\input{pages/TaskAssignment.tex}
 
-% \pagebreak
-\section{Bảng phân công việc}
-\begin{center}
-  \renewcommand{\arraystretch}{1.5}
-  \begin{tabular}{|c|p{\dimexpr0.6\linewidth-2\tabcolsep}|c|}
-    \hline
-    \textbf{STT} & \textbf{Công việc} & \textbf{Người thực hiện} \\\hline
-    1            & K                  & None                     \\\hline
-    2            & K                  & None                     \\\hline
-    3            & V                  & None                     \\\hline
-    4            & D                  & None                     \\\hline
-  \end{tabular}
-\end{center}
+\pagebreak
+\input{pages/ProblemAnalysis.tex}
 
 \pagebreak
 \section{Chi tiết về các Design Pattern được sử dụng}
 \input{pages/Factory.tex}
+\pagebreak
 \input{pages/Decorator.tex}
+\pagebreak
 \input{pages/CoR.tex}
 
 \pagebreak
-\section{Simple Demo Source}
-\codeimport{cpp}{../src/ecommerce-demo/main.cpp}
-\codeimport{cpp}{../src/ecommerce-demo/Payment.hpp}
-\codeimport{cpp}{../src/ecommerce-demo/Order.hpp}
-\codeimport{cpp}{../src/ecommerce-demo/Stage.hpp}
-
-\pagebreak
-\section{Ảnh chụp màn hình}
-% \subsection{Demo}
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[width=0.7\textwidth]{Screenshots/server-console.png}
-%   \caption{Giao diện Server (Console)}\label{fig:server-console}
-% \end{figure}
+\section{Ứng dụng Demo}
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/cart_empty.png}
+    \caption{Giao diện bắt đầu}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/cart_with_discount.png}
+    \caption{Giao diện giỏ hàng với giảm giá}
+  \end{subfigure}
+  \caption{Xem, thêm, xóa sản phẩm trong giỏ hàng và áp mã giảm giá}
+\end{figure}
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/address_info.png}
+    \caption{Giao diện nhập thông tin địa chỉ}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/shipping_provider.png}
+    \caption{Giao diện chọn đơn vị vận chuyển}
+  \end{subfigure}
+  \caption{Nhập thông tin địa chỉ và chọn đơn vị vận chuyển}
+\end{figure}
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/payment_cod.png}
+    \caption{Giao diện chọn phương thức thanh toán COD}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/payment_creditcard.png}
+    \caption{Giao diện chọn phương thức thanh toán thẻ tín dụng}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/payment_paypal.png}
+    \caption{Giao diện chọn phương thức thanh toán PayPal}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/payment_stripe.png}
+    \caption{Giao diện chọn phương thức thanh toán Stripe}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.55\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../assets/screenshots/gui/payment_cod_success.png}
+    \caption{Giao diện thanh toán bằng COD thành công}
+  \end{subfigure}
+  \caption{Chọn phương thức thanh toán và thanh toán thành công}
+\end{figure}
+\begin{figure}[!ht]
+  \centering
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/order_complete.png}
+    \caption{Giao diện hoàn tất đơn hàng}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}{0.46\textwidth}
+    \centering
+    \includegraphics[width=0.9\textwidth]{../assets/screenshots/gui/archived_order.png}
+    \caption{Giao diện xem đơn hàng đã hoàn tất}
+  \end{subfigure}
+  \caption{Hoàn tất đơn hàng và xem đơn hàng đã hoàn tất}
+\end{figure}
 
 % References
 \pagebreak
 \section{Nguồn tham khảo}
 \begin{enumerate}
   \item \href{https://www.youtube.com/watch?v=oBykLn64AUc}{Class Diagram in UML}
+  \item \href{https://drive.google.com/file/d/16rFOFMC4pIhXA9Vhczq5nJKG7FLvJyHC/view}{Refactoring Guru (PDF)}
+  \item \href{https://www.raylib.com/examples.html}{Raylib Examples}
 \end{enumerate}
 
 \end{document}

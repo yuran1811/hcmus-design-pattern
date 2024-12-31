@@ -1,46 +1,71 @@
-#pragma once
-
-#include <iostream>
-#include <memory>
-
-using namespace std;
-
 // Abstract Order Stage Handler
-class OrderStage {
+class OrderHandler {
  protected:
-  OrderStage* nextStage;
+  shared_ptr<OrderHandler> nextStage;
 
  public:
-  OrderStage() : nextStage(nullptr) {}
-  virtual ~OrderStage() { delete nextStage; };
+  OrderHandler() = default;
+  virtual ~OrderHandler() = default;
 
-  void setNextStage(OrderStage* next) { nextStage = move(next); }
-  virtual void handleOrder() const = 0;
+  void setNext(const shared_ptr<OrderHandler> &next) { nextStage = next; }
+
+  virtual void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) = 0;
+  virtual void render(OrderContext &, GUI *, Application *) = 0;
 };
 
-// Concrete Stage: Payment
-class PaymentStage : public OrderStage {
+// Order Stage Context
+class OrderContext {
  public:
-  void handleOrder() const override {
-    cout << "Processing payment stage.\n";
-    if (nextStage) nextStage->handleOrder();
+  OrderStageState currentStage;
+
+  CartType cart;
+  Price totalCost;
+  Price discount;
+
+  string address;
+  string phone;
+
+  string deliveryProvider;
+
+  PaymentMethod paymentMethod;
+  pair<string, Price> paymentInfo;
+
+ public:
+  OrderContext();
+  ~OrderContext() = default;
+
+  Price getFinalCost() const {
+    return totalCost > discount ? totalCost - discount : Price(0, 0);
   }
 };
 
-// Concrete Stage: Packaging
-class PackagingStage : public OrderStage {
+// Concrete Order Stages
+class SelectItemStage : public OrderHandler {
  public:
-  void handleOrder() const override {
-    cout << "Processing packaging stage.\n";
-    if (nextStage) nextStage->handleOrder();
-  }
+  void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) override;
+  void render(OrderContext &, GUI *, Application *) override;
 };
 
-// Concrete Stage: Shipping
-class ShippingStage : public OrderStage {
+class AddressInfoStage : public OrderHandler {
  public:
-  void handleOrder() const override {
-    cout << "Processing shipping stage.\n";
-    if (nextStage) nextStage->handleOrder();
-  }
+  void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) override;
+  void render(OrderContext &, GUI *, Application *) override;
+};
+
+class ShippingStage : public OrderHandler {
+ public:
+  void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) override;
+  void render(OrderContext &, GUI *, Application *) override;
+};
+
+class PaymentStage : public OrderHandler {
+ public:
+  void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) override;
+  void render(OrderContext &, GUI *, Application *) override;
+};
+
+class CompletionStage : public OrderHandler {
+ public:
+  void handle(OrderStageSystem &, OrderContext &, GUI *, Application *) override;
+  void render(OrderContext &, GUI *, Application *) override;
 };

@@ -1,40 +1,75 @@
-#pragma once
-
-#include <iostream>
-#include <memory>
-#include <string>
-
-using namespace std;
-
 // Abstract Payment Gateway
 class PaymentGateway {
  public:
-  virtual void processPayment(double amount) = 0;
   virtual ~PaymentGateway() = default;
+  virtual pair<bool, string> processPayment(const double&) = 0;
 };
 
-// Concrete Payment Gateway: Credit Card
+// Concrete Payment Gateways
 class CreditCardPayment : public PaymentGateway {
  public:
-  void processPayment(double amount) override {
-    cout << "Processing credit card payment of $" << amount << "\n";
+  pair<bool, string> processPayment(const double& amount) override {
+    return {true, "Processed Credit Card payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 
-// Concrete Payment Gateway: PayPal
 class PayPalPayment : public PaymentGateway {
  public:
-  void processPayment(double amount) override {
-    cout << "Processing PayPal payment of $" << amount << "\n";
+  pair<bool, string> processPayment(const double& amount) override {
+    return {true, "Processed Paypal payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
   }
 };
 
-// Payment Gateway Factory
+class StripePayment : public PaymentGateway {
+ public:
+  pair<bool, string> processPayment(const double& amount) override {
+    return {true, "Processed Stripe payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
+  }
+};
+
+class CODPayment : public PaymentGateway {
+ public:
+  pair<bool, string> processPayment(const double& amount) override {
+    return {true, "Processed COD payment of $" +
+                      utils::toStringWithPrecision(amount, 2) + "\n"};
+  }
+};
+
+// Abstract Factory
 class PaymentGatewayFactory {
  public:
-  static PaymentGateway* createPaymentGateway(const string& type) {
-    if (type == "credit") return new CreditCardPayment();
-    if (type == "paypal") return new PayPalPayment();
-    return nullptr;
+  virtual ~PaymentGatewayFactory() = default;
+  virtual unique_ptr<PaymentGateway> createPaymentGateway() const = 0;
+};
+
+// Concrete Factories
+class CreditCardPaymentFactory : public PaymentGatewayFactory {
+ public:
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<CreditCardPayment>();
+  }
+};
+
+class PayPalPaymentFactory : public PaymentGatewayFactory {
+ public:
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<PayPalPayment>();
+  }
+};
+
+class StripePaymentFactory : public PaymentGatewayFactory {
+ public:
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<StripePayment>();
+  }
+};
+
+class CODPaymentFactory : public PaymentGatewayFactory {
+ public:
+  unique_ptr<PaymentGateway> createPaymentGateway() const override {
+    return make_unique<CODPayment>();
   }
 };
