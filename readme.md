@@ -44,10 +44,12 @@
 - [x] System Correctness
 - [x] Effectiveness of Design Patterns
 - [x] Demo Application
-- [x] [Report](./report/) + Documentation
-- [ ] [Slide](./slide/) + Presentation Video
+- [x] [Report](./report/7-23127065_23127073_23127145_23127527.pdf) + Documentation
+- [x] Slide + Presentation Video
 
 ## References
+
+- Official Cloud Link: [Google Drive](https://drive.google.com/drive/folders/1C-crdARyA8eY_gdCR5P_yUyNelR9vO6-)
 
 ### External
 
