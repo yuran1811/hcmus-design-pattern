@@ -1,50 +1,66 @@
-#pragma once
-
-#include <iostream>
-#include <memory>
-
-using namespace std;
-
-// Abstract Order class
+// Abstract Order
 class Order {
  public:
-  virtual void placeOrder() const = 0;
   virtual ~Order() = default;
+  virtual Price calculateTotal() const = 0;
+  virtual pair<bool, vector<string>> placeOrder() = 0;
 };
 
-// Concrete Basic Order
+// Concrete Order: Basic Order
 class BasicOrder : public Order {
+ private:
+  Price cartTotal;
+  string couponCode = "";
+
  public:
-  void placeOrder() const override { cout << "Placing a basic order.\n"; }
+  BasicOrder() = default;
+  BasicOrder(Price, const string&);
+
+  const Price& getCartTotal() const { return cartTotal; };
+  const string& getCouponCode() const { return couponCode; };
+
+  void setCartTotal(const Price&);
+  void setCouponCode(const string& _);
+
+  Price calculateTotal() const override;
+  pair<bool, vector<string>> placeOrder() override;
 };
 
 // Abstract Decorator
 class OrderDecorator : public Order {
  protected:
-  Order* wrappedOrder;
+  shared_ptr<Order> wrappedOrder;
 
  public:
-  OrderDecorator(Order* order) : wrappedOrder(move(order)) {}
-};
+  OrderDecorator() = delete;
+  OrderDecorator(shared_ptr<Order> order) : wrappedOrder(move(order)) {}
 
-// Concrete Decorator: Gift Wrap
-class GiftWrapDecorator : public OrderDecorator {
- public:
-  GiftWrapDecorator(Order* order) : OrderDecorator(move(order)) {}
-
-  void placeOrder() const override {
-    wrappedOrder->placeOrder();
-    cout << "Adding gift wrap.\n";
+  Order* unwrap() override {
+    return wrappedOrder ? wrappedOrder->unwrap() : this;
   }
 };
 
 // Concrete Decorator: Express Delivery
 class ExpressDeliveryDecorator : public OrderDecorator {
  public:
-  ExpressDeliveryDecorator(Order* order) : OrderDecorator(move(order)) {}
+  inline static map<string, Price> availableProviders = {
+      {"J&T Express", Price(23'15, 2)},
+      {"Viettel Post", Price(25'35, 2)},
+      {"Ninja Van", Price(21'55, 2)}
+  };
 
-  void placeOrder() const override {
-    wrappedOrder->placeOrder();
-    cout << "Adding express delivery.\n";
-  }
+ private:
+  string currentProvider;
+  Price expressFee;
+
+ public:
+  ExpressDeliveryDecorator(shared_ptr<Order>);
+
+  void updateDeliveryProvider(const string&);
+
+  const string& getCurrentDeliveryProvider() const;
+  const Price& getExpressFee() const;
+
+  Price calculateTotal() const override;
+  pair<bool, vector<string>> placeOrder() override;
 };

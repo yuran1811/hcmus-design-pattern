@@ -1,0 +1,51 @@
+\section{Ý tưởng dự án và lựa chọn Design Pattern}
+\subsection{Ý tưởng dự án}
+\begin{itemize}
+  \item \textbf{Tên dự án:} E-commerce Application
+  \item \textbf{Mô tả:} Ứng dụng mô phỏng một trang web bán hàng trực tuyến, bao gồm các chức năng cơ bản như:
+        \begin{itemize}
+          \item Xem danh sách sản phẩm
+          \item Thêm và xóa sản phẩm khỏi giỏ hàng
+          \item Xem giỏ hàng, chỉnh sửa số lượng sản phẩm
+          \item Áp dụng mã giảm giá
+          \item Điền thông tin giao hàng (địa chỉ, số điện thoại)
+          \item Chọn đơn vị vận chuyển
+          \item Chọn phương thức thanh toán (COD, Credit Card, PayPal, Stripe,\ldots)
+          \item Thanh toán đơn hàng
+          \item Xem lịch sử đơn hàng
+        \end{itemize}
+  \item \textbf{Mục tiêu:} Áp dụng \textbf{Design Pattern} vào ứng dụng để tăng tính linh hoạt, dễ bảo trì và mở rộng.
+  \item \textbf{Note:} Ý tưởng dự án được sinh từ ChatGPT và có thể xem ở \href{https://chatgpt.com/share/672878ca-3f94-8000-83fe-afb2a063412d}{đây}.
+\end{itemize}
+\subsection{Lựa chọn Design Pattern}
+\subsubsection{Phân tích vấn đề}
+\begin{itemize}
+  \item \textbf{Yêu cầu:} Cần xây dựng một ứng dụng E-commerce linh hoạt, dễ bảo trì và mở rộng.
+  \item \textbf{Vấn đề:}
+        \begin{itemize}
+          \item Làm sao để tích hợp đa dạng các hình thức thanh toán và cổng thanh toán mà tránh việc sửa đổi mã nguồn nhiều và chỉ cần bổ sung thêm khi cần?
+          \item Với một đơn hàng cơ bản, làm sao để bổ sung thêm đơn vị vận chuyển hay quà tặng mà không trực tiếp sửa đổi đơn hàng cơ bản?
+          \item Giả sử quy trình xử lí đơn hàng có thể thay đổi, làm sao để thay đổi (thêm, sửa, xóa) quy trình mà không ảnh hưởng đến các bước khác?
+        \end{itemize}
+  \item \textbf{Giải pháp:} Cần lựa chọn và sử dụng các Design Pattern phù hợp để giải quyết những vấn đề trên.
+\end{itemize}
+\subsubsection{Các Design Pattern phù hợp}
+\begin{itemize}
+  \item \textbf{Tính linh hoạt và mở rộng}
+        \begin{itemize}
+          \item \textbf{Thêm mới phương thức thanh toán:} Với \textit{Factory Method}, việc thêm mới một cổng thanh toán (ví dụ: PayPal, Stripe) chỉ cần tạo thêm một lớp con của lớp Payment Gateway và cập nhật logic trong Factory. Điều này giúp tránh sửa đổi nhiều phần mã nguồn khi cần bổ sung tính năng mới.
+          \item \textbf{Thêm tính năng bổ sung cho đơn hàng:} \textit{Decorator Pattern} cho phép thêm các tính năng bổ sung cho đơn hàng (ví dụ: gói quà tặng, giao hàng nhanh, bảo hiểm) mà không cần sửa đổi trực tiếp lớp \verb|Order| cơ bản. Điều này giúp ứng dụng dễ dàng tùy chỉnh và đáp ứng nhu cầu đa dạng của khách hàng.
+          \item \textbf{Thay đổi quy trình xử lý đơn hàng:} \textit{Chain of Responsibility Pattern} giúp dễ dàng thay đổi hoặc thêm mới các bước xử lý đơn hàng (ví dụ: kiểm tra tồn kho, xác thực địa chỉ) mà không ảnh hưởng đến các bước khác. Điều này tăng tính linh hoạt trong quản lý và tối ưu hóa quy trình kinh doanh.
+        \end{itemize}
+  \item \textbf{Dễ bảo trì và sửa chữa}
+        \begin{itemize}
+          \item \textbf{Giảm sự phụ thuộc giữa các thành phần:} Các Design Pattern giúp giảm sự liên kết chặt chẽ giữa các thành phần trong ứng dụng, giúp dễ dàng bảo trì và sửa chữa các phần riêng lẻ mà không ảnh hưởng đến toàn bộ hệ thống.
+          \item \textbf{Tái sử dụng mã nguồn:} Các Pattern khuyến khích việc viết mã nguồn một cách trừu tượng và tái sử dụng được, giúp tiết kiệm thời gian và công sức phát triển.
+          \item \textbf{Dễ dàng kiểm thử:} Các Pattern thường giúp tách biệt các chức năng, giúp việc kiểm thử đơn vị và tích hợp trở nên dễ dàng hơn.
+        \end{itemize}
+  \item \textbf{Nâng cao hiệu suất}
+        \begin{itemize}
+          \item \textbf{Tái sử dụng đối tượng:} \textit{Factory Method} giúp tránh việc tạo ra nhiều đối tượng giống nhau, giúp tiết kiệm tài nguyên hệ thống.
+          \item \textbf{Tối ưu hóa quá trình xử lý:} \textit{Chain of Responsibility Pattern} giúp tối ưu hóa quá trình xử lý đơn hàng bằng cách chỉ thực hiện các bước cần thiết.
+        \end{itemize}
+\end{itemize}
