@@ -47,9 +47,37 @@
 - [x] [Report](./report/7-23127065_23127073_23127145_23127527.pdf) + Documentation
 - [x] Slide + Presentation Video
 
+## Demo App Screenshots
+
+<div style="display:flex">
+    <img src="assets/screenshots/gui/cart_empty.png" alt="cart_empty.png" style="width: 45%;">
+    <img src="assets/screenshots/gui/cart_with_discount.png" alt="cart_with_discount.png" style="width: 45%;">
+</div>
+<div style="display:flex">
+    <img src="assets/screenshots/gui/address_info.png" alt="address_info.png" style="width: 45%;">
+    <img src="assets/screenshots/gui/shipping_provider.png" alt="shipping_provider.png" style="width: 45%;">
+</div>
+<div style="display:flex">
+    <img src="assets/screenshots/gui/payment_creditcard.png" alt="payment_creditcard.png" style="width: 33%;">
+    <img src="assets/screenshots/gui/payment_paypal.png" alt="payment_paypal.png" style="width: 33%;">
+    <img src="assets/screenshots/gui/payment_stripe.png" alt="payment_stripe.png" style="width: 33%;">
+</div>
+<div style="display:flex">
+    <img src="assets/screenshots/gui/payment_cod.png" alt="payment_cod.png" style="width: 45%;">
+    <img src="assets/screenshots/gui/payment_cod_success.png" alt="payment_cod_success.png" style="width: 45%;">
+</div>
+<div style="display:flex">
+    <img src="assets/screenshots/gui/order_complete.png" alt="order_complete.png" style="width: 45%;">
+    <img src="assets/screenshots/gui/archived_order.png" alt="archived_order.png" style="width: 45%;">
+</div>
+
 ## References
 
 - Official Cloud Link: [Google Drive](https://drive.google.com/drive/folders/1C-crdARyA8eY_gdCR5P_yUyNelR9vO6-)
+  - [Report.pdf](https://drive.google.com/file/d/18Ufsy69zsrsS-qm-eP5ZnpxG2i-Gg1ML/view)
+  - [Slide.pptx](https://drive.google.com/file/d/1Yd9oZIE32t08AhZFUjm2Ol4YpDd7WyGT/view)
+  - [Video.mp4](https://drive.google.com/file/d/1dZZ7nCoUkOLr2luG-abLWSQezKK-9hpw/view)
+  - [DemoApp.zip](https://drive.google.com/file/d/1zci60wE7oq-rt9EaeJlZUXmVYOQULwTK/view)
 
 ### External
 
